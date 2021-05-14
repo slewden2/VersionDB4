@@ -50,11 +50,8 @@ namespace VersionDB4
         }
 
         #region Events
-        private void FVersionDB_Load(object sender, EventArgs e)
-        {
-            ProcessAction(EAction.ProjectScriptReload);
-
-        }
+        private void FVersionDB_Load(object sender, EventArgs e) 
+            => ProcessAction(EAction.ProjectScriptReload);
 
         private void CbVersions_SelectedIndexChanged(object sender, EventArgs e)
             => ProcessAction(EAction.ProjectReferentialReload);
@@ -69,7 +66,7 @@ namespace VersionDB4
                 }
                 else if (e.Node.Tag is TypeObjectCounter typ && cbVersions.SelectedItem is Version version2)
                 {
-                    FillReferentialVersion(e.Node, version2, typ);
+                    FillReferentialTypeObject(e.Node, version2, typ);
                 }
             }
         }
@@ -131,21 +128,21 @@ namespace VersionDB4
                     lblVersion.Visible = false;
                     FillReferentialTreeView();
                     break;
-                case EAction.VersionScriptAdd:
+                case EAction.ProjectVersionAdd:
                     int versionNewId = NewVersion();
                     if (versionNewId > 0)
                     {
                         FillScriptTreeView(versionNewId);
                     }
                     break;
-                case EAction.VersionScriptRefresh:
-                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounter)
-                    {
-                        FillScriptVersion(treeView1.SelectedNode, versionCounter);
-                        treeView1.SelectedNode.Expand();
-                    }
+                ////case EAction.VersionScriptRefresh:
+                ////    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounter)
+                ////    {
+                ////        FillScriptVersion(treeView1.SelectedNode, versionCounter);
+                ////        treeView1.SelectedNode.Expand();
+                ////    }
 
-                    break;
+                ////    break;
                 case EAction.ScriptBeginAdd:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounterAdd)
                     {
@@ -167,6 +164,8 @@ namespace VersionDB4
                         currentScriptEdited.ScriptText = TxtScriptText.Text;
                         using var cnn = new DatabaseConnection();
                         int id = cnn.ExecuteScalar(Script.SQLInsert, currentScriptEdited);
+                        var analyzer = SqlAnalyzer.Analyse(id, currentScriptEdited.ScriptText);
+                        analyzer.Save(cnn);
                         CancelEdition(null);
                         FillScriptVersion(treeView1.SelectedNode, versionCounterAdd2);
                         treeView1.SelectedNode.Expand();
@@ -187,8 +186,10 @@ namespace VersionDB4
                     if (currentScriptEdited != null)
                     {
                         currentScriptEdited.ScriptText = TxtScriptText.Text;
+                        var analyzer = SqlAnalyzer.Analyse(currentScriptEdited.ScriptId, currentScriptEdited.ScriptText);
                         using var cnn = new DatabaseConnection();
                         cnn.Execute(Script.SQLUpdate, currentScriptEdited);
+                        analyzer.Save(cnn);
                         CancelEdition(treeView1.SelectedNode);
                     }
 
@@ -196,11 +197,17 @@ namespace VersionDB4
                 case EAction.ScriptAnalyze:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script scriptA)
                     {
-                        var analyzer = SqlAnalyzer.Analyse(scriptA.ScriptId, scriptA.ScriptText);
-                        using var cnn = new DatabaseConnection();
-                        analyzer.Save(cnn);
+                        using (var frm = new FDetailScript())
+                        {
+                            frm.Script = scriptA;
+                            frm.ShowDialog(this);
+                        }
+
+                        ////var analyzer = SqlAnalyzer.Analyse(scriptA.ScriptId, scriptA.ScriptText);
+                        ////using var cnn = new DatabaseConnection();
+                        ////analyzer.Save(cnn);
                     }
-                     
+
                     break;
                 default:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is IPresentable presentable)
@@ -364,8 +371,6 @@ namespace VersionDB4
                 }
             }
         }
-
-
         private void FillScriptVersion(TreeNode node, VersionScriptCounter versionCounter)
         {
             node.Nodes.Clear();
@@ -391,7 +396,7 @@ namespace VersionDB4
             }
         }
 
-        private void FillReferentialVersion(TreeNode node, Version version, TypeObjectCounter typ)
+        private void FillReferentialTypeObject(TreeNode node, Version version, TypeObjectCounter typ)
         {
             node.Nodes.Clear();
 
@@ -411,6 +416,7 @@ namespace VersionDB4
         {
             lblType.Text = string.Empty;
             TxtScriptText.Text = string.Empty;
+            lblResumes.Text = string.Empty;
 
             if (selectedNode != null && selectedNode.Tag != null && selectedNode.Tag is IPresentable presentable)
             {
@@ -443,6 +449,8 @@ namespace VersionDB4
                         if (selectedNode.Tag is Script script)
                         {
                             TxtScriptText.Text = script.ScriptText;
+                            var analyzer = script.GetAnalyzer();
+                            lblResumes.Text = analyzer.ResumeText;
                             SqlColorizer.Colorise(TxtScriptText);
                         }
                         
@@ -569,23 +577,6 @@ namespace VersionDB4
             return false;
         }
         #endregion
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            if (treeView1.SelectedNode != null && treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script script)
-            {
-                using var cnn = new DatabaseConnection();
-                var analyzer = SqlAnalyzer.Load(cnn, script.ScriptId);
-                listBox1.DataSource = null;
-                listBox1.DataSource = analyzer.Blocs;
-                listBox2.DataSource = null;
-                listBox2.DataSource = analyzer.SqlObjets;
-                listBox3.DataSource = null;
-                listBox3.DataSource = analyzer.Resumes;
-
-
-            }
-        }
 
     }
 }

@@ -7,41 +7,7 @@ namespace VersionDB4Lib.Business
 {
     public static class EnumHelper
     {
-        public static string GetIcon(this EAction action)
-            =>  action switch
-            { 
-                EAction.Cancel => "",                        // 0xE106;  Cancel
-                EAction.ClientAdd => "",                     // 0xE109;  Add
-                EAction.ClientEdit => "",                    // 0xE104;  Edit
-                EAction.ClientReload => "",                  // 0xE72C;  Reload
-                EAction.ClientsReload => "",                 // 0xE72C;
-                EAction.ProjectReferentialReload => "",      // 0xE72C;
-                EAction.ProjectScriptReload => "",           // 0xE72C;
-                EAction.ScriptAnalyze => "",                 // 0xE773;  Analyze
-                EAction.ScriptBeginAdd => "",                // 0xE109;
-                EAction.ScriptBeginEdit => "",               // 0xE104;
-                EAction.ScriptEndAdd => "",                  // 0xE081;  Valider
-                EAction.ScriptEndEdit => "",                 // 0xE081;
-                EAction.SqlGroupAdd => "",                   // 0xE109;  
-                EAction.SqlGroupReLoad => "",                // 0xE72C;  
-                EAction.SqlGroupReoadFromBdd => "",          // 0xE72C;   
-                EAction.SqlObjectAddCustomClient => "",      // 0xE8FA;  Custom client Add
-                EAction.SqlObjectDelete => "",               // 0xE107;  Delete
-                EAction.SqlObjectEdit => "",                 // 0xE104;  
-                EAction.SqlObjectLock => "",                 // 0xE72E;  Lock
-                EAction.SqlObjectMakeFullCustomClient => "", // 0xE2AF;  Full client
-                EAction.SqlObjectRemoveCustomClient => "",   // 0xE8CF;  Custom client Remove
-                EAction.SqlObjectSaveSqlToDisk => "",        // 0xEA35;  Save to disk
-                EAction.SqlObjectUnlock => "",               // 0xE785;  Unlock
-                EAction.VersionReferentialRefresh => "",     // 0xE72C;
-                EAction.VersionScriptAdd => "",              // 0xE109;
-                EAction.VersionScriptRefresh => "",          // 0xE72C;
-                _ => string.Empty
-            };
-        
-
-
-        public static IEnumerable<EAction> GetActions(this ETypeObjectPresentable typeObjectPresentable, object theObject)
+          public static IEnumerable<EAction> GetActions(this ETypeObjectPresentable typeObjectPresentable, object theObject)
         {
             switch (typeObjectPresentable)
             {
@@ -88,10 +54,10 @@ namespace VersionDB4Lib.Business
  
                 case ETypeObjectPresentable.Project:
                     yield return EAction.ProjectScriptReload;
-                    yield return EAction.VersionScriptAdd;
+                    yield return EAction.ProjectVersionAdd;
                     break;
                 case ETypeObjectPresentable.VersionScript:
-                    yield return EAction.VersionScriptRefresh;
+                    ////yield return EAction.VersionScriptRefresh;
                     yield return EAction.ScriptBeginAdd;
                     break;
 
@@ -110,6 +76,42 @@ namespace VersionDB4Lib.Business
                     break;
             }
         }
+
+        public static string GetIcon(this EAction action)
+              => action switch
+              {
+                  EAction.Cancel => "",                        // 0xE106;  Cancel
+                EAction.ClientAdd => "",                     // 0xE109;  Add
+                EAction.ClientEdit => "",                    // 0xE104;  Edit
+                EAction.ClientReload => "",                  // 0xE72C;  Reload
+                EAction.ClientsReload => "",                 // 0xE72C;
+                EAction.ProjectReferentialReload => "",      // 0xE72C;
+                EAction.ProjectScriptReload => "",           // 0xE72C;
+                EAction.ScriptAnalyze => "",                 // 0xE773;  Analyze
+                EAction.ScriptBeginAdd => "",                // 0xE109;
+                EAction.ScriptBeginEdit => "",               // 0xE104;
+                EAction.ScriptEndAdd => "",                  // 0xE081;  Valider
+                EAction.ScriptEndEdit => "",                 // 0xE081;
+                EAction.SqlGroupAdd => "",                   // 0xE109;  
+                EAction.SqlGroupReLoad => "",                // 0xE72C;  
+                EAction.SqlGroupReoadFromBdd => "",          // 0xE72C;   
+                EAction.SqlObjectAddCustomClient => "",      // 0xE8FA;  Custom client Add
+                EAction.SqlObjectDelete => "",               // 0xE107;  Delete
+                EAction.SqlObjectEdit => "",                 // 0xE104;  
+                EAction.SqlObjectLock => "",                 // 0xE72E;  Lock
+                EAction.SqlObjectMakeFullCustomClient => "", // 0xE2AF;  Full client
+                EAction.SqlObjectRemoveCustomClient => "",   // 0xE8CF;  Custom client Remove
+                EAction.SqlObjectSaveSqlToDisk => "",        // 0xEA35;  Save to disk
+                EAction.SqlObjectUnlock => "",               // 0xE785;  Unlock
+                EAction.VersionReferentialRefresh => "",     // 0xE72C;
+                EAction.VersionScriptAdd => "",              // 0xE109;
+                EAction.ProjectVersionAdd => "",              // 0xE109;
+                                                               //EAction.VersionScriptRefresh => "",          // 0xE72C;
+                _ => string.Empty
+              };
+
+
+
 
 
         /// <summary>

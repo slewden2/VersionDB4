@@ -146,6 +146,9 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             return  nb + nbr + nbsqlo;
         }
 
+        public string ResumeText
+            => string.Join(", ", this.Resumes);
+
         /// <summary>
         /// Enregistre l'objet en base
         /// </summary>
@@ -286,6 +289,16 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     if (int.TryParse(m.Groups["codeClient"].Value, out int cc))
                     {
                         clientCode = cc;
+                    }
+
+                    if (db != null && db.EndsWith("."))
+                    {
+                        db = db[0..^1];
+                    }
+
+                    if (sch != null && sch.EndsWith("."))
+                    {
+                        sch = sch[0..^1];
                     }
 
                     res = new Bloc()
@@ -585,7 +598,9 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                                                           && x.SqlActionId != SqlAction.CodeClient && x.SqlActionId != SqlAction.DbComparer
                                                           && x.SqlActionId == SqlAction.Execute
                                                           && (x.SqlWhatId != SqlWhat.Table ||
-                                                               (x.SqlWhatId == SqlWhat.Table && x.BlocSchema.ToLower() != "sys"))).Select(x => x.GetResume(false)).Distinct());
+                                                               (x.SqlWhatId == SqlWhat.Table && x.BlocSchema.ToLower() != "sys")))
+                                                        .Select(x => x.GetResume(false))
+                                                        .Distinct());
                 }
             }
         }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VersionDB4Lib.Business;
 using Version = VersionDB4Lib.CRUD.Version;
 
 namespace VersionDB4Lib.ForUI
 {
-    public class VersionScriptCounter : Version
+    public class VersionScriptCounter : Version, IPresentable
     {
         public int Count { get; set; }
        
@@ -29,5 +30,8 @@ WHERE v.ProjectId = @ProjectId
 
             return tit;
         }
+
+        public new ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.VersionScript;
+
     }
 }

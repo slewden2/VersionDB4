@@ -60,8 +60,8 @@ namespace VersionDB4Lib.Business
         /// </summary>
         Cancel = 0,
 
-
-        VersionScriptRefresh = 1,
+ 
+        //VersionScriptRefresh = 1,
         VersionScriptAdd = 2,
 
         SqlGroupReLoad = 10,
@@ -84,6 +84,7 @@ namespace VersionDB4Lib.Business
 
         ProjectScriptReload = 40,
         ProjectReferentialReload = 41,
+        ProjectVersionAdd = 42,
 
         ScriptBeginAdd = 50,
         ScriptEndAdd = 51,

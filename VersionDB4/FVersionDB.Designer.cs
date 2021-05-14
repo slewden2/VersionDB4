@@ -31,20 +31,17 @@ namespace VersionDB4
         {
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblVersion = new System.Windows.Forms.Label();
             this.rdReferential = new VersionDB4Lib.UI.RadioButton();
             this.rdClients = new VersionDB4Lib.UI.RadioButton();
             this.rdScript = new VersionDB4Lib.UI.RadioButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pnlVersion = new System.Windows.Forms.Panel();
             this.cbVersions = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.listBox3 = new System.Windows.Forms.ListBox();
-            this.listBox2 = new System.Windows.Forms.ListBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.lblResumes = new System.Windows.Forms.Label();
             this.TxtScriptText = new System.Windows.Forms.RichTextBox();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.lblType = new System.Windows.Forms.Label();
-            this.lblVersion = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -80,6 +77,15 @@ namespace VersionDB4
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(400, 42);
             this.panel1.TabIndex = 1;
+            // 
+            // lblVersion
+            // 
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Location = new System.Drawing.Point(155, 9);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(80, 21);
+            this.lblVersion.TabIndex = 3;
+            this.lblVersion.Text = "V99.99.99";
             // 
             // rdReferential
             // 
@@ -139,14 +145,11 @@ namespace VersionDB4
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Panel2.Controls.Add(this.listBox3);
-            this.splitContainer1.Panel2.Controls.Add(this.listBox2);
-            this.splitContainer1.Panel2.Controls.Add(this.listBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.lblResumes);
             this.splitContainer1.Panel2.Controls.Add(this.TxtScriptText);
             this.splitContainer1.Panel2.Controls.Add(this.pnlActions);
             this.splitContainer1.Panel2.Controls.Add(this.lblType);
-            this.splitContainer1.Size = new System.Drawing.Size(1613, 450);
+            this.splitContainer1.Size = new System.Drawing.Size(904, 450);
             this.splitContainer1.SplitterDistance = 400;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -171,42 +174,18 @@ namespace VersionDB4
             this.cbVersions.TabIndex = 1;
             this.cbVersions.SelectedIndexChanged += new System.EventHandler(this.CbVersions_SelectedIndexChanged);
             // 
-            // button1
+            // lblResumes
             // 
-            this.button1.Location = new System.Drawing.Point(520, 128);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 37);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
-            // 
-            // listBox3
-            // 
-            this.listBox3.FormattingEnabled = true;
-            this.listBox3.ItemHeight = 21;
-            this.listBox3.Location = new System.Drawing.Point(957, 26);
-            this.listBox3.Name = "listBox3";
-            this.listBox3.Size = new System.Drawing.Size(240, 88);
-            this.listBox3.TabIndex = 7;
-            // 
-            // listBox2
-            // 
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.ItemHeight = 21;
-            this.listBox2.Location = new System.Drawing.Point(778, 26);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(173, 88);
-            this.listBox2.TabIndex = 6;
-            // 
-            // listBox1
-            // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 21;
-            this.listBox1.Location = new System.Drawing.Point(386, 26);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(386, 88);
-            this.listBox1.TabIndex = 5;
+            this.lblResumes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblResumes.AutoEllipsis = true;
+            this.lblResumes.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblResumes.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.lblResumes.Location = new System.Drawing.Point(292, 27);
+            this.lblResumes.Name = "lblResumes";
+            this.lblResumes.Size = new System.Drawing.Size(196, 18);
+            this.lblResumes.TabIndex = 5;
+            this.lblResumes.Text = "label1";
             // 
             // TxtScriptText
             // 
@@ -214,42 +193,33 @@ namespace VersionDB4
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TxtScriptText.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.TxtScriptText.Location = new System.Drawing.Point(12, 193);
+            this.TxtScriptText.Location = new System.Drawing.Point(12, 103);
             this.TxtScriptText.Name = "TxtScriptText";
-            this.TxtScriptText.Size = new System.Drawing.Size(1185, 245);
+            this.TxtScriptText.Size = new System.Drawing.Size(476, 335);
             this.TxtScriptText.TabIndex = 4;
             this.TxtScriptText.Text = "";
             // 
             // pnlActions
             // 
-            this.pnlActions.Location = new System.Drawing.Point(12, 128);
+            this.pnlActions.Location = new System.Drawing.Point(12, 48);
             this.pnlActions.Name = "pnlActions";
             this.pnlActions.Size = new System.Drawing.Size(372, 49);
             this.pnlActions.TabIndex = 2;
             // 
             // lblType
             // 
-            this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(22, 39);
+            this.lblType.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblType.Location = new System.Drawing.Point(12, 12);
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(59, 21);
+            this.lblType.Size = new System.Drawing.Size(274, 32);
             this.lblType.TabIndex = 1;
             this.lblType.Text = "lblType";
-            // 
-            // lblVersion
-            // 
-            this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(155, 9);
-            this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(80, 21);
-            this.lblVersion.TabIndex = 3;
-            this.lblVersion.Text = "V99.99.99";
             // 
             // FVersionDB
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1613, 450);
+            this.ClientSize = new System.Drawing.Size(904, 450);
             this.Controls.Add(this.splitContainer1);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Name = "FVersionDB";
@@ -259,7 +229,6 @@ namespace VersionDB4
             this.panel1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.pnlVersion.ResumeLayout(false);
@@ -275,16 +244,13 @@ namespace VersionDB4
         private System.Windows.Forms.Label lblType;
         private System.Windows.Forms.Panel pnlActions;
         private System.Windows.Forms.RichTextBox TxtScriptText;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListBox listBox3;
-        private System.Windows.Forms.ListBox listBox2;
-        private System.Windows.Forms.ListBox listBox1;
         private VersionDB4Lib.UI.RadioButton rdReferential;
         private VersionDB4Lib.UI.RadioButton rdClients;
         private VersionDB4Lib.UI.RadioButton rdScript;
         private System.Windows.Forms.Panel pnlVersion;
         private System.Windows.Forms.ComboBox cbVersions;
         private System.Windows.Forms.Label lblVersion;
+        private System.Windows.Forms.Label lblResumes;
     }
 }
 

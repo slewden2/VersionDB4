@@ -103,6 +103,20 @@ namespace VersionDB4Lib.CRUD
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Resume res)
+            {
+                return this.ScriptId == res.ScriptId && this.SqlActionId == res.SqlActionId && this.SqlWhatId == res.SqlWhatId
+                    && this.ResumeDatabase == res.ResumeDatabase && this.ResumeSchema == res.ResumeSchema && this.ResumeName == res.ResumeName && this.ResumeColumn == res.ResumeColumn;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+            => HashCode.Combine(ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn);
+
         public static string SQLSelect
             => @"
 SELECT ResumeId, ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode
