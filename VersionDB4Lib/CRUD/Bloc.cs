@@ -95,6 +95,25 @@ namespace VersionDB4Lib.CRUD
             return EnumHelper.ToString(GetAction(), GetWhat(), BlocDatabase, BlocSchema, BlocName, BlocColumn) + $" at ({BlocIndex}, {BlocLength})";
         }
 
+        public override int GetHashCode()
+            => HashCode.Combine(SqlActionId, SqlWhatId, ClientCodeId, BlocDatabase, BlocSchema, BlocName, BlocColumn);
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Bloc bl)
+            {
+                return this.SqlActionId == bl.SqlActionId
+                    && this.SqlWhatId == bl.SqlWhatId
+                    && this.ClientCodeId == bl.ClientCodeId
+                    && (this.BlocDatabase == bl.BlocDatabase || (string.IsNullOrWhiteSpace(this.BlocDatabase) && string.IsNullOrWhiteSpace(bl.BlocDatabase)))
+                    && (this.BlocSchema == bl.BlocSchema || (string.IsNullOrWhiteSpace(this.BlocSchema) && string.IsNullOrWhiteSpace(bl.BlocSchema)))
+                    && (this.BlocName == bl.BlocName || (string.IsNullOrWhiteSpace(this.BlocName) && string.IsNullOrWhiteSpace(bl.BlocName)))
+                    && (this.BlocColumn == bl.BlocColumn || (string.IsNullOrWhiteSpace(this.BlocColumn) && string.IsNullOrWhiteSpace(bl.BlocColumn)));
+            }
+
+            return false;
+        }
+
         public static string SQLSelect
             => @"
 SELECT BlocId, ScriptId, SqlActionId, SqlWhatId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn

@@ -176,7 +176,7 @@ namespace VersionDB4
             this.BtnRefuseAll.FlatAppearance.BorderSize = 0;
             this.BtnRefuseAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BtnRefuseAll.Font = new System.Drawing.Font("Segoe MDL2 Assets", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BtnRefuseAll.ForeColor = System.Drawing.Color.OrangeRed;
+            this.BtnRefuseAll.ForeColor = System.Drawing.Color.Red;
             this.BtnRefuseAll.Location = new System.Drawing.Point(63, 41);
             this.BtnRefuseAll.Name = "BtnRefuseAll";
             this.BtnRefuseAll.Size = new System.Drawing.Size(123, 28);

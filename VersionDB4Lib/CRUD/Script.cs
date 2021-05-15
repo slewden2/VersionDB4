@@ -70,6 +70,18 @@ UPDATE dbo.Resume
 SET ResumeManualValidationCode = 2  ---- 2 = refusé
 WHERE ScriptId  = @ScriptId
 ;";
+        public static string SQLDelete
+            => @"
+DELETE FROM dbo.Resume WHERE ScriptId = @ScriptId;
+DELETE FROM dbo.DatabaseObject WHERE ScriptId = @ScriptId;
+DELETE FROM dbo.Bloc WHERE ScriptId = @ScriptId;
+UPDATE s SET ScriptOrder = s.ScriptOrder - 1 
+FROM dbo.Script s INNER JOIN dbo.Script s2  ON s.VersionId = s2.VersionId AND s.ScriptOrder > s2.ScriptOrder
+WHERE s2.ScriptId = @ScriptId;
+DELETE FROM dbo.Script WHERE ScriptId = @ScriptId;
+";
+
+
         public Version Version { get; set; }
 
         public override string ToString()

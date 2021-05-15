@@ -24,7 +24,8 @@ namespace VersionDB4
         private readonly int projectId = 1;
 
         private readonly Project project;
-        private Version lastVersion; 
+        private Version lastVersion;
+        private bool versionListIsDirty = true;
 
         private Script currentScriptEdited = null;
         #endregion
@@ -37,8 +38,7 @@ namespace VersionDB4
             rdReferential.Checked = false;
             rdScript.Checked = true;
 
-
-            TxtScriptText.Enabled = false;
+            SetRightPanel(ERightPanelMode.TextSqlReadOnly);
 
             using var cnn = new DatabaseConnection();
             var filter = new { ProjectId = projectId };
@@ -118,22 +118,50 @@ namespace VersionDB4
                     }
 
                     break;
+                case EAction.ClientDel:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Base clientDel)
+                    {
+                        if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer la base client {clientDel} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            using var cnn = new DatabaseConnection();
+                            cnn.Execute(Base.SQLDelete, clientDel);
+                            FillClientTreeView();
+                        }
+                        
+                    }
+
+                    break;
                 case EAction.ProjectScriptReload:
                     pnlVersion.Visible = false;
                     lblVersion.Visible = false;
                     FillScriptTreeView();
                     break;
                 case EAction.ProjectReferentialReload:
+                    FillReferentialListOfVersions();
                     pnlVersion.Visible = true;
                     lblVersion.Visible = false;
                     FillReferentialTreeView();
                     break;
-                case EAction.ProjectVersionAdd:
+                case EAction.ProjectVersionScriptAdd:
                     int versionNewId = NewVersion();
                     if (versionNewId > 0)
                     {
                         FillScriptTreeView(versionNewId);
+                        versionListIsDirty = true;
                     }
+                    break;
+                case EAction.ProjetVersionScriptDelete:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionDelete)
+                    {
+                        if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer la version {versionDelete} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            using var cnn = new DatabaseConnection();
+                            cnn.Execute(Version.SQLDelete, versionDelete);
+                            versionListIsDirty = true;
+                            FillScriptTreeView();
+                        }
+                    }
+
                     break;
                 ////case EAction.VersionScriptRefresh:
                 ////    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounter)
@@ -150,10 +178,11 @@ namespace VersionDB4
                         {
                             VersionId = versionCounterAdd.VersionId,
                             Version = versionCounterAdd,
-                            ScriptOrder = versionCounterAdd.Count + 1
+                            ScriptOrder = versionCounterAdd.CountScript + 1
                         };
+                        lblType.Text = $"Ajout d'un script à la version {versionCounterAdd.FullVersion}";
                         TxtScriptText.Text = string.Empty;
-                        TxtScriptText.Enabled = true;
+                        SetRightPanel(ERightPanelMode.TextSqlEdition);
                         ActionsFill(new List<EAction>() { EAction.ScriptEndAdd, EAction.Cancel });
                     }
 
@@ -176,7 +205,8 @@ namespace VersionDB4
                 case EAction.ScriptBeginEdit:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script script)
                     {
-                        TxtScriptText.Enabled = true;
+                        lblType.Text = $"Modification du script {script}";
+                        SetRightPanel(ERightPanelMode.TextSqlEdition);
                         currentScriptEdited = script;
                         ActionsFill(new List<EAction>() { EAction.ScriptEndEdit, EAction.Cancel });
                     }
@@ -202,10 +232,25 @@ namespace VersionDB4
                             frm.Script = scriptA;
                             frm.ShowDialog(this);
                         }
+                    }
 
-                        ////var analyzer = SqlAnalyzer.Analyse(scriptA.ScriptId, scriptA.ScriptText);
-                        ////using var cnn = new DatabaseConnection();
-                        ////analyzer.Save(cnn);
+                    break;
+                case EAction.ScriptDelete:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script scriptDel)
+                    {
+                        if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer le script {scriptDel} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            using var cnn = new DatabaseConnection();
+                            cnn.Execute(Script.SQLDelete, scriptDel);
+
+                            var parent = treeView1.SelectedNode.Parent;
+                            if (parent != null && parent.Tag != null && parent.Tag is VersionScriptCounter versionWithDeletedScript)
+                            {
+                                FillScriptVersion(parent, versionWithDeletedScript, true);
+                                treeView1.SelectedNode.Expand();
+                                NodeSelected(parent);
+                            }
+                        }
                     }
 
                     break;
@@ -222,9 +267,13 @@ namespace VersionDB4
         #region Remplissage du treeView
         private void FillReferentialListOfVersions()
         {
-            cbVersions.DataSource = null;
-            using var conn = new DatabaseConnection();
-            cbVersions.DataSource = conn.Query<VersionObjectCounter>(VersionObjectCounter.SQLSelect, new { ProjectId = projectId }).OrderByDescending(x => x.VersionNumber()).ToList();
+            if (versionListIsDirty)
+            {
+                cbVersions.DataSource = null;
+                using var conn = new DatabaseConnection();
+                cbVersions.DataSource = conn.Query<VersionObjectCounter>(VersionObjectCounter.SQLSelect, new { ProjectId = projectId }).OrderByDescending(x => x.VersionNumber()).ToList();
+                versionListIsDirty = false;
+            }
         }
 
         private void FillClientTreeView(int id = 0)
@@ -290,7 +339,7 @@ namespace VersionDB4
                         Tag = versionCounter
                     };
                     racine.Nodes.Add(nod);
-                    if (versionCounter.Count > 0)
+                    if (versionCounter.CountScript > 0)
                     {
                         nod.Nodes.Add(new TreeNode());
                     }
@@ -371,7 +420,7 @@ namespace VersionDB4
                 }
             }
         }
-        private void FillScriptVersion(TreeNode node, VersionScriptCounter versionCounter)
+        private void FillScriptVersion(TreeNode node, VersionScriptCounter versionCounter, bool select = false)
         {
             node.Nodes.Clear();
             var conn = new DatabaseConnection();
@@ -388,11 +437,16 @@ namespace VersionDB4
                 count++;
             }
 
-            if (count != versionCounter.Count)
+            if (count != versionCounter.CountScript)
             {
-                versionCounter.Count = count;
+                versionCounter.CountScript = count;
                 node.Tag = versionCounter;
                 node.Text = versionCounter.ToString();
+            }
+
+            if (select)
+            {
+                treeView1.SelectedNode = node;
             }
         }
 
@@ -424,14 +478,38 @@ namespace VersionDB4
                 var cat = presentable.GetCategory();
                 switch (cat)
                 {
+                    case ETypeObjectPresentable.Project:
+                        SetRightPanel(ERightPanelMode.List);
+                        break;
+                    case ETypeObjectPresentable.VersionScript:
+                        if (selectedNode.Tag is VersionScriptCounter version)
+                        {
+                            lblType.Text = version.FullVersion;
+                            versionScriptControl1.Version = version;
+                        }
+
+                        SetRightPanel(ERightPanelMode.VersionScript);
+                        break;
+                    case ETypeObjectPresentable.Clients:
+                        SetRightPanel(ERightPanelMode.List);
+                        break;
+                    case ETypeObjectPresentable.Client:
+                        if (selectedNode.Tag != null && selectedNode.Tag is Base baseClient)
+                        {
+                            baseClientControl1.ClientBase = baseClient;
+                            SetRightPanel(ERightPanelMode.BaseClient);
+                        }
+                        break;
                     case ETypeObjectPresentable.VersionReferential:
                         lblType.Text = $"Version {presentable}";
+                        SetRightPanel(ERightPanelMode.List);
                         break;
                     case ETypeObjectPresentable.SqlGroup:
                         lblType.Text = $"Liste des {presentable}";
-
+                        SetRightPanel(ERightPanelMode.List);
                         break;
                     case ETypeObjectPresentable.SqlObject:
+                        SetRightPanel(ERightPanelMode.TextSqlReadOnly);
                         var parent = selectedNode.Parent;
                         if (parent != null && parent.Tag is TypeObject typ2)
                         {
@@ -446,6 +524,7 @@ namespace VersionDB4
 
                         break;
                     case ETypeObjectPresentable.Script:
+                        SetRightPanel(ERightPanelMode.TextSqlReadOnly);
                         if (selectedNode.Tag is Script script)
                         {
                             TxtScriptText.Text = script.ScriptText;
@@ -453,10 +532,10 @@ namespace VersionDB4
                             lblResumes.Text = analyzer.ResumeText;
                             SqlColorizer.Colorise(TxtScriptText);
                         }
-                        
+
                         break;
                 }
-                
+
                 ActionsFill(cat.GetActions(presentable));
             }
             else
@@ -491,6 +570,42 @@ namespace VersionDB4
         #endregion
 
         #region Edition
+
+        private void SetRightPanel(ERightPanelMode mode)
+        {
+            switch(mode)
+            {
+                case ERightPanelMode.BaseClient:
+                    versionScriptControl1.Visible = false;
+                    TxtScriptText.Visible = false;
+                    baseClientControl1.Visible = true;
+                    break;
+                case ERightPanelMode.TextSqlEdition:
+                    versionScriptControl1.Visible = false;
+                    TxtScriptText.Visible = true;
+                    TxtScriptText.Enabled = true;
+                    baseClientControl1.Visible = false;
+                    break;
+                case ERightPanelMode.TextSqlReadOnly:
+                    versionScriptControl1.Visible = false;
+                    TxtScriptText.Visible = true;
+                    TxtScriptText.Enabled = false;
+                    baseClientControl1.Visible = false;
+                    break;
+                case ERightPanelMode.VersionScript:
+                    versionScriptControl1.Visible = true;
+                    TxtScriptText.Visible = false;
+                    TxtScriptText.Enabled = false;
+                    baseClientControl1.Visible = false;
+                    break;
+                default:
+                    versionScriptControl1.Visible = false;
+                    TxtScriptText.Visible = false;
+                    baseClientControl1.Visible = false;
+                    break;
+            }
+        }
+
         private void ActionsClear()
         {
             foreach (var ctrl in pnlActions.Controls)
@@ -515,21 +630,25 @@ namespace VersionDB4
                     Name = action.ToString(),
                     Tag = action,
                     Text = action.GetIcon(),
+                    ForeColor = action.GetColor(),
                     Font = new Font("Segoe MDL2 Assets", 12f),
+                    FlatStyle = FlatStyle.Flat,
                     Height = 30,
-                    Width = 60,
+                    Width = 30,
                     Top = 1,
                     Left = mw
                 };
+                bt.FlatAppearance.BorderSize = 0;
+                bt.FlatAppearance.MouseOverBackColor = Color.FromArgb(232, 239, 247);
                 pnlActions.Controls.Add(bt);
                 bt.Click += BtActions_Click;
-                mw += 75;
+                mw += bt.Width + 10;
             }
         }
 
         private void CancelEdition(TreeNode selectedNode)
         {
-            TxtScriptText.Enabled = false;
+            SetRightPanel(ERightPanelMode.TextSqlReadOnly);
             currentScriptEdited = null;
             NodeSelected(selectedNode);
         }
@@ -578,5 +697,14 @@ namespace VersionDB4
         }
         #endregion
 
+
+        private enum ERightPanelMode
+        {
+            TextSqlReadOnly,
+            TextSqlEdition,
+            BaseClient,
+            VersionScript,
+            List
+        }
     }
 }

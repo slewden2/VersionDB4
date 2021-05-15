@@ -42,6 +42,8 @@ namespace VersionDB4
             this.TxtScriptText = new System.Windows.Forms.RichTextBox();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.lblType = new System.Windows.Forms.Label();
+            this.baseClientControl1 = new VersionDB4.Control.BaseClientControl();
+            this.versionScriptControl1 = new VersionDB4.Control.VersionScriptControl();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -57,7 +59,7 @@ namespace VersionDB4
             this.treeView1.FullRowSelect = true;
             this.treeView1.HideSelection = false;
             this.treeView1.HotTracking = true;
-            this.treeView1.Location = new System.Drawing.Point(0, 84);
+            this.treeView1.Location = new System.Drawing.Point(0, 42);
             this.treeView1.Name = "treeView1";
             this.treeView1.ShowLines = false;
             this.treeView1.ShowRootLines = false;
@@ -72,8 +74,8 @@ namespace VersionDB4
             this.panel1.Controls.Add(this.rdReferential);
             this.panel1.Controls.Add(this.rdClients);
             this.panel1.Controls.Add(this.rdScript);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 408);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(400, 42);
             this.panel1.TabIndex = 1;
@@ -145,10 +147,12 @@ namespace VersionDB4
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.versionScriptControl1);
             this.splitContainer1.Panel2.Controls.Add(this.lblResumes);
             this.splitContainer1.Panel2.Controls.Add(this.TxtScriptText);
             this.splitContainer1.Panel2.Controls.Add(this.pnlActions);
             this.splitContainer1.Panel2.Controls.Add(this.lblType);
+            this.splitContainer1.Panel2.Controls.Add(this.baseClientControl1);
             this.splitContainer1.Size = new System.Drawing.Size(904, 450);
             this.splitContainer1.SplitterDistance = 400;
             this.splitContainer1.TabIndex = 2;
@@ -157,7 +161,7 @@ namespace VersionDB4
             // 
             this.pnlVersion.Controls.Add(this.cbVersions);
             this.pnlVersion.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlVersion.Location = new System.Drawing.Point(0, 42);
+            this.pnlVersion.Location = new System.Drawing.Point(0, 0);
             this.pnlVersion.Name = "pnlVersion";
             this.pnlVersion.Size = new System.Drawing.Size(400, 42);
             this.pnlVersion.TabIndex = 2;
@@ -181,7 +185,7 @@ namespace VersionDB4
             this.lblResumes.AutoEllipsis = true;
             this.lblResumes.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblResumes.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.lblResumes.Location = new System.Drawing.Point(292, 27);
+            this.lblResumes.Location = new System.Drawing.Point(292, 54);
             this.lblResumes.Name = "lblResumes";
             this.lblResumes.Size = new System.Drawing.Size(196, 18);
             this.lblResumes.TabIndex = 5;
@@ -193,9 +197,9 @@ namespace VersionDB4
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TxtScriptText.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.TxtScriptText.Location = new System.Drawing.Point(12, 103);
+            this.TxtScriptText.Location = new System.Drawing.Point(12, 85);
             this.TxtScriptText.Name = "TxtScriptText";
-            this.TxtScriptText.Size = new System.Drawing.Size(476, 335);
+            this.TxtScriptText.Size = new System.Drawing.Size(476, 353);
             this.TxtScriptText.TabIndex = 4;
             this.TxtScriptText.Text = "";
             // 
@@ -203,17 +207,42 @@ namespace VersionDB4
             // 
             this.pnlActions.Location = new System.Drawing.Point(12, 48);
             this.pnlActions.Name = "pnlActions";
-            this.pnlActions.Size = new System.Drawing.Size(372, 49);
+            this.pnlActions.Size = new System.Drawing.Size(265, 32);
             this.pnlActions.TabIndex = 2;
             // 
             // lblType
             // 
+            this.lblType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblType.AutoEllipsis = true;
             this.lblType.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblType.Location = new System.Drawing.Point(12, 12);
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(274, 32);
+            this.lblType.Size = new System.Drawing.Size(475, 32);
             this.lblType.TabIndex = 1;
             this.lblType.Text = "lblType";
+            // 
+            // baseClientControl1
+            // 
+            this.baseClientControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.baseClientControl1.Location = new System.Drawing.Point(12, 85);
+            this.baseClientControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.baseClientControl1.Name = "baseClientControl1";
+            this.baseClientControl1.Size = new System.Drawing.Size(475, 353);
+            this.baseClientControl1.TabIndex = 6;
+            // 
+            // versionScriptControl1
+            // 
+            this.versionScriptControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.versionScriptControl1.Location = new System.Drawing.Point(12, 87);
+            this.versionScriptControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.versionScriptControl1.Name = "versionScriptControl1";
+            this.versionScriptControl1.Size = new System.Drawing.Size(476, 350);
+            this.versionScriptControl1.TabIndex = 7;
             // 
             // FVersionDB
             // 
@@ -251,6 +280,8 @@ namespace VersionDB4
         private System.Windows.Forms.ComboBox cbVersions;
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Label lblResumes;
+        private Control.BaseClientControl baseClientControl1;
+        private Control.VersionScriptControl versionScriptControl1;
     }
 }
 

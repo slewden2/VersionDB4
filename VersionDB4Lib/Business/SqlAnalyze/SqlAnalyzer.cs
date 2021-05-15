@@ -255,78 +255,9 @@ namespace VersionDB4Lib.Business.SqlAnalyze
         /// <param name="e">L'expression à trouver</param>
         private void FillBlocsExpression(string text, RegexFounding e)
         {
-            MatchCollection cll;
-            Bloc res;
-            string db, sch, name, col;
-            //try
-            //{
-            cll = e.Expression.Matches(text);
-
-            if (cll != null && cll.Count > 0)
-            {
-                foreach (Match m in cll)
-                {
-                    db = m.Groups["database"]?.Value;
-                    sch = m.Groups["schema"]?.Value;
-                    if (string.IsNullOrWhiteSpace(sch) && !string.IsNullOrWhiteSpace(db))
-                    {
-                        sch = db;
-                        db = null;
-                    }
-
-                    name = m.Groups["name"]?.Value;
-                    col = string.Empty;
-                    if (SqlAction.IsForColumn(e.Action))
-                    {
-                        col = m.Groups["col"]?.Value;
-                    }
-                    else if (e.ApplyOn == SqlWhat.Index && SqlAction.IsForIndex(e.Action))
-                    {
-                        col = m.Groups["col"]?.Value;
-                    }
-
-                    int? clientCode = null;
-                    if (int.TryParse(m.Groups["codeClient"].Value, out int cc))
-                    {
-                        clientCode = cc;
-                    }
-
-                    if (db != null && db.EndsWith("."))
-                    {
-                        db = db[0..^1];
-                    }
-
-                    if (sch != null && sch.EndsWith("."))
-                    {
-                        sch = sch[0..^1];
-                    }
-
-                    res = new Bloc()
-                    {
-                        ScriptId = this.ScriptId,
-                        SqlActionId = e.Action,
-                        SqlWhatId = e.ApplyOn,
-                        BlocIndex = m.Index,
-                        BlocLength = m.Length,
-                        BlocDatabase = db,
-                        BlocSchema = sch,
-                        BlocName = name,
-                        BlocColumn = col,
-                        ClientCodeId = clientCode
-                    };
-
-                    if (SqlAction.IsForColumn(e.Action))
-                    {
-                        res.BlocColumn = m.Groups["col"]?.Value;
-                    }
-
-                    this.myblocs.Add(res);
-                }
-            }
-            //}
-            //catch
-            //{
-            //}
+            var ba = new BlocAnalyzer();
+            ba.Analyze(e, this.ScriptId, text);
+            myblocs.AddRange(ba.Blocs);
         }
 
         /// <summary>

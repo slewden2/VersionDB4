@@ -80,17 +80,7 @@ namespace VersionDB4Lib.CRUD
         /// <returns>Le texte à afficher</returns>
         public override string ToString()
         {
-            string valid = "?";
-            valid = GetResumeManualValidationCode() switch
-            {
-                EValidation.None => "A valider",
-                EValidation.Valide => "Validé ",
-                EValidation.NonValide => "Refusé ",
-                EValidation.Manuel => "Imposé ",
-                EValidation.Supprime => "Invalide ",
-                EValidation.Effacement => "Supprimé",
-                _ => "?"
-            };
+            string valid = GetResumeManualValidationCode().Libelle(); 
 
             if (SqlActionId == SqlAction.CodeClient)
             {
@@ -119,8 +109,8 @@ namespace VersionDB4Lib.CRUD
 
         public static string SQLSelect
             => @"
-SELECT ResumeId, ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode
-FROM dbo.Resume
+SELECT r.ResumeId, r.ScriptId, r.SqlActionId, r.SqlWhatId, r.ResumeDatabase, r.ResumeSchema, r.ResumeName, r.ResumeColumn, r.ResumeForOtherClients, r.ResumeManualValidationCode
+FROM dbo.Resume r
 ";
         public static string SQLUpdateValidation
             => @"

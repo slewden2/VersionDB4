@@ -92,7 +92,7 @@ namespace VersionDB4Lib.CRUD
 
         public static string SQLSelect
             => @"
-SELECT SqlActionId, SqlActionName, SqlActionIsForColumn, SqlActionIsForColumn, SqlActionIsForTable, SqlActionIsForIndex, SqlActionTitle 
+SELECT SqlActionId, SqlActionName, SqlActionIsForColumn, SqlActionIsForTable, SqlActionIsForIndex, SqlActionTitle 
 FROM dbo.SqlAction
 ";
 
@@ -100,8 +100,31 @@ FROM dbo.SqlAction
         {
             if (actions == null)
             {
-                using var cnn = new DatabaseConnection();
-                actions = cnn.Query<SqlAction>(SqlAction.SQLSelect).ToList();
+                ////using var cnn = new DatabaseConnection();
+                ////actions = cnn.Query<SqlAction>(SqlAction.SQLSelect).ToList();
+                ///
+                actions = new List<SqlAction>()
+                {
+                    new SqlAction() { SqlActionId = 0,  SqlActionName = "UnKnow",          SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Rien à faire"},
+                    new SqlAction() { SqlActionId = 1,  SqlActionName = "DBComparer",      SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Script créé par DBComparer"},
+                    new SqlAction() { SqlActionId = 2,  SqlActionName = "CodeClient",      SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Code spécifique à un client"},
+                    new SqlAction() { SqlActionId = 3,  SqlActionName = "Comment",         SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Commentaire"},
+                    new SqlAction() { SqlActionId = 4,  SqlActionName = "Create",          SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = true,  SqlActionTitle = "Création de"},
+                    new SqlAction() { SqlActionId = 5,  SqlActionName = "Alter",           SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = true,  SqlActionTitle = "Modification de"},
+                    new SqlAction() { SqlActionId = 6,  SqlActionName = "Drop",            SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = true,  SqlActionTitle = "Suppression de"},
+                    new SqlAction() { SqlActionId = 7,  SqlActionName = "Rename",          SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Changement de nom de"},
+                    new SqlAction() { SqlActionId = 8,  SqlActionName = "AddColumn",       SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Ajout de colonne à"},
+                    new SqlAction() { SqlActionId = 9,  SqlActionName = "AlterColumn",     SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Modification d'une colonne de"},
+                    new SqlAction() { SqlActionId = 10, SqlActionName = "DropColumn",      SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Suppression d'une colonne dans"},
+                    new SqlAction() { SqlActionId = 11, SqlActionName = "RenameColumn",    SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Changement de nom d'une colonne de"},
+                    new SqlAction() { SqlActionId = 12, SqlActionName = "Update",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Mise à jour de données dans"},
+                    new SqlAction() { SqlActionId = 13, SqlActionName = "Insert",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Insersion de données dans"},
+                    new SqlAction() { SqlActionId = 14, SqlActionName = "Delete",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Suppression de données dans"},
+                    new SqlAction() { SqlActionId = 15, SqlActionName = "Execute",         SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Execution de"},
+                    new SqlAction() { SqlActionId = 16, SqlActionName = "AddColumNotNull", SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Ajout de colonne non nulle à"},
+                    new SqlAction() { SqlActionId = 17, SqlActionName = "RaiseError",      SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Erreur programmée"},
+                    new SqlAction() { SqlActionId = 18, SqlActionName = "Print",           SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Affichage d'un message"},
+                };
             }
 
             return actions;

@@ -70,8 +70,14 @@ ProjectId, VersionPrincipal, VersionSecondary
 );
 SELECT TOP 1 SCOPE_IDENTITY() AS [Key];
 ";
+        public static string SQLDelete => @"
+DELETE FROM dbo.Version WHERE VersionId = @VersionId;
+";
 
-        public override string ToString() => $"Version {VersionPrincipal}.{VersionSecondary}";
+
+        public string FullVersion => $"Version {VersionPrincipal}.{VersionSecondary}";
+
+        public override string ToString() => FullVersion;
         public override bool Equals(object obj)
          => (obj is Version v) && IsEquals(v);
 

@@ -62,8 +62,21 @@ FROM dbo.SqlWhat
         {
             if (list == null)
             {
-                using var cnn = new DatabaseConnection();
-                list = cnn.Query<SqlWhat>(SqlWhat.SQLSelect).ToList();
+                //using var cnn = new DatabaseConnection();
+                //list = cnn.Query<SqlWhat>(SqlWhat.SQLSelect).ToList();
+                list = new List<SqlWhat>()
+                { 
+                    new SqlWhat(){ SqlWhatId = 0, SqlWhatName = "Aucun",      SqlWhatTitle = ""},
+                    new SqlWhat(){ SqlWhatId = 1, SqlWhatName = "Procedure",  SqlWhatTitle = "les procédures"},
+                    new SqlWhat(){ SqlWhatId = 2, SqlWhatName = "Function",   SqlWhatTitle = "les fonctions"},
+                    new SqlWhat(){ SqlWhatId = 3, SqlWhatName = "View",       SqlWhatTitle = "les vues"},
+                    new SqlWhat(){ SqlWhatId = 4, SqlWhatName = "Trigger",    SqlWhatTitle = "les triggers"},
+                    new SqlWhat(){ SqlWhatId = 5, SqlWhatName = "Index",      SqlWhatTitle = "les index"},
+                    new SqlWhat(){ SqlWhatId = 6, SqlWhatName = "Schema",     SqlWhatTitle = "les schémas"},
+                    new SqlWhat(){ SqlWhatId = 7, SqlWhatName = "Table",      SqlWhatTitle = "les tables"},
+                    new SqlWhat(){ SqlWhatId = 8, SqlWhatName = "Type",       SqlWhatTitle = "les types"},
+                    new SqlWhat(){ SqlWhatId = 9, SqlWhatName = "Constraint", SqlWhatTitle = "les contraintes"},
+                };
             }
 
             return list;

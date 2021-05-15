@@ -25,11 +25,11 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\s+déclencheur", SqlAction.DbComparer, SqlWhat.Trigger),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?l'index", SqlAction.DbComparer, SqlWhat.Index),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\s+schéma", SqlAction.DbComparer, SqlWhat.Schema),
-            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?L'état\s+perso\s+(\S+\s+)*?etli_nom\s+=\s+''(?<name>(\S+?\s*?)+?)''", SqlAction.DbComparer, SqlWhat.None), 
+            ////new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?L'état\s+perso\s+(\S+\s+)*?etli_nom\s+=\s+''(?<name>(\S+?\s*?)+?)''", SqlAction.DbComparer, SqlWhat.None), 
             //// ici on ne gère pas les scripts d'état perso (inutile pour le projet)
 
-            new RegexFounding(@"CODECLIENTIS\((?<codeClient>\d+)\)", SqlAction.CodeClient, SqlWhat.None),
-            //// IF\s+\(\s*EXISTS\s*\(\s*SELECT\s+(\S+?\s*?)+?FROM\s+DBO\.CODECLIENTIS\((?<codeClient>\d+)\)\s*?\)\s*?\)\s*?(--(.*?)\n)*BEGIN(\s+?\S*?)*?END
+            new RegexFounding(@"CodeClientIs\((?<codeClient>\d+)\)", SqlAction.CodeClient, SqlWhat.None),
+            //// IF\s+\(\s*EXISTS\s*\(\s*SELECT\s+(\S+?\s*?)+?FROM\s+DBO\.CodeClientIs\((?<codeClient>\d+)\)\s*?\)\s*?\)\s*?(--(.*?)\n)*BEGIN(\s+?\S*?)*?END
             new RegexFounding(@"(?m)--(.*?)\n", SqlAction.Comment, SqlWhat.None),
             new RegexFounding(@"/\*+([^*]|[\r\n]| \*([^/]|[\r\n]))*?\*+/", SqlAction.Comment, SqlWhat.None),
 
@@ -37,7 +37,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
 
             new RegexFounding(@"CREATE\s+TABLE\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)\s*\(", SqlAction.Create, SqlWhat.Table),
             new RegexFounding(@"SELECT\s+(\S+\s+(?!(FROM|CREATE|BEGIN|INSERT)))*?INTO\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)\s", SqlAction.Create, SqlWhat.Table),
-            new RegexFounding(@"DROP\s+Table\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)(\s|;|$)", SqlAction.Drop, SqlWhat.Table),
+            new RegexFounding(@"DROP\s+TABLE\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)(\s|;|$)", SqlAction.Drop, SqlWhat.Table),
             new RegexFounding(@"ALTER\s+TABLE\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)?(?<name>\S+)\s+ADD\s+(?<col>\w+?)\s+?(\S+?\s+?)NOT\s+NULL", SqlAction.AddColumnNotNull, SqlWhat.Table),
             new RegexFounding(@"ALTER\s+TABLE\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)?(?<name>\S+)\s+ADD\s+(?!CONSTRAINT)(?<col>\w+?)\s", SqlAction.AddColumn, SqlWhat.Table),
 
@@ -166,7 +166,12 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             }
             else
             {
-                return name.Replace(".", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty).Replace("'", string.Empty);
+                return name.Replace(".", string.Empty)
+                    .Replace("[", string.Empty)
+                    .Replace("]", string.Empty)
+                    .Replace("\"", string.Empty)
+                    .Replace(";", string.Empty)
+                    .Replace("'", string.Empty);
             }
         }
     }

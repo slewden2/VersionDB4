@@ -28,8 +28,7 @@ SELECT b.BaseId, b.ClientCodeId, b.BaseName, b.BaseConnectionString
 FROM dbo.Base b
 ";
 
-        public static string SQLInsert
-            => @"
+        public static string SQLInsert => @"
 INSERT INTO dbo.Base (
 ClientCodeId, BaseName, BaseConnectionString
 ) VALUES (
@@ -37,13 +36,17 @@ ClientCodeId, BaseName, BaseConnectionString
 );
 SELECT TOP 1 SCOPE_IDENTITY() AS [Key];
 ";
-        public static string SQLUpdate
-            => @"
+        public static string SQLUpdate => @"
 UPDATE dbo.Base 
 SET 
   ClientCodeId = @ClientCodeId, 
   BaseName     = @BaseName, 
   BaseConnectionString = @BaseConnectionString
+WHERE BaseId = @BaseId
+;
+";
+        public static string SQLDelete => @"
+DELETE FROM dbo.Base 
 WHERE BaseId = @BaseId
 ;
 ";

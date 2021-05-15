@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using VersionDB4Lib.CRUD;
+using VersionDB4Lib.ForUI;
 
 namespace VersionDB4Lib.Business
 {
     public static class EnumHelper
     {
-          public static IEnumerable<EAction> GetActions(this ETypeObjectPresentable typeObjectPresentable, object theObject)
+        public static IEnumerable<EAction> GetActions(this ETypeObjectPresentable typeObjectPresentable, object theObject)
         {
             switch (typeObjectPresentable)
             {
@@ -51,19 +53,25 @@ namespace VersionDB4Lib.Business
                     }
 
                     break;
- 
+
                 case ETypeObjectPresentable.Project:
                     yield return EAction.ProjectScriptReload;
-                    yield return EAction.ProjectVersionAdd;
+                    yield return EAction.ProjectVersionScriptAdd;
                     break;
                 case ETypeObjectPresentable.VersionScript:
                     ////yield return EAction.VersionScriptRefresh;
                     yield return EAction.ScriptBeginAdd;
+
+                    if (theObject is VersionScriptCounter vc && vc.IsLastVersion && vc.CountScript == 0 && vc.CountObject == 0)
+                    {
+                        yield return EAction.ProjetVersionScriptDelete;
+                    }
                     break;
 
                 case ETypeObjectPresentable.Script:
                     yield return EAction.ScriptBeginEdit;
                     yield return EAction.ScriptAnalyze;
+                    yield return EAction.ScriptDelete;
                     break;
 
                 case ETypeObjectPresentable.Clients:
@@ -73,6 +81,7 @@ namespace VersionDB4Lib.Business
                 case ETypeObjectPresentable.Client:
                     yield return EAction.ClientReload;
                     yield return EAction.ClientEdit;
+                    yield return EAction.ClientDel;
                     break;
             }
         }
@@ -81,36 +90,72 @@ namespace VersionDB4Lib.Business
               => action switch
               {
                   EAction.Cancel => "",                        // 0xE106;  Cancel
-                EAction.ClientAdd => "",                     // 0xE109;  Add
-                EAction.ClientEdit => "",                    // 0xE104;  Edit
-                EAction.ClientReload => "",                  // 0xE72C;  Reload
-                EAction.ClientsReload => "",                 // 0xE72C;
-                EAction.ProjectReferentialReload => "",      // 0xE72C;
-                EAction.ProjectScriptReload => "",           // 0xE72C;
-                EAction.ScriptAnalyze => "",                 // 0xE773;  Analyze
-                EAction.ScriptBeginAdd => "",                // 0xE109;
-                EAction.ScriptBeginEdit => "",               // 0xE104;
-                EAction.ScriptEndAdd => "",                  // 0xE081;  Valider
-                EAction.ScriptEndEdit => "",                 // 0xE081;
-                EAction.SqlGroupAdd => "",                   // 0xE109;  
-                EAction.SqlGroupReLoad => "",                // 0xE72C;  
-                EAction.SqlGroupReoadFromBdd => "",          // 0xE72C;   
-                EAction.SqlObjectAddCustomClient => "",      // 0xE8FA;  Custom client Add
-                EAction.SqlObjectDelete => "",               // 0xE107;  Delete
-                EAction.SqlObjectEdit => "",                 // 0xE104;  
-                EAction.SqlObjectLock => "",                 // 0xE72E;  Lock
-                EAction.SqlObjectMakeFullCustomClient => "", // 0xE2AF;  Full client
-                EAction.SqlObjectRemoveCustomClient => "",   // 0xE8CF;  Custom client Remove
-                EAction.SqlObjectSaveSqlToDisk => "",        // 0xEA35;  Save to disk
-                EAction.SqlObjectUnlock => "",               // 0xE785;  Unlock
-                EAction.VersionReferentialRefresh => "",     // 0xE72C;
-                EAction.VersionScriptAdd => "",              // 0xE109;
-                EAction.ProjectVersionAdd => "",              // 0xE109;
-                                                               //EAction.VersionScriptRefresh => "",          // 0xE72C;
-                _ => string.Empty
+                  EAction.ClientAdd => "",                     // 0xE109;  Add
+                  EAction.ClientEdit => "",                    // 0xE104;  Edit
+                  EAction.ClientReload => "",                  // 0xE72C;  Reload
+                  EAction.ClientDel => "",                     // 0xE107;  Delete
+                  EAction.ClientsReload => "",                 // 0xE72C;
+                  EAction.ProjectReferentialReload => "",      // 0xE72C;
+                  EAction.ProjectScriptReload => "",           // 0xE72C;
+                  EAction.ScriptAnalyze => "",                 // 0xE773;  Analyze
+                  EAction.ScriptBeginAdd => "",                // 0xE109;
+                  EAction.ScriptBeginEdit => "",               // 0xE104;
+                  EAction.ScriptEndAdd => "",                  // 0xE081;  Valider
+                  EAction.ScriptEndEdit => "",                 // 0xE081;
+                  EAction.ScriptDelete => "",                  // 0xE107; 
+                  EAction.SqlGroupAdd => "",                   // 0xE109;  
+                  EAction.SqlGroupReLoad => "",                // 0xE72C;  
+                  EAction.SqlGroupReoadFromBdd => "",          // 0xE72C;   
+                  EAction.SqlObjectAddCustomClient => "",      // 0xE8FA;  Custom client Add
+                  EAction.SqlObjectDelete => "",               // 0xE107;  
+                  EAction.SqlObjectEdit => "",                 // 0xE104;  
+                  EAction.SqlObjectLock => "",                 // 0xE72E;  Lock
+                  EAction.SqlObjectMakeFullCustomClient => "", // 0xE2AF;  Full client
+                  EAction.SqlObjectRemoveCustomClient => "",   // 0xE8CF;  Custom client Remove
+                  EAction.SqlObjectSaveSqlToDisk => "",        // 0xEA35;  Save to disk
+                  EAction.SqlObjectUnlock => "",               // 0xE785;  Unlock
+                  EAction.VersionReferentialRefresh => "",     // 0xE72C;
+                  EAction.VersionScriptAdd => "",              // 0xE109;
+                  EAction.ProjetVersionScriptDelete => "",           // 0xE107;  Delete
+                  EAction.ProjectVersionScriptAdd => "",             // 0xE109;
+                                                                      //EAction.VersionScriptRefresh => "",          // 0xE72C;
+                  _ => string.Empty
               };
 
+        public static Color GetColor(this EAction action)
+                => action switch
+                {
+                    EAction.Cancel => Color.Red,                             // Cancel  : Rouge
+                    EAction.ClientAdd => Color.Navy,                         // Add     : Bleu
+                    EAction.ClientEdit => Color.DarkViolet,                  // Edit    : Rose
+                    EAction.ClientReload => Color.DeepSkyBlue,               // Reload  : Bleu clair
+                    EAction.ClientsReload => Color.DeepSkyBlue,
+                    EAction.ClientDel => Color.Red,                          // Delete  : rouge
+                    EAction.ProjectReferentialReload => Color.DeepSkyBlue,
+                    EAction.ProjectScriptReload => Color.DeepSkyBlue,
+                    EAction.ScriptBeginAdd => Color.Navy,
+                    EAction.ScriptBeginEdit => Color.DarkViolet,
+                    EAction.ScriptEndAdd => Color.MediumSeaGreen,            // Valider : Vert
+                    EAction.ScriptEndEdit => Color.MediumSeaGreen,
+                    EAction.ScriptDelete => Color.Red,
+                    EAction.SqlGroupAdd => Color.Navy,
+                    EAction.SqlGroupReLoad => Color.DeepSkyBlue,
+                    EAction.SqlGroupReoadFromBdd => Color.DeepSkyBlue,
+                    EAction.SqlObjectAddCustomClient => Color.Navy,          // Add Client    : Bleu ?
+                    EAction.SqlObjectDelete => Color.Red,
+                    EAction.SqlObjectEdit => Color.DarkViolet,
+                    EAction.SqlObjectLock => Color.Gold,                     // Lock : jaune foncé
+                    EAction.SqlObjectMakeFullCustomClient => Color.Navy,     // Full Client    : Bleu ?
+                    EAction.SqlObjectRemoveCustomClient => Color.Red,
+                    EAction.SqlObjectSaveSqlToDisk => Color.Navy,            // Save disk     : Bleu ?
+                    EAction.SqlObjectUnlock => Color.Gold,                   // UnLock : jaune foncé 
+                    EAction.VersionReferentialRefresh => Color.DeepSkyBlue,
+                    EAction.VersionScriptAdd => Color.Navy,
+                    EAction.ProjetVersionScriptDelete => Color.Red,
+                    EAction.ProjectVersionScriptAdd => Color.Navy,
 
+                    _ => Color.Black
+                };
 
 
 
@@ -173,5 +218,30 @@ namespace VersionDB4Lib.Business
             string sh = string.IsNullOrWhiteSpace(schema) ? string.Empty : $"{schema}.";
             return $"{db}{sh}{name}";
         }
+
+
+        public static string Libelle(this EValidation validation)
+            => validation switch
+            {
+                EValidation.None => "A valider",
+                EValidation.Valide => "Validé ",
+                EValidation.NonValide => "Refusé ",
+                EValidation.Manuel => "Imposé ",
+                EValidation.Supprime => "Invalide ",
+                EValidation.Effacement => "Supprimé",
+                _ => "?"
+            };
+
+        public static Color GetColor(this EValidation validation)
+            => validation switch
+            {
+                EValidation.None => Color.Orange,
+                EValidation.Valide => Color.Green,
+                EValidation.NonValide => Color.Red,
+                EValidation.Manuel => Color.Navy,
+                EValidation.Supprime => Color.Red,
+                EValidation.Effacement => Color.DarkGray,
+                _ => Color.Black
+            };
     }
 }

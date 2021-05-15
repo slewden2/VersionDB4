@@ -63,6 +63,7 @@ namespace VersionDB4Lib.Business
  
         //VersionScriptRefresh = 1,
         VersionScriptAdd = 2,
+        
 
         SqlGroupReLoad = 10,
         SqlGroupReoadFromBdd = 11,
@@ -84,18 +85,22 @@ namespace VersionDB4Lib.Business
 
         ProjectScriptReload = 40,
         ProjectReferentialReload = 41,
-        ProjectVersionAdd = 42,
+        ProjectVersionScriptAdd = 42,
+        ProjetVersionScriptDelete = 43,
 
         ScriptBeginAdd = 50,
         ScriptEndAdd = 51,
         ScriptBeginEdit = 52,
         ScriptEndEdit = 53,
         ScriptAnalyze = 54,
+        ScriptDelete = 55,
 
         ClientsReload = 60,
         ClientAdd = 61,
         ClientReload = 62,
-        ClientEdit = 63
+        ClientEdit = 63,
+        ClientDel = 64
+
     }
 
 
