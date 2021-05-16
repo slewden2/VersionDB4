@@ -18,6 +18,7 @@ namespace VersionDB4
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FVersionDB());
+            //Application.Run(new FTest());
         }
     }
 }

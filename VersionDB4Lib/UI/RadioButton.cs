@@ -27,11 +27,11 @@ namespace VersionDB4Lib.UI
         [DefaultValue(typeof(Color), "0xFF0074C6")]
         public Color CheckedColor { get; set; } = Color.FromArgb(0, 114, 198);
 
-        [DefaultValue(typeof(Color), "0xFFC9E0F7")]
-        public Color DownColor { get; set; } = Color.FromArgb(201, 224, 247);
+        [DefaultValue(typeof(Color), "0xFF92CE0")]
+        public Color DownColor { get; set; } = Color.FromArgb(146, 192, 224);
 
-        [DefaultValue(typeof(Color), "0xFFE8EFF7")]
-        public Color HoverColor { get; set; } = Color.FromArgb(232, 239, 247);
+        [DefaultValue(typeof(Color), "0xFFCDE6F7")]
+        public Color HoverColor { get; set; } = Color.FromArgb(205, 230, 247);
 
         public bool Checked
         {

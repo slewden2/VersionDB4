@@ -60,10 +60,8 @@ namespace VersionDB4.Control
             this.lstResume.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstResume.BackColor = System.Drawing.SystemColors.Control;
             this.lstResume.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstResume.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lstResume.Enabled = false;
             this.lstResume.FormattingEnabled = true;
             this.lstResume.IntegralHeight = false;
             this.lstResume.ItemHeight = 20;

@@ -178,10 +178,11 @@ namespace VersionDB4
                         {
                             VersionId = versionCounterAdd.VersionId,
                             Version = versionCounterAdd,
-                            ScriptOrder = versionCounterAdd.CountScript + 1
+                            ScriptOrder = versionCounterAdd.Count + 1
                         };
                         lblType.Text = $"Ajout d'un script à la version {versionCounterAdd.FullVersion}";
-                        TxtScriptText.Text = string.Empty;
+                        lblResumes.Text = string.Empty;
+                        sqlTextBox1.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
                         ActionsFill(new List<EAction>() { EAction.ScriptEndAdd, EAction.Cancel });
                     }
@@ -190,7 +191,7 @@ namespace VersionDB4
                 case EAction.ScriptEndAdd:
                     if (currentScriptEdited != null && treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounterAdd2)
                     {
-                        currentScriptEdited.ScriptText = TxtScriptText.Text;
+                        currentScriptEdited.ScriptText = sqlTextBox1.Text;
                         using var cnn = new DatabaseConnection();
                         int id = cnn.ExecuteScalar(Script.SQLInsert, currentScriptEdited);
                         var analyzer = SqlAnalyzer.Analyse(id, currentScriptEdited.ScriptText);
@@ -206,6 +207,7 @@ namespace VersionDB4
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script script)
                     {
                         lblType.Text = $"Modification du script {script}";
+                        lblResumes.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
                         currentScriptEdited = script;
                         ActionsFill(new List<EAction>() { EAction.ScriptEndEdit, EAction.Cancel });
@@ -215,7 +217,7 @@ namespace VersionDB4
                 case EAction.ScriptEndEdit:
                     if (currentScriptEdited != null)
                     {
-                        currentScriptEdited.ScriptText = TxtScriptText.Text;
+                        currentScriptEdited.ScriptText = sqlTextBox1.Text;
                         var analyzer = SqlAnalyzer.Analyse(currentScriptEdited.ScriptId, currentScriptEdited.ScriptText);
                         using var cnn = new DatabaseConnection();
                         cnn.Execute(Script.SQLUpdate, currentScriptEdited);
@@ -279,7 +281,11 @@ namespace VersionDB4
         private void FillClientTreeView(int id = 0)
         {
             treeView1.Nodes.Clear();
-            var cl = new Clients();
+
+            using var conn = new DatabaseConnection();
+            var lstClient = conn.Query<Base>(Base.SQLSelect + ";").OrderBy(x => x.BaseName).ToList();
+
+            var cl = new Clients(lstClient.Count);
             TreeNode racine = new TreeNode(cl.ToString())
             {
                 Tag = cl
@@ -288,11 +294,7 @@ namespace VersionDB4
             try
             {
                 treeView1.Nodes.Add(racine);
-
-                using var conn = new DatabaseConnection();
-                var lstClient = conn.Query<Base>(Base.SQLSelect + ";");
-
-                foreach (var client in lstClient.OrderBy(x => x.BaseName))
+                foreach (var client in lstClient)
                 {
                     TreeNode nod = new TreeNode(client.BaseName)
                     {
@@ -339,7 +341,7 @@ namespace VersionDB4
                         Tag = versionCounter
                     };
                     racine.Nodes.Add(nod);
-                    if (versionCounter.CountScript > 0)
+                    if (versionCounter.Count > 0)
                     {
                         nod.Nodes.Add(new TreeNode());
                     }
@@ -387,13 +389,7 @@ namespace VersionDB4
 
                     foreach (var typObject in lstCounter.OrderBy(x => x.TypeObjectPrestentOrder))
                     {
-                        string tit = typObject.TypeObjectPlurial;
-                        if (typObject.Count > 0)
-                        {
-                            tit += $" ({typObject.Count})";
-                        }
-
-                        TreeNode nod = new TreeNode(tit)
+                        TreeNode nod = new TreeNode(typObject.TypeObjectPlurial)
                         {
                             Tag = typObject
                         };
@@ -437,9 +433,9 @@ namespace VersionDB4
                 count++;
             }
 
-            if (count != versionCounter.CountScript)
+            if (count != versionCounter.Count)
             {
-                versionCounter.CountScript = count;
+                versionCounter.Count = count;
                 node.Tag = versionCounter;
                 node.Text = versionCounter.ToString();
             }
@@ -469,7 +465,7 @@ namespace VersionDB4
         private void NodeSelected(TreeNode selectedNode)
         {
             lblType.Text = string.Empty;
-            TxtScriptText.Text = string.Empty;
+            sqlTextBox1.Text = string.Empty;
             lblResumes.Text = string.Empty;
 
             if (selectedNode != null && selectedNode.Tag != null && selectedNode.Tag is IPresentable presentable)
@@ -518,8 +514,7 @@ namespace VersionDB4
 
                         if (selectedNode.Tag is Object myobject)
                         {
-                            TxtScriptText.Text = myobject.ObjectSql;
-                            SqlColorizer.Colorise(TxtScriptText);
+                            sqlTextBox1.Text = myobject.ObjectSql;
                         }
 
                         break;
@@ -527,10 +522,9 @@ namespace VersionDB4
                         SetRightPanel(ERightPanelMode.TextSqlReadOnly);
                         if (selectedNode.Tag is Script script)
                         {
-                            TxtScriptText.Text = script.ScriptText;
+                            sqlTextBox1.Text = script.ScriptText;
                             var analyzer = script.GetAnalyzer();
                             lblResumes.Text = analyzer.ResumeText;
-                            SqlColorizer.Colorise(TxtScriptText);
                         }
 
                         break;
@@ -577,30 +571,29 @@ namespace VersionDB4
             {
                 case ERightPanelMode.BaseClient:
                     versionScriptControl1.Visible = false;
-                    TxtScriptText.Visible = false;
+                    sqlTextBox1.Visible = false;
                     baseClientControl1.Visible = true;
                     break;
                 case ERightPanelMode.TextSqlEdition:
                     versionScriptControl1.Visible = false;
-                    TxtScriptText.Visible = true;
-                    TxtScriptText.Enabled = true;
+                    sqlTextBox1.Visible = true;
+                    sqlTextBox1.ReadOnly = false;
                     baseClientControl1.Visible = false;
                     break;
                 case ERightPanelMode.TextSqlReadOnly:
                     versionScriptControl1.Visible = false;
-                    TxtScriptText.Visible = true;
-                    TxtScriptText.Enabled = false;
+                    sqlTextBox1.Visible = true;
+                    sqlTextBox1.ReadOnly = true;
                     baseClientControl1.Visible = false;
                     break;
                 case ERightPanelMode.VersionScript:
                     versionScriptControl1.Visible = true;
-                    TxtScriptText.Visible = false;
-                    TxtScriptText.Enabled = false;
+                    sqlTextBox1.Visible = false;
                     baseClientControl1.Visible = false;
                     break;
                 default:
                     versionScriptControl1.Visible = false;
-                    TxtScriptText.Visible = false;
+                    sqlTextBox1.Visible = false;
                     baseClientControl1.Visible = false;
                     break;
             }
@@ -639,7 +632,8 @@ namespace VersionDB4
                     Left = mw
                 };
                 bt.FlatAppearance.BorderSize = 0;
-                bt.FlatAppearance.MouseOverBackColor = Color.FromArgb(232, 239, 247);
+                bt.FlatAppearance.MouseOverBackColor = Color.FromArgb(205, 230, 247);
+                bt.FlatAppearance.MouseDownBackColor = Color.FromArgb(146, 192, 224);
                 pnlActions.Controls.Add(bt);
                 bt.Click += BtActions_Click;
                 mw += bt.Width + 10;
@@ -705,6 +699,16 @@ namespace VersionDB4
             BaseClient,
             VersionScript,
             List
+        }
+
+        private void SplitContainer1_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(212,212,212)), splitContainer1.SplitterDistance, 0, splitContainer1.SplitterDistance, splitContainer1.ClientSize.Height);
+        }
+
+        private void SplitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(212, 212, 212)), 0, 78, splitContainer1.Panel2.ClientSize.Width, 78);
         }
     }
 }

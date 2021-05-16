@@ -5,7 +5,7 @@ using Version = VersionDB4Lib.CRUD.Version;
 
 namespace VersionDB4Lib.ForUI
 {
-    public class VersionObjectCounter : Version
+    public class VersionObjectCounter : Version, ICounter
     {
         public int Count { get; set; }
 
@@ -18,16 +18,5 @@ LEFT JOIN (SELECT o.VersionId, COUNT(*) AS nb
            GROUP BY o.VersionId) ox ON v.VersionId = ox.VersionId
 WHERE v.ProjectId = @ProjectId
 ";
-
-        public override string ToString()
-        {
-            string tit = base.ToString();
-            if (Count > 0)
-            {
-                tit += $" ({Count})";
-            }
-
-            return tit;
-        }
     }
 }

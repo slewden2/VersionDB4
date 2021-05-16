@@ -5,7 +5,7 @@ using VersionDB4Lib.CRUD;
 
 namespace VersionDB4Lib.ForUI
 {
-    public class TypeObjectCounter : TypeObject
+    public class TypeObjectCounter : TypeObject, ICounter
     {
         public int Count { get; set; }
 

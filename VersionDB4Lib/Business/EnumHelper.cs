@@ -62,7 +62,7 @@ namespace VersionDB4Lib.Business
                     ////yield return EAction.VersionScriptRefresh;
                     yield return EAction.ScriptBeginAdd;
 
-                    if (theObject is VersionScriptCounter vc && vc.IsLastVersion && vc.CountScript == 0 && vc.CountObject == 0)
+                    if (theObject is VersionScriptCounter vc && vc.IsLastVersion && vc.Count == 0 && vc.CountObject == 0)
                     {
                         yield return EAction.ProjetVersionScriptDelete;
                     }

@@ -26,10 +26,10 @@ namespace VersionDB4.Control
                 }
                 else
                 {
-                    lblInfoScripts.Text = Count(value.CountScript, "Aucun script dans cette version", "Un seul script dans cette version", $"{value.CountScript} scripts dans cette version");
+                    lblInfoScripts.Text = Count(value.Count, "Aucun script dans cette version", "Un seul script dans cette version", $"{value.Count} scripts dans cette version");
                     lblInfoObjects.Text = Count(value.CountObject, string.Empty, "Un objet dans le référentiel pour cette version", $"{value.CountObject} objets sont dans le référentiel pour cette version");
 
-                    if (value.CountScript > 0)
+                    if (value.Count > 0)
                     {
                         lblTitleResume.Visible = true;
                         LoadAllResumeVersion(value.VersionId);
