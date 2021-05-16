@@ -29,7 +29,7 @@ namespace VersionDB4Lib.CRUD
         /// <summary>
         /// La clé du type d'objet
         /// </summary>
-        public int SqlWhatId { get; set; }
+        public int TypeObjectId { get; set; }
 
         /// <summary>
         /// Base de données concernée par ce résumé
@@ -69,8 +69,8 @@ namespace VersionDB4Lib.CRUD
         public SqlAction GetAction() => SqlAction.List().FirstOrDefault(x => x.SqlActionId == SqlActionId);
         public void SetAction(SqlAction value) => SqlActionId = (value == null ? 0 : value.SqlActionId);
 
-        public SqlWhat GetWhat() => SqlWhat.List().FirstOrDefault(x => x.SqlWhatId == SqlWhatId);
-        public void SetWhat(SqlWhat value) => SqlWhatId = (value == null ? 0 : value.SqlWhatId);
+        public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
+        public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
 
         public IEnumerable<ClientCode> Clients { get; set; }
 
@@ -97,7 +97,7 @@ namespace VersionDB4Lib.CRUD
         {
             if (obj is Resume res)
             {
-                return this.ScriptId == res.ScriptId && this.SqlActionId == res.SqlActionId && this.SqlWhatId == res.SqlWhatId
+                return this.ScriptId == res.ScriptId && this.SqlActionId == res.SqlActionId && this.TypeObjectId == res.TypeObjectId
                     && this.ResumeDatabase == res.ResumeDatabase && this.ResumeSchema == res.ResumeSchema && this.ResumeName == res.ResumeName && this.ResumeColumn == res.ResumeColumn;
             }
 
@@ -105,11 +105,11 @@ namespace VersionDB4Lib.CRUD
         }
 
         public override int GetHashCode()
-            => HashCode.Combine(ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn);
+            => HashCode.Combine(ScriptId, SqlActionId, TypeObjectId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn);
 
         public static string SQLSelect
             => @"
-SELECT r.ResumeId, r.ScriptId, r.SqlActionId, r.SqlWhatId, r.ResumeDatabase, r.ResumeSchema, r.ResumeName, r.ResumeColumn, r.ResumeForOtherClients, r.ResumeManualValidationCode
+SELECT r.ResumeId, r.ScriptId, r.SqlActionId, r.TypeObjectId, r.ResumeDatabase, r.ResumeSchema, r.ResumeName, r.ResumeColumn, r.ResumeForOtherClients, r.ResumeManualValidationCode
 FROM dbo.Resume r
 ";
         public static string SQLUpdateValidation
@@ -122,7 +122,7 @@ WHERE ScriptId = @ScriptId
 
         public bool IsSame(Resume res)
             => this.SqlActionId == res.SqlActionId 
-            && this.SqlWhatId == res.SqlWhatId 
+            && this.TypeObjectId == res.TypeObjectId
             && this.ScriptId == res.ScriptId 
             && ((string.IsNullOrWhiteSpace(this.ResumeDatabase) && string.IsNullOrWhiteSpace(res.ResumeDatabase)) || this.ResumeDatabase == res.ResumeDatabase)
             && ((string.IsNullOrWhiteSpace(this.ResumeSchema) && string.IsNullOrWhiteSpace(res.ResumeSchema)) || this.ResumeSchema == res.ResumeSchema)

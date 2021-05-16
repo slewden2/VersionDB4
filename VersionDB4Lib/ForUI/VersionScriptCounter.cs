@@ -26,6 +26,7 @@ LEFT JOIN (SELECT s.VersionId, COUNT(*) AS nb
            GROUP BY s.VersionId) ox ON v.VersionId = ox.VersionId
 LEFT JOIN (SELECT o.VersionId, COUNT(*) AS nb 
            FROM dbo.Object o 
+           WHERE o.ObjectDeleted = 0
            GROUP BY o.VersionId) oy ON v.VersionId = oy.VersionId
 WHERE v.ProjectId = @ProjectId
 ";

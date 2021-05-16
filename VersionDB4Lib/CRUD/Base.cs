@@ -34,7 +34,7 @@ ClientCodeId, BaseName, BaseConnectionString
 ) VALUES (
 @ClientCodeId, @BaseName, @BaseConnectionString
 );
-SELECT TOP 1 SCOPE_IDENTITY() AS [Key];
+SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
 ";
         public static string SQLUpdate => @"
 UPDATE dbo.Base 

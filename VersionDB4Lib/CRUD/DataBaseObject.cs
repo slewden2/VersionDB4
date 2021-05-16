@@ -22,7 +22,7 @@ namespace VersionDB4Lib.CRUD
         /// <summary>
         /// La clé du type d'objet
         /// </summary>
-        public int SqlWhatId { get; set; }
+        public int TypeObjectId { get; set; }
 
         /// <summary>
         /// La base de données cocernée par cet objet
@@ -40,14 +40,14 @@ namespace VersionDB4Lib.CRUD
         public string DatabaseObjectName { get; set; }
 
 
-        public SqlWhat GetWhat() => SqlWhat.List().FirstOrDefault(x => x.SqlWhatId == SqlWhatId);
-        public void SetWhat(SqlWhat value) => SqlWhatId = (value == null ? 0 : value.SqlWhatId);
+        public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
+        public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
 
-        public override string ToString() => $"{GetWhat().SqlWhatName} {EnumHelper.ToString(DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName)}";
+        public override string ToString() => $"{GetWhat().TypeObjectName} {EnumHelper.ToString(DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName)}";
 
         public static string SQLSelect
             => @"
-SELECT DatabaseObjectId, ScriptId, SqlWhatId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName
+SELECT DatabaseObjectId, ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName
 FROM dbo.DatabaseObject
 ";
 

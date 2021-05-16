@@ -1,20 +1,28 @@
 
 --- référentiel des types a gérer
 
+DELETE FROM dbo.Object
+DELETE FROM dbo.TypeObject
 
-INSERT INTO dbo.TypeObject (TypeObjectSqlServerCode, TypeObjectName, TypeObjectPlurial, TypeObjectPrestentOrder) VALUES 
-  ('F', 'Référence', 'Les références', 8)
-, ('FN', 'Fonction scalaire', 'Les fonctions scalaires', 4)
-, ('IF', 'Fonction table en ligne', 'les fonctions tables (en ligne)', 5)
-, ('P', 'Procédure stockée', 'Les procédures stockées', 3)
-, ('U', 'Table', 'Les tables', 1)
-, ('V', 'Vue', 'Les vues', 2)
-, ('TF', 'fonction table', 'Les fonctions table (instructions multiples)', 6)
-, ('TT', 'Type de table', 'Les types de données Table', 7)
-, ('IDX', 'Index', 'Les index', 9)
-, ('TR', 'Trigger', 'Les triggers', 10)
-, ('SCH', 'Schema', 'Les schémas', 11)
+SET IDENTITY_INSERT dbo.TypeObject ON;
 
+INSERT INTO dbo.TypeObject (TypeObjectId, TypeObjectSqlServerCode, TypeObjectName, TypeObjectPlurial, TypeObjectPrestentOrder) VALUES 
+  (0, '', 'Aucun', '', 255) 
+, (1, 'P', 'Procédure stockée', 'Les procédures stockées', 3)
+, (2, 'FN', 'Fonction scalaire', 'Les fonctions scalaires', 4)
+, (3, 'IF', 'Fonction table en ligne', 'Les fonctions tables (en ligne)', 5)
+, (4, 'TF', 'Fonction table', 'Les fonctions table (instructions multiples)', 6)
+, (5, 'V', 'Vue', 'Les vues', 2)
+, (6, 'TR', 'Trigger', 'Les triggers', 11)
+, (7, 'IDX', 'Index', 'Les index', 10)
+, (8, 'SCH', 'Schema', 'Les schémas', 12)
+, (9, 'U', 'Table', 'Les tables', 1)
+, (10, 'TT', 'Type de table', 'Les types de données Table', 7)
+, (11, 'TD', 'Type de données', 'Les types de données', 8)
+, (12, 'F', 'Référence', 'Les références', 9)
+SET IDENTITY_INSERT dbo.TypeObject OFF;
+
+SELECT *  From TypeObject ORDER BY TypeObjectPrestentOrder
 
 ---UPDATE dbo.TypeObject  SET TypeObjectSqlServerCode = 'TR' WHERE TypeObjectName = 'Trigger'
 
@@ -28,7 +36,7 @@ SELECt * From dbo.Project
 
 
 
-SELECT * FROM dbo.SqlWhat
+
 
 --SET IDENTITY_INSERT dbo.SqlWhat ON;
 --INSERT INTO dbo.SqlWhat(SqlWhatId, SqlWhatName, SqlWhatTitle) VALUES 

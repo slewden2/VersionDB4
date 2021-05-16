@@ -28,6 +28,7 @@ namespace VersionDB4
         private bool versionListIsDirty = true;
 
         private Script currentScriptEdited = null;
+        private Object currentObjectEdited = null;
         #endregion
 
         public FVersionDB()
@@ -90,6 +91,16 @@ namespace VersionDB4
 
         private void RdReferential_Click(object sender, EventArgs e)
             => ProcessAction(EAction.ProjectReferentialReload);
+
+        private void VersionScriptControl1_OnLinkReferential(object sender, EventArgs e)
+        {
+            if (treeView1.SelectedNode != null && treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter version)
+            {
+                SelectionneVersionObjet(version.VersionId);
+                rdReferential.Checked = true;
+            }
+        }
+
         #endregion
 
         private void ProcessAction(EAction action)
@@ -99,11 +110,25 @@ namespace VersionDB4
                 case EAction.Cancel:
                     CancelEdition(treeView1.SelectedNode);
                     break;
+                #region Onglets Scripts/Clients/Objets
                 case EAction.ClientsReload:
                     pnlVersion.Visible = false;
                     lblVersion.Visible = true;
                     FillClientTreeView();
                     break;
+                case EAction.ProjectScriptReload:
+                    pnlVersion.Visible = false;
+                    lblVersion.Visible = false;
+                    FillScriptTreeView();
+                    break;
+                case EAction.ProjectReferentialReload:
+                    FillReferentialListOfVersions();
+                    pnlVersion.Visible = true;
+                    lblVersion.Visible = false;
+                    FillReferentialTreeView();
+                    break;
+                #endregion
+                #region Clients
                 case EAction.ClientAdd:
                     int baseNewId = ClientNew();
                     if (baseNewId > 0)
@@ -131,18 +156,9 @@ namespace VersionDB4
                     }
 
                     break;
-                case EAction.ProjectScriptReload:
-                    pnlVersion.Visible = false;
-                    lblVersion.Visible = false;
-                    FillScriptTreeView();
-                    break;
-                case EAction.ProjectReferentialReload:
-                    FillReferentialListOfVersions();
-                    pnlVersion.Visible = true;
-                    lblVersion.Visible = false;
-                    FillReferentialTreeView();
-                    break;
-                case EAction.ProjectVersionScriptAdd:
+                #endregion
+                #region Versions 
+                case EAction.ProjectVersionAdd:
                     int versionNewId = NewVersion();
                     if (versionNewId > 0)
                     {
@@ -150,7 +166,7 @@ namespace VersionDB4
                         versionListIsDirty = true;
                     }
                     break;
-                case EAction.ProjetVersionScriptDelete:
+                case EAction.ProjectVersionDelete:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionDelete)
                     {
                         if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer la version {versionDelete} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
@@ -171,7 +187,9 @@ namespace VersionDB4
                 ////    }
 
                 ////    break;
-                case EAction.ScriptBeginAdd:
+                #endregion
+                #region Scripts
+                case EAction.ScriptAddBegin:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounterAdd)
                     {
                         currentScriptEdited = new Script()
@@ -184,11 +202,11 @@ namespace VersionDB4
                         lblResumes.Text = string.Empty;
                         sqlTextBox1.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
-                        ActionsFill(new List<EAction>() { EAction.ScriptEndAdd, EAction.Cancel });
+                        ActionsFill(new List<EAction>() { EAction.ScriptAddEnd, EAction.Cancel });
                     }
 
                     break;
-                case EAction.ScriptEndAdd:
+                case EAction.ScriptAddEnd:
                     if (currentScriptEdited != null && treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounterAdd2)
                     {
                         currentScriptEdited.ScriptText = sqlTextBox1.Text;
@@ -203,18 +221,18 @@ namespace VersionDB4
                     }
 
                     break;
-                case EAction.ScriptBeginEdit:
+                case EAction.ScriptEditBegin:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script script)
                     {
                         lblType.Text = $"Modification du script {script}";
                         lblResumes.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
                         currentScriptEdited = script;
-                        ActionsFill(new List<EAction>() { EAction.ScriptEndEdit, EAction.Cancel });
+                        ActionsFill(new List<EAction>() { EAction.ScriptEditEnd, EAction.Cancel });
                     }
 
                     break;
-                case EAction.ScriptEndEdit:
+                case EAction.ScriptEditEnd:
                     if (currentScriptEdited != null)
                     {
                         currentScriptEdited.ScriptText = sqlTextBox1.Text;
@@ -223,17 +241,6 @@ namespace VersionDB4
                         cnn.Execute(Script.SQLUpdate, currentScriptEdited);
                         analyzer.Save(cnn);
                         CancelEdition(treeView1.SelectedNode);
-                    }
-
-                    break;
-                case EAction.ScriptAnalyze:
-                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script scriptA)
-                    {
-                        using (var frm = new FDetailScript())
-                        {
-                            frm.Script = scriptA;
-                            frm.ShowDialog(this);
-                        }
                     }
 
                     break;
@@ -256,6 +263,99 @@ namespace VersionDB4
                     }
 
                     break;
+                case EAction.ScriptAnalyze:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script scriptA)
+                    {
+                        using (var frm = new FDetailScript())
+                        {
+                            frm.Script = scriptA;
+                            frm.ShowDialog(this);
+                        }
+                    }
+
+                    break;
+                #endregion
+                #region Objets SQL
+                case EAction.SqlObjectAddBegin:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is TypeObjectCounter typeObjetAdd && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterAdd)
+                    {
+                        currentObjectEdited = new Object()
+                        {
+                            VersionId = versionObjectCounterAdd.VersionId,
+                            TypeObjectId = typeObjetAdd.TypeObjectId,
+                        };
+                        lblType.Text = $"Ajout d'un {typeObjetAdd.TypeObjectName} à la version {versionObjectCounterAdd.FullVersion}";
+                        lblResumes.Text = string.Empty;
+                        sqlTextBox1.Text = string.Empty;
+                        SetRightPanel(ERightPanelMode.TextSqlEdition);
+                        ActionsFill(new List<EAction>() { EAction.SqlObjectAddEnd, EAction.Cancel });
+                    }
+
+                    break;
+                case EAction.SqlObjectAddEnd:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is TypeObjectCounter typeObjetAddEnd && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterAddEnd)
+                    {
+                        currentObjectEdited.ObjectSql = sqlTextBox1.Text;
+                        var analyzer = SqlAnalyzer.Analyse(0, currentObjectEdited.ObjectSql);
+                        if (analyzer.Resumes.Count() != 1)
+                        {
+                            MessageBox.Show(this, "L'analyse du script a échoué.\nPas ou trop de résumé\nL'opération est annulée", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        Resume resume = analyzer.Resumes.First();
+                        if (string.IsNullOrWhiteSpace(resume.ResumeName))
+                        {
+                            MessageBox.Show(this, "L'analyse du script a échoué.\nImpossible de trouver le nom de l'objet inséré.\nL'opération est annulée", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        if (resume.TypeObjectId != typeObjetAddEnd.TypeObjectId && MessageBox.Show($"Le script saisit ne correspond pas à la catégorie choisie. Voulez vous continuer l'ajout ?\nCatégorie choisie : {typeObjetAddEnd.TypeObjectName}\nDans le script : {resume.TypeObjectId}", "Confirmez continuer", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.No)
+                        {
+                            return;
+                        }
+
+                        currentObjectEdited.ObjectSchema = resume.ResumeSchema;
+                        currentObjectEdited.ObjectName = resume.ResumeName;
+                        currentObjectEdited.ObjectDeleted = false;
+                        currentObjectEdited.ObjectEmpty = false;
+
+
+                        using var cnn = new DatabaseConnection();
+                        int id = cnn.ExecuteScalar(Object.SQLInsert, currentObjectEdited);
+                        
+                        // TODO : Ajouter un script à la version ?
+                        
+                        ////    analyzer.Save(cnn);
+                        CancelEdition(null);
+                        FillReferentialTypeObject(treeView1.SelectedNode, versionObjectCounterAddEnd, typeObjetAddEnd, true);
+                        treeView1.SelectedNode.Expand();
+                        SelectNodeObject(treeView1.SelectedNode, id);
+                    }
+
+                    break;
+                case EAction.SqlObjectDelete:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Object objectDel && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterDel)
+                    {
+                        if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer {objectDel} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            // TODO : Générer les script SQL pour suppression de la base
+
+                            using var cnn = new DatabaseConnection();
+                            cnn.Execute(Object.SQLDelete, objectDel);
+
+                            var parent = treeView1.SelectedNode.Parent;
+                            if (parent != null && parent.Tag != null && parent.Tag is TypeObjectCounter typeObjectCounterDel)
+                            {
+                                FillReferentialTypeObject(parent, versionObjectCounterDel, typeObjectCounterDel);
+                                treeView1.SelectedNode.Expand();
+                                NodeSelected(parent);
+                            }
+                        }
+                    }
+
+                    break;
+                #endregion
                 default:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is IPresentable presentable)
                     {
@@ -275,6 +375,18 @@ namespace VersionDB4
                 using var conn = new DatabaseConnection();
                 cbVersions.DataSource = conn.Query<VersionObjectCounter>(VersionObjectCounter.SQLSelect, new { ProjectId = projectId }).OrderByDescending(x => x.VersionNumber()).ToList();
                 versionListIsDirty = false;
+            }
+        }
+
+        private void SelectionneVersionObjet(int versionId)
+        {
+            foreach(VersionObjectCounter v in cbVersions.Items)
+            {
+                if (v.VersionId == versionId)
+                {
+                    cbVersions.SelectedItem = v;
+                    return;
+                }
             }
         }
 
@@ -446,12 +558,13 @@ namespace VersionDB4
             }
         }
 
-        private void FillReferentialTypeObject(TreeNode node, Version version, TypeObjectCounter typ)
+        private void FillReferentialTypeObject(TreeNode node, Version version, TypeObjectCounter typ, bool select = false)
         {
             node.Nodes.Clear();
 
             using var conn = new DatabaseConnection();
             var lst = conn.Query<Object>(Object.SQlSelectWithVersionAndType, new { version.VersionId, typ.TypeObjectId });
+            int count = 0;
             foreach (var obj in lst.OrderBy(x => x.ToString()))
             {
                 TreeNode nod = new TreeNode(obj.ToString())
@@ -459,6 +572,19 @@ namespace VersionDB4
                     Tag = obj
                 };
                 node.Nodes.Add(nod);
+                count++;
+            }
+
+            if (count != typ.Count)
+            {
+                typ.Count = count;
+                node.Tag = typ;
+                node.Text = typ.ToString();
+            }
+
+            if (select)
+            {
+                treeView1.SelectedNode = node;
             }
         }
 
@@ -549,18 +675,19 @@ namespace VersionDB4
                 }
             }
         }
-        ////private void SelectNodeVersion(TreeNode node, int versionId)
-        ////{
-        ////    foreach (TreeNode nod in node.Nodes)
-        ////    {
-        ////        if (nod.Tag != null && nod.Tag is VersionScriptCounter version && version.VersionId == versionId)
-        ////        {
-        ////            treeView1.SelectedNode = nod;
-        ////            return;
-        ////        }
-        ////    }
-        ////}
 
+        private void SelectNodeObject(TreeNode node, int objectId)
+        {
+            foreach (TreeNode nod in node.Nodes)
+            {
+                if (nod.Tag != null && nod.Tag is Object theobject && theobject.ObjectId == objectId)
+                {
+                    treeView1.SelectedNode = nod;
+                    return;
+                }
+            }
+        }
+      
         #endregion
 
         #region Edition
@@ -701,14 +828,12 @@ namespace VersionDB4
             List
         }
 
-        private void SplitContainer1_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawLine(new Pen(Color.FromArgb(212,212,212)), splitContainer1.SplitterDistance, 0, splitContainer1.SplitterDistance, splitContainer1.ClientSize.Height);
-        }
+        private void SplitContainer1_Paint(object sender, PaintEventArgs e) 
+            => e.Graphics.DrawLine(new Pen(Color.FromArgb(212, 212, 212)), splitContainer1.SplitterDistance, 0, splitContainer1.SplitterDistance, splitContainer1.ClientSize.Height);
 
-        private void SplitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawLine(new Pen(Color.FromArgb(212, 212, 212)), 0, 78, splitContainer1.Panel2.ClientSize.Width, 78);
-        }
+        private void SplitContainer1_Panel2_Paint(object sender, PaintEventArgs e) 
+            => e.Graphics.DrawLine(new Pen(Color.FromArgb(212, 212, 212)), 0, 80, splitContainer1.Panel2.ClientSize.Width, 80);
+
+   
     }
 }

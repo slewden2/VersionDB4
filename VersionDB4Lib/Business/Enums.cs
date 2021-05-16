@@ -60,20 +60,14 @@ namespace VersionDB4Lib.Business
         /// </summary>
         Cancel = 0,
 
- 
-        //VersionScriptRefresh = 1,
-        VersionScriptAdd = 2,
-        
 
-        SqlGroupReLoad = 10,
-        SqlGroupReoadFromBdd = 11,
-        SqlGroupAdd = 12,
+        //SqlGroupReLoad = 10,
+        //SqlGroupReoadFromBdd = 11,
+        SqlObjectAddBegin = 12,
+        SqlObjectAddEnd = 13,
+        SqlObjectEditBegin = 14,
+        SqlObjectEditEnd = 15,
 
-
-        VersionReferentialRefresh = 20,
-
-
-        SqlObjectEdit = 30,
         SqlObjectDelete = 31,
         SqlObjectLock = 32,
         SqlObjectUnlock = 33,
@@ -83,21 +77,21 @@ namespace VersionDB4Lib.Business
         SqlObjectSaveSqlToDisk = 37,
 
 
-        ProjectScriptReload = 40,
-        ProjectReferentialReload = 41,
-        ProjectVersionScriptAdd = 42,
-        ProjetVersionScriptDelete = 43,
+        ProjectScriptReload = 40,           // rechargement global des versions avec les scipts
+        ProjectReferentialReload = 41,      // rechargement global des versions avec les objets SQL
+        ProjectVersionAdd = 42,             // Ajout d'une version
+        ProjectVersionDelete = 43,          // Supression d'une version (vide !)
 
-        ScriptBeginAdd = 50,
-        ScriptEndAdd = 51,
-        ScriptBeginEdit = 52,
-        ScriptEndEdit = 53,
-        ScriptAnalyze = 54,
-        ScriptDelete = 55,
+        ScriptAddBegin = 50,
+        ScriptAddEnd = 51,
+        ScriptEditBegin = 52,
+        ScriptEditEnd = 53,
+        ScriptDelete = 54,
+        ScriptAnalyze = 55,
 
-        ClientsReload = 60,
+        ClientsReload = 60,                 // rechargement de la liste des clients
         ClientAdd = 61,
-        ClientReload = 62,
+        //ClientReload = 62,
         ClientEdit = 63,
         ClientDel = 64
 

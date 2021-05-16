@@ -45,7 +45,7 @@ VersionId, ScriptOrder, ScriptText
 ) VALUES (
 @VersionId, @ScriptOrder, @ScriptText
 );
-SELECT TOP 1 SCOPE_IDENTITY() AS [Key];
+SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
 ";
         public static string SQLUpdate
             => @"

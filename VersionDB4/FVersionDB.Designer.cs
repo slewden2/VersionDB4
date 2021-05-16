@@ -38,12 +38,12 @@ namespace VersionDB4
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pnlVersion = new System.Windows.Forms.Panel();
             this.cbVersions = new VersionDB4Lib.UI.ComboBox();
-            this.sqlTextBox1 = new VersionDB4.Control.SqlTextBox();
             this.lblResumes = new System.Windows.Forms.Label();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.lblType = new System.Windows.Forms.Label();
-            this.baseClientControl1 = new VersionDB4.Control.BaseClientControl();
             this.versionScriptControl1 = new VersionDB4.Control.VersionScriptControl();
+            this.sqlTextBox1 = new VersionDB4.Control.SqlTextBox();
+            this.baseClientControl1 = new VersionDB4.Control.BaseClientControl();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -57,15 +57,15 @@ namespace VersionDB4
             this.treeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            //this.treeView1.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
-            //this.treeView1.FullRowSelect = true;
-            //this.treeView1.HideSelection = false;
-            //this.treeView1.HotTracking = true;
-            //this.treeView1.ItemHeight = 24;
+            this.treeView1.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            this.treeView1.FullRowSelect = true;
+            this.treeView1.HideSelection = false;
+            this.treeView1.HotTracking = true;
+            this.treeView1.ItemHeight = 24;
             this.treeView1.Location = new System.Drawing.Point(0, 40);
             this.treeView1.Name = "treeView1";
-            //this.treeView1.ShowLines = false;
-            //this.treeView1.ShowRootLines = false;
+            this.treeView1.ShowLines = false;
+            this.treeView1.ShowRootLines = false;
             this.treeView1.Size = new System.Drawing.Size(400, 370);
             this.treeView1.TabIndex = 0;
             this.treeView1.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.TreeView1_BeforeExpand);
@@ -155,14 +155,14 @@ namespace VersionDB4
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.sqlTextBox1);
             this.splitContainer1.Panel2.Controls.Add(this.lblResumes);
             this.splitContainer1.Panel2.Controls.Add(this.pnlActions);
             this.splitContainer1.Panel2.Controls.Add(this.lblType);
-            this.splitContainer1.Panel2.Controls.Add(this.baseClientControl1);
             this.splitContainer1.Panel2.Controls.Add(this.versionScriptControl1);
+            this.splitContainer1.Panel2.Controls.Add(this.sqlTextBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.baseClientControl1);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.SplitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(904, 450);
+            this.splitContainer1.Size = new System.Drawing.Size(1012, 450);
             this.splitContainer1.SplitterDistance = 400;
             this.splitContainer1.TabIndex = 2;
             this.splitContainer1.TabStop = false;
@@ -182,6 +182,7 @@ namespace VersionDB4
             // 
             this.cbVersions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbVersions.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cbVersions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbVersions.FormattingEnabled = true;
             this.cbVersions.Location = new System.Drawing.Point(3, 6);
@@ -189,19 +190,6 @@ namespace VersionDB4
             this.cbVersions.Size = new System.Drawing.Size(395, 28);
             this.cbVersions.TabIndex = 1;
             this.cbVersions.SelectedIndexChanged += new System.EventHandler(this.CbVersions_SelectedIndexChanged);
-            // 
-            // sqlTextBox1
-            // 
-            this.sqlTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.sqlTextBox1.Location = new System.Drawing.Point(11, 83);
-            this.sqlTextBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.sqlTextBox1.Name = "sqlTextBox1";
-            this.sqlTextBox1.ReadOnly = false;
-            this.sqlTextBox1.Size = new System.Drawing.Size(489, 367);
-            this.sqlTextBox1.TabIndex = 8;
-            this.sqlTextBox1.WordWrap = true;
             // 
             // lblResumes
             // 
@@ -212,7 +200,7 @@ namespace VersionDB4
             this.lblResumes.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.lblResumes.Location = new System.Drawing.Point(260, 51);
             this.lblResumes.Name = "lblResumes";
-            this.lblResumes.Size = new System.Drawing.Size(230, 17);
+            this.lblResumes.Size = new System.Drawing.Size(338, 17);
             this.lblResumes.TabIndex = 5;
             this.lblResumes.Text = "label1";
             // 
@@ -220,7 +208,7 @@ namespace VersionDB4
             // 
             this.pnlActions.Location = new System.Drawing.Point(11, 46);
             this.pnlActions.Name = "pnlActions";
-            this.pnlActions.Size = new System.Drawing.Size(236, 30);
+            this.pnlActions.Size = new System.Drawing.Size(236, 32);
             this.pnlActions.TabIndex = 2;
             // 
             // lblType
@@ -231,20 +219,9 @@ namespace VersionDB4
             this.lblType.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblType.Location = new System.Drawing.Point(11, 11);
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(478, 30);
+            this.lblType.Size = new System.Drawing.Size(586, 30);
             this.lblType.TabIndex = 1;
             this.lblType.Text = "lblType";
-            // 
-            // baseClientControl1
-            // 
-            this.baseClientControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.baseClientControl1.Location = new System.Drawing.Point(11, 81);
-            this.baseClientControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.baseClientControl1.Name = "baseClientControl1";
-            this.baseClientControl1.Size = new System.Drawing.Size(478, 357);
-            this.baseClientControl1.TabIndex = 6;
             // 
             // versionScriptControl1
             // 
@@ -254,14 +231,39 @@ namespace VersionDB4
             this.versionScriptControl1.Location = new System.Drawing.Point(11, 83);
             this.versionScriptControl1.Margin = new System.Windows.Forms.Padding(4);
             this.versionScriptControl1.Name = "versionScriptControl1";
-            this.versionScriptControl1.Size = new System.Drawing.Size(479, 354);
+            this.versionScriptControl1.Size = new System.Drawing.Size(597, 367);
             this.versionScriptControl1.TabIndex = 7;
+            this.versionScriptControl1.OnLinkReferential += new System.EventHandler(this.VersionScriptControl1_OnLinkReferential);
+            // 
+            // sqlTextBox1
+            // 
+            this.sqlTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.sqlTextBox1.Location = new System.Drawing.Point(11, 83);
+            this.sqlTextBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.sqlTextBox1.Name = "sqlTextBox1";
+            this.sqlTextBox1.ReadOnly = false;
+            this.sqlTextBox1.Size = new System.Drawing.Size(597, 367);
+            this.sqlTextBox1.TabIndex = 8;
+            this.sqlTextBox1.WordWrap = true;
+            // 
+            // baseClientControl1
+            // 
+            this.baseClientControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.baseClientControl1.Location = new System.Drawing.Point(11, 81);
+            this.baseClientControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.baseClientControl1.Name = "baseClientControl1";
+            this.baseClientControl1.Size = new System.Drawing.Size(597, 369);
+            this.baseClientControl1.TabIndex = 6;
             // 
             // FVersionDB
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(904, 450);
+            this.ClientSize = new System.Drawing.Size(1012, 450);
             this.Controls.Add(this.splitContainer1);
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Name = "FVersionDB";

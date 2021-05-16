@@ -29,6 +29,16 @@ namespace VersionDB4.Control
                     lblInfoScripts.Text = Count(value.Count, "Aucun script dans cette version", "Un seul script dans cette version", $"{value.Count} scripts dans cette version");
                     lblInfoObjects.Text = Count(value.CountObject, string.Empty, "Un objet dans le référentiel pour cette version", $"{value.CountObject} objets sont dans le référentiel pour cette version");
 
+                    if (value.CountObject == 1)
+                    {
+                        lblInfoObjects.LinkArea = new LinkArea(0, 8);
+                    }
+                    else if (value.CountObject > 1)
+                    {
+                        lblInfoObjects.LinkArea = new LinkArea(0, value.CountObject.ToString().Length + 7);
+                    }
+
+
                     if (value.Count > 0)
                     {
                         lblTitleResume.Visible = true;
@@ -43,6 +53,8 @@ namespace VersionDB4.Control
                 }
             }
         }
+
+        public event EventHandler OnLinkReferential;
 
         private void LoadAllResumeVersion(int versionId)
         {
@@ -100,5 +112,8 @@ namespace VersionDB4.Control
                 }
             }
         }
-    }
+
+        private void LblInfoObjects_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) 
+            => OnLinkReferential?.Invoke(this, new EventArgs());
+     }
 }

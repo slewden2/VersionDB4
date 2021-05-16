@@ -30,10 +30,10 @@ namespace VersionDB4.Control
         private void InitializeComponent()
         {
             this.lblInfoScripts = new System.Windows.Forms.Label();
-            this.lblInfoObjects = new System.Windows.Forms.Label();
             this.lstResume = new System.Windows.Forms.ListBox();
             this.lblTitleResume = new System.Windows.Forms.Label();
             this.lblNoAction = new System.Windows.Forms.Label();
+            this.lblInfoObjects = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // lblInfoScripts
@@ -44,16 +44,6 @@ namespace VersionDB4.Control
             this.lblInfoScripts.Size = new System.Drawing.Size(76, 15);
             this.lblInfoScripts.TabIndex = 0;
             this.lblInfoScripts.Text = "lblInfoScripts";
-            // 
-            // lblInfoObjects
-            // 
-            this.lblInfoObjects.AutoSize = true;
-            this.lblInfoObjects.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblInfoObjects.Location = new System.Drawing.Point(27, 53);
-            this.lblInfoObjects.Name = "lblInfoObjects";
-            this.lblInfoObjects.Size = new System.Drawing.Size(81, 15);
-            this.lblInfoObjects.TabIndex = 1;
-            this.lblInfoObjects.Text = "lblInfoObjects";
             // 
             // lstResume
             // 
@@ -90,14 +80,29 @@ namespace VersionDB4.Control
             this.lblNoAction.TabIndex = 4;
             this.lblNoAction.Text = "Aucune action pertinente";
             // 
+            // lblInfoObjects
+            // 
+            this.lblInfoObjects.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblInfoObjects.AutoEllipsis = true;
+            this.lblInfoObjects.LinkColor = System.Drawing.Color.SteelBlue;
+            this.lblInfoObjects.Location = new System.Drawing.Point(28, 52);
+            this.lblInfoObjects.Name = "lblInfoObjects";
+            this.lblInfoObjects.Size = new System.Drawing.Size(439, 23);
+            this.lblInfoObjects.TabIndex = 5;
+            this.lblInfoObjects.TabStop = true;
+            this.lblInfoObjects.Text = "lblInfoObjects";
+            this.lblInfoObjects.VisitedLinkColor = System.Drawing.Color.SteelBlue;
+            this.lblInfoObjects.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LblInfoObjects_LinkClicked);
+            // 
             // VersionScriptControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lblInfoObjects);
             this.Controls.Add(this.lblNoAction);
             this.Controls.Add(this.lblTitleResume);
             this.Controls.Add(this.lstResume);
-            this.Controls.Add(this.lblInfoObjects);
             this.Controls.Add(this.lblInfoScripts);
             this.Name = "VersionScriptControl";
             this.Size = new System.Drawing.Size(497, 254);
@@ -109,9 +114,9 @@ namespace VersionDB4.Control
         #endregion
 
         private System.Windows.Forms.Label lblInfoScripts;
-        private System.Windows.Forms.Label lblInfoObjects;
         private System.Windows.Forms.ListBox lstResume;
         private System.Windows.Forms.Label lblTitleResume;
         private System.Windows.Forms.Label lblNoAction;
+        private System.Windows.Forms.LinkLabel lblInfoObjects;
     }
 }

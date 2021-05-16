@@ -14,13 +14,13 @@ namespace VersionDB4Lib.Business
             switch (typeObjectPresentable)
             {
                 case ETypeObjectPresentable.VersionReferential:
-                    yield return EAction.VersionReferentialRefresh;
+                    yield return EAction.ProjectReferentialReload;
                     break;
 
                 case ETypeObjectPresentable.SqlGroup:
-                    yield return EAction.SqlGroupReLoad;
-                    yield return EAction.SqlGroupReoadFromBdd;
-                    yield return EAction.SqlGroupAdd;
+                    //yield return EAction.SqlGroupReLoad;
+                    //yield return EAction.SqlGroupReoadFromBdd;
+                    yield return EAction.SqlObjectAddBegin;
                     break;
                 case ETypeObjectPresentable.SqlObject:
                     if (theObject != null && theObject is CRUD.Object sqlObject)
@@ -29,7 +29,7 @@ namespace VersionDB4Lib.Business
                         {
                             if (string.IsNullOrWhiteSpace(sqlObject.ObjectLockedBy))
                             {
-                                yield return EAction.SqlObjectEdit;
+                                yield return EAction.SqlObjectEditBegin;
                                 yield return EAction.SqlObjectDelete;
                                 yield return EAction.SqlObjectLock;
 
@@ -56,20 +56,20 @@ namespace VersionDB4Lib.Business
 
                 case ETypeObjectPresentable.Project:
                     yield return EAction.ProjectScriptReload;
-                    yield return EAction.ProjectVersionScriptAdd;
+                    yield return EAction.ProjectVersionAdd;
                     break;
                 case ETypeObjectPresentable.VersionScript:
                     ////yield return EAction.VersionScriptRefresh;
-                    yield return EAction.ScriptBeginAdd;
+                    yield return EAction.ScriptAddBegin;
 
                     if (theObject is VersionScriptCounter vc && vc.IsLastVersion && vc.Count == 0 && vc.CountObject == 0)
                     {
-                        yield return EAction.ProjetVersionScriptDelete;
+                        yield return EAction.ProjectVersionDelete;
                     }
                     break;
 
                 case ETypeObjectPresentable.Script:
-                    yield return EAction.ScriptBeginEdit;
+                    yield return EAction.ScriptEditBegin;
                     yield return EAction.ScriptAnalyze;
                     yield return EAction.ScriptDelete;
                     break;
@@ -79,7 +79,7 @@ namespace VersionDB4Lib.Business
                     yield return EAction.ClientAdd;
                     break;
                 case ETypeObjectPresentable.Client:
-                    yield return EAction.ClientReload;
+                    //yield return EAction.ClientReload;
                     yield return EAction.ClientEdit;
                     yield return EAction.ClientDel;
                     break;
@@ -90,34 +90,41 @@ namespace VersionDB4Lib.Business
               => action switch
               {
                   EAction.Cancel => "",                        // 0xE106;  Cancel
+
                   EAction.ClientAdd => "",                     // 0xE109;  Add
                   EAction.ClientEdit => "",                    // 0xE104;  Edit
-                  EAction.ClientReload => "",                  // 0xE72C;  Reload
+                  //EAction.ClientReload => "",                  // 0xE72C;  Reload
                   EAction.ClientDel => "",                     // 0xE107;  Delete
                   EAction.ClientsReload => "",                 // 0xE72C;
+                  
                   EAction.ProjectReferentialReload => "",      // 0xE72C;
                   EAction.ProjectScriptReload => "",           // 0xE72C;
-                  EAction.ScriptAnalyze => "",                 // 0xE773;  Analyze
-                  EAction.ScriptBeginAdd => "",                // 0xE109;
-                  EAction.ScriptBeginEdit => "",               // 0xE104;
-                  EAction.ScriptEndAdd => "",                  // 0xE081;  Valider
-                  EAction.ScriptEndEdit => "",                 // 0xE081;
+                 
+                  EAction.ScriptAddBegin => "",                // 0xE109;
+                  EAction.ScriptEditBegin => "",               // 0xE104;
+                  EAction.ScriptAddEnd => "",                  // 0xE081;  Valider
+                  EAction.ScriptEditEnd => "",                 // 0xE081;
                   EAction.ScriptDelete => "",                  // 0xE107; 
-                  EAction.SqlGroupAdd => "",                   // 0xE109;  
-                  EAction.SqlGroupReLoad => "",                // 0xE72C;  
-                  EAction.SqlGroupReoadFromBdd => "",          // 0xE72C;   
+                  EAction.ScriptAnalyze => "",                 // 0xE773;  Analyze
+                  
+                  EAction.SqlObjectAddBegin => "",             // 0xE109;  
+                  EAction.SqlObjectAddEnd => "",               // 0xE081; 
+                  EAction.SqlObjectEditBegin => "",            // 0xE104;  
+                  EAction.SqlObjectEditEnd => "",              // 0xE081; 
+
+                  //EAction.SqlGroupReLoad => "",                // 0xE72C;  
+                  //EAction.SqlGroupReoadFromBdd => "",          // 0xE72C;   
                   EAction.SqlObjectAddCustomClient => "",      // 0xE8FA;  Custom client Add
                   EAction.SqlObjectDelete => "",               // 0xE107;  
-                  EAction.SqlObjectEdit => "",                 // 0xE104;  
                   EAction.SqlObjectLock => "",                 // 0xE72E;  Lock
                   EAction.SqlObjectMakeFullCustomClient => "", // 0xE2AF;  Full client
                   EAction.SqlObjectRemoveCustomClient => "",   // 0xE8CF;  Custom client Remove
                   EAction.SqlObjectSaveSqlToDisk => "",        // 0xEA35;  Save to disk
                   EAction.SqlObjectUnlock => "",               // 0xE785;  Unlock
-                  EAction.VersionReferentialRefresh => "",     // 0xE72C;
-                  EAction.VersionScriptAdd => "",              // 0xE109;
-                  EAction.ProjetVersionScriptDelete => "",           // 0xE107;  Delete
-                  EAction.ProjectVersionScriptAdd => "",             // 0xE109;
+                  //EAction.VersionScriptAdd => "",              // 0xE109;
+                  
+                  EAction.ProjectVersionDelete => "",           // 0xE107;  Delete
+                  EAction.ProjectVersionAdd => "",             // 0xE109;
                                                                       //EAction.VersionScriptRefresh => "",          // 0xE72C;
                   _ => string.Empty
               };
@@ -126,33 +133,41 @@ namespace VersionDB4Lib.Business
                 => action switch
                 {
                     EAction.Cancel => Color.Red,                             // Cancel  : Rouge
+
                     EAction.ClientAdd => Color.Navy,                         // Add     : Bleu
                     EAction.ClientEdit => Color.DarkViolet,                  // Edit    : Rose
-                    EAction.ClientReload => Color.DeepSkyBlue,               // Reload  : Bleu clair
+                    //EAction.ClientReload => Color.DeepSkyBlue,             // Reload  : Bleu clair
                     EAction.ClientsReload => Color.DeepSkyBlue,
                     EAction.ClientDel => Color.Red,                          // Delete  : rouge
+                    
                     EAction.ProjectReferentialReload => Color.DeepSkyBlue,
                     EAction.ProjectScriptReload => Color.DeepSkyBlue,
-                    EAction.ScriptBeginAdd => Color.Navy,
-                    EAction.ScriptBeginEdit => Color.DarkViolet,
-                    EAction.ScriptEndAdd => Color.MediumSeaGreen,            // Valider : Vert
-                    EAction.ScriptEndEdit => Color.MediumSeaGreen,
+
+                    EAction.ScriptAddBegin => Color.Navy,
+                    EAction.ScriptEditBegin => Color.DarkViolet,
+                    EAction.ScriptAddEnd => Color.MediumSeaGreen,            // Valider : Vert
+                    EAction.ScriptEditEnd => Color.MediumSeaGreen,
                     EAction.ScriptDelete => Color.Red,
-                    EAction.SqlGroupAdd => Color.Navy,
-                    EAction.SqlGroupReLoad => Color.DeepSkyBlue,
-                    EAction.SqlGroupReoadFromBdd => Color.DeepSkyBlue,
-                    EAction.SqlObjectAddCustomClient => Color.Navy,          // Add Client    : Bleu ?
+                    EAction.ScriptAnalyze => Color.Violet,                 // Analyze script Violet ?
+
+                    EAction.SqlObjectAddBegin => Color.Navy,
+                    EAction.SqlObjectAddEnd => Color.MediumSeaGreen,
+                    EAction.SqlObjectEditBegin => Color.DarkViolet,
+                    EAction.SqlObjectEditEnd => Color.MediumSeaGreen,
                     EAction.SqlObjectDelete => Color.Red,
-                    EAction.SqlObjectEdit => Color.DarkViolet,
+
+                    //EAction.SqlGroupReLoad => Color.DeepSkyBlue,
+                    //EAction.SqlGroupReoadFromBdd => Color.DeepSkyBlue,
+
+                    EAction.SqlObjectAddCustomClient => Color.Navy,          // Add Client    : Bleu ?
                     EAction.SqlObjectLock => Color.Gold,                     // Lock : jaune foncé
                     EAction.SqlObjectMakeFullCustomClient => Color.Navy,     // Full Client    : Bleu ?
                     EAction.SqlObjectRemoveCustomClient => Color.Red,
                     EAction.SqlObjectSaveSqlToDisk => Color.Navy,            // Save disk     : Bleu ?
                     EAction.SqlObjectUnlock => Color.Gold,                   // UnLock : jaune foncé 
-                    EAction.VersionReferentialRefresh => Color.DeepSkyBlue,
-                    EAction.VersionScriptAdd => Color.Navy,
-                    EAction.ProjetVersionScriptDelete => Color.Red,
-                    EAction.ProjectVersionScriptAdd => Color.Navy,
+                    //EAction.VersionScriptAdd => Color.Navy,
+                    EAction.ProjectVersionDelete => Color.Red,
+                    EAction.ProjectVersionAdd => Color.Navy,
 
                     _ => Color.Black
                 };
@@ -163,7 +178,7 @@ namespace VersionDB4Lib.Business
         /// Renvoie une chaine pour afficher la représentation de l'objet
         /// </summary>
         /// <returns>Le texte à afficher</returns>
-        public static string ToString(SqlAction action, SqlWhat applyOn, string database, string schema, string name, string column)
+        public static string ToString(SqlAction action, TypeObject applyOn, string database, string schema, string name, string column)
         {
             if (action == null && applyOn == null)
             {
@@ -178,7 +193,7 @@ namespace VersionDB4Lib.Business
             ////{
             ////    if (!string.IsNullOrWhiteSpace(this.FullName))
             ////    {
-            ////        if (this.ApplyOn == SqlWhat.None)
+            ////        if (this.ApplyOn == TypeObject.None)
             ////        {
             ////            return $"Script DBComparer ajout ou modification de l'état perso : {this.Name}";
             ////        }
@@ -197,11 +212,11 @@ namespace VersionDB4Lib.Business
                 string db = string.IsNullOrWhiteSpace(database) ? string.Empty : $"{database}.";
                 string sh = string.IsNullOrWhiteSpace(schema) ? string.Empty : $"{schema}.";
                 string theName = $"{db}{sh}{name}";
-                return $"{SqlAction.Name(action, column)} {applyOn.SqlWhatName} {theName}";
+                return $"{SqlAction.Name(action, column)} {applyOn.TypeObjectName} {theName}";
             }
             else
             {
-                return $"{action.SqlActionTitle} {applyOn.SqlWhatName} {ToString(database, schema, name)}";
+                return $"{action.SqlActionTitle} {applyOn.TypeObjectName} {ToString(database, schema, name)}";
             }
         }
 

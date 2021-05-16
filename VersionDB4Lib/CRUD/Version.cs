@@ -68,7 +68,7 @@ ProjectId, VersionPrincipal, VersionSecondary
 ) VALUES (
 @ProjectId, @VersionPrincipal, @VersionSecondary
 );
-SELECT TOP 1 SCOPE_IDENTITY() AS [Key];
+SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
 ";
         public static string SQLDelete => @"
 DELETE FROM dbo.Version WHERE VersionId = @VersionId;

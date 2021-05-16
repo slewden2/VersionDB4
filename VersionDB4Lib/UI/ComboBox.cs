@@ -30,7 +30,8 @@ namespace VersionDB4Lib.UI
                 {  // compteur
                     var cpt = $"({counter.Count})";
                     using var ft3 = new Font(Font.FontFamily, Font.Size - 2);
-                    e.Graphics.DrawString(cpt, ft3, new SolidBrush(Color.FromArgb(97, 146, 198)), new PointF(e.Bounds.Left + sz.Width, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
+                    var sz2 = e.Graphics.MeasureString(txt, ft3);
+                    e.Graphics.DrawString(cpt, ft3, new SolidBrush(Color.FromArgb(97, 146, 198)), new PointF(e.Bounds.Left + sz.Width, e.Bounds.Top + ((e.Bounds.Height - sz2.Height) / 2)));
                 }
             }
         }

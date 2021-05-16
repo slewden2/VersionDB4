@@ -212,7 +212,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     this.CompileResume();
 
                     // compilation des SQL objets
-                    this.mysqlobjets = this.myblocs.Where(x => x.SqlWhatId != SqlWhat.None && x.SqlActionId != SqlAction.DbComparer && x.SqlActionId != SqlAction.Comment).Select(x => x.GetDatabaseObject()).Distinct().ToList();
+                    this.mysqlobjets = this.myblocs.Where(x => x.TypeObjectId != TypeObject.None && x.SqlActionId != SqlAction.DbComparer && x.SqlActionId != SqlAction.Comment).Select(x => x.GetDatabaseObject()).Distinct().ToList();
                 }
 
                 if (!this.Resumes.Any())
@@ -220,8 +220,8 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     this.myresumes.Add(new Resume() 
                         { 
                             ScriptId = this.ScriptId, 
-                            SqlActionId = SqlAction.Unknow, 
-                            SqlWhatId = SqlWhat.None 
+                            SqlActionId = SqlAction.Unknow,
+                            TypeObjectId = TypeObject.None 
                         });
                 }
             }
@@ -273,9 +273,9 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             { // le Tri assure que les Addcolumns arrivent avant les AddColumnNotNull
                 if (r.SqlActionId == SqlAction.AddColumn)
                 {
-                    if (!this.myblocs.Any(x => x.SqlActionId == SqlAction.AddColumnNotNull && x.SqlWhatId == r.SqlWhatId && x.GetFullName() == r.GetFullName() && x.BlocIndex == r.BlocIndex))
+                    if (!this.myblocs.Any(x => x.SqlActionId == SqlAction.AddColumnNotNull && x.TypeObjectId == r.TypeObjectId && x.GetFullName() == r.GetFullName() && x.BlocIndex == r.BlocIndex))
                     { // on a pas trouvé un not null ==> c'est un add column qu'il faut : on le garde
-                        if (r.BlocColumn.ToUpper() != "DEFAULT" || (r.BlocName.ToUpper() == "DEFAULT" && !this.myblocs.Any(x => x.SqlActionId == SqlAction.AlterColumn && x.SqlWhatId == r.SqlWhatId && x.BlocIndex == r.BlocIndex)))
+                        if (r.BlocColumn.ToUpper() != "DEFAULT" || (r.BlocName.ToUpper() == "DEFAULT" && !this.myblocs.Any(x => x.SqlActionId == SqlAction.AlterColumn && x.TypeObjectId == r.TypeObjectId && x.BlocIndex == r.BlocIndex)))
                         {  // on est pas sur un add column défaut sans avoir de modifiy column
                             lst.Add(r);
                         }
@@ -283,14 +283,14 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                 }
                 else if (r.SqlActionId == SqlAction.DropColumn && string.IsNullOrWhiteSpace(r.BlocColumn) && r.BlocSchema == r.BlocName)
                 { // au cas ou les 2 REGEX de drop column aient remontées la même info ?
-                    if (!this.myblocs.Any(x => x.SqlActionId == SqlAction.DropColumn && x.SqlWhatId == r.SqlWhatId && x.BlocIndex == r.BlocIndex && !string.IsNullOrWhiteSpace(x.BlocColumn)))
+                    if (!this.myblocs.Any(x => x.SqlActionId == SqlAction.DropColumn && x.TypeObjectId == r.TypeObjectId && x.BlocIndex == r.BlocIndex && !string.IsNullOrWhiteSpace(x.BlocColumn)))
                     { // on a pas trouvé un avec le nom ==> on le garde
                         lst.Add(r);
                     }
                 }
-                ////else if (r.SqlActionId == SqlAction.Execute && r.SqlWhatId == SqlWhat.Procedure && r.BlocSchema.ToLower() == "dbo" && r.BlocName.ToLower() == "flag_systemes_drop_column")
+                ////else if (r.SqlActionId == SqlAction.Execute && r.TypeObjectId == TypeObject.Procedure && r.BlocSchema.ToLower() == "dbo" && r.BlocName.ToLower() == "flag_systemes_drop_column")
                 ////{ // un appel a cette procédure est détecté s'il y a aussi un Supprime colonne pas loin (à 10 caractères près ) ==> on filtre l'appel
-                ////    if (!this.myblocs.Any(x => x.SqlActionId == SqlAction.DropColumn && x.SqlWhatId == SqlWhat.Table && Math.Abs(r.BlocIndex - x.BlocIndex) < 10))
+                ////    if (!this.myblocs.Any(x => x.SqlActionId == SqlAction.DropColumn && x.TypeObjectId == TypeObject.Table && Math.Abs(r.BlocIndex - x.BlocIndex) < 10))
                 ////    { // on a pas le drop column ==> on garde l'appel à la procédure
                 ////        lst.Add(r);
                 ////    }
@@ -309,7 +309,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
         /// </summary>
         private void RemoveActionInComment()
         {
-            var comments = this.myblocs.Where(x => x.SqlActionId == SqlAction.Comment && x.SqlWhatId == SqlWhat.None);
+            var comments = this.myblocs.Where(x => x.SqlActionId == SqlAction.Comment && x.TypeObjectId == TypeObject.None);
             if (comments.Any())
             { // Y a des commentaires
                 foreach (var res in comments.ToList())
@@ -331,25 +331,25 @@ namespace VersionDB4Lib.Business.SqlAnalyze
         private void RemoveSystemProcedureCall()
         {
             // Supression des Exec (@sql) ou EXEC ('update...') ==> inutile pour l'analyse 
-            this.myblocs.RemoveAll(x => x.SqlActionId == SqlAction.Execute && x.SqlWhatId == SqlWhat.None);
-            foreach (var r in this.myblocs.Where(x => x.SqlWhatId == SqlWhat.Table && string.IsNullOrWhiteSpace(x.BlocSchema) && x.BlocName.StartsWith("#")))
+            this.myblocs.RemoveAll(x => x.SqlActionId == SqlAction.Execute && x.TypeObjectId == TypeObject.None);
+            foreach (var r in this.myblocs.Where(x => x.TypeObjectId == TypeObject.Table && string.IsNullOrWhiteSpace(x.BlocSchema) && x.BlocName.StartsWith("#")))
             { // la manipulation de tables temporaire n'est pas dans le résumé
                 r.BlocExcludeFromResume = true;
             }
 
             // Filtre des appels aux procédures SQL Server sytème (sp_xxx)
-            foreach (var r in this.myblocs.Where(x => x.SqlActionId == SqlAction.Execute && x.SqlWhatId == SqlWhat.Procedure && x.BlocName.ToLowerInvariant().StartsWith("sp_")))
+            foreach (var r in this.myblocs.Where(x => x.SqlActionId == SqlAction.Execute && x.TypeObjectId == TypeObject.Procedure && x.BlocName.ToLowerInvariant().StartsWith("sp_")))
             {
                 r.BlocExcludeFromResume = true;
             }
 
             // filtre des objet Temporaires
-            foreach (var r in this.myblocs.Where(x => x.SqlWhatId == SqlWhat.Table && (x.BlocName.StartsWith("@") || x.BlocName.StartsWith("##") || x.BlocName.StartsWith("#"))))
+            foreach (var r in this.myblocs.Where(x => x.TypeObjectId == TypeObject.Table && (x.BlocName.StartsWith("@") || x.BlocName.StartsWith("##") || x.BlocName.StartsWith("#"))))
             {
                 r.BlocExcludeFromResume = true;
             }
 
-            ////foreach (var r in this.myblocs.Where(x => x.SqlActionId == SqlAction.Execute && x.SqlWhatId == SqlWhat.Procedure && x.BlocName.ToUpperInvariant() == "FLAG_SYSTEMES_DROP_COLUMN"))
+            ////foreach (var r in this.myblocs.Where(x => x.SqlActionId == SqlAction.Execute && x.TypeObjectId == TypeObject.Procedure && x.BlocName.ToUpperInvariant() == "FLAG_SYSTEMES_DROP_COLUMN"))
             ////{
             ////    r.BlocExcludeFromResume = true;
             ////}
@@ -365,7 +365,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
 
             foreach (var dbcomparer in dbcomparers)
             {
-                if (dbcomparer.SqlWhatId == SqlWhat.None)
+                if (dbcomparer.TypeObjectId == TypeObject.None)
                 {
                     if (!string.IsNullOrWhiteSpace(dbcomparer.BlocName))
                     { // spécifique pour les états personnalisés
@@ -376,9 +376,9 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                 else
                 { // uniquement si le commentaire DBComparer est trouvé
                     int theaction;
-                    if (dbcomparer.SqlWhatId == SqlWhat.Schema)
+                    if (dbcomparer.TypeObjectId == TypeObject.Schema)
                     { // pour les schéma il n'y a que des CREATE
-                        var schema = this.myblocs.FirstOrDefault(x => x.SqlActionId == SqlAction.Create && x.SqlWhatId == SqlWhat.Schema);
+                        var schema = this.myblocs.FirstOrDefault(x => x.SqlActionId == SqlAction.Create && x.TypeObjectId == TypeObject.Schema);
                         if (schema != null)
                         {
                             this.identifiedScript = schema.GetResume();
@@ -388,17 +388,17 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     }
 
                     // on essaie les Create en premier
-                    var name = this.myblocs.Where(x => x.SqlActionId == SqlAction.Drop && x.SqlWhatId == dbcomparer.SqlWhatId).Select(x => x.GetResume()).FirstOrDefault();
+                    var name = this.myblocs.Where(x => x.SqlActionId == SqlAction.Drop && x.TypeObjectId == dbcomparer.TypeObjectId).Select(x => x.GetResume()).FirstOrDefault();
                     theaction = SqlAction.Create;
                     if (name == null)
                     { // ca marche pas on essaie les alter
-                        name = this.myblocs.Where(x => x.SqlActionId == SqlAction.Alter && x.SqlWhatId == dbcomparer.SqlWhatId).Select(x => x.GetResume()).FirstOrDefault();
+                        name = this.myblocs.Where(x => x.SqlActionId == SqlAction.Alter && x.TypeObjectId == dbcomparer.TypeObjectId).Select(x => x.GetResume()).FirstOrDefault();
                         theaction = SqlAction.Alter;
                     }
 
                     if (name != null)
                     { // Y a tout pour dire que c'est un script DBComparer
-                        int nbcreate = this.myblocs.Count(x => x.SqlActionId == theaction && x.SqlWhatId == dbcomparer.SqlWhatId && x.GetFullName() == name.GetFullName());
+                        int nbcreate = this.myblocs.Count(x => x.SqlActionId == theaction && x.TypeObjectId == dbcomparer.TypeObjectId && x.GetFullName() == name.GetFullName());
                         var clients = this.myblocs.Where(x => x.SqlActionId == SqlAction.CodeClient && x.ClientCodeId.HasValue && x.ClientCodeId > 0).Select(x => new ClientCode() { ClientCodeId = x.ClientCodeId.Value }).ToList();
                         int nbclient = clients.Count();
                         if (Math.Abs(nbcreate - nbclient) < 2)
@@ -406,8 +406,8 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                             var act = nbcreate == 0 && theaction != SqlAction.Alter ? SqlAction.Drop : SqlAction.Alter;
                             this.identifiedScript = new Resume() 
                                 { 
-                                SqlActionId = act, 
-                                SqlWhatId = dbcomparer.SqlWhatId, 
+                                SqlActionId = act,
+                                TypeObjectId = dbcomparer.TypeObjectId, 
                                 ScriptId =dbcomparer.ScriptId,
                                 ResumeDatabase = name.ResumeDatabase,
                                 ResumeSchema = name.ResumeSchema,
@@ -437,8 +437,8 @@ namespace VersionDB4Lib.Business.SqlAnalyze
         /// </summary>
         private void FindTableReCreation()
         {
-            var droptable = this.myblocs.Where(x => !x.BlocExcludeFromResume && x.SqlActionId == SqlAction.Drop && x.SqlWhatId == SqlWhat.Table);
-            var createtable = this.myblocs.Where(x => !x.BlocExcludeFromResume && x.SqlActionId == SqlAction.Create && x.SqlWhatId == SqlWhat.Table);
+            var droptable = this.myblocs.Where(x => !x.BlocExcludeFromResume && x.SqlActionId == SqlAction.Drop && x.TypeObjectId == TypeObject.Table);
+            var createtable = this.myblocs.Where(x => !x.BlocExcludeFromResume && x.SqlActionId == SqlAction.Create && x.TypeObjectId == TypeObject.Table);
             if (droptable.Any() && createtable.Any())
             { // Y a des drop et des créate on peut réfléchir...
                 var tmps = new List<Resume>();
@@ -452,7 +452,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     if (del.BlocName.ToLowerInvariant().StartsWith("tmp_"))
                     { // on vient de trouver un drop d'une table tmp_xx : recherche de rename xx et Create xx
                         tableName = del.BlocName[4..]; // suppression de tmp_
-                        rename = this.myblocs.FirstOrDefault(x => !x.BlocExcludeFromResume && x.SqlActionId == SqlAction.Rename && x.SqlWhatId == SqlWhat.Table && x.BlocDatabase == del.BlocDatabase && x.BlocSchema == del.BlocSchema && x.BlocName == tableName && x.BlocIndex > del.BlocIndex);
+                        rename = this.myblocs.FirstOrDefault(x => !x.BlocExcludeFromResume && x.SqlActionId == SqlAction.Rename && x.TypeObjectId == TypeObject.Table && x.BlocDatabase == del.BlocDatabase && x.BlocSchema == del.BlocSchema && x.BlocName == tableName && x.BlocIndex > del.BlocIndex);
                         if (rename != null)
                         { // on peut continuer
                             create = createtable.FirstOrDefault(x => x.BlocSchema == del.BlocSchema && x.BlocName == tableName && x.BlocIndex > rename.BlocIndex);
@@ -466,7 +466,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
 
                     if (create != null)
                     { // on a trouvé le create en face du drop ==> on mémorise l'action
-                        tmps.Add(new Resume() { ScriptId = this.ScriptId, SqlActionId = SqlAction.Alter, SqlWhatId = SqlWhat.Table, ResumeDatabase = del.BlocDatabase, ResumeSchema = del.BlocSchema, ResumeName = tableName });
+                        tmps.Add(new Resume() { ScriptId = this.ScriptId, SqlActionId = SqlAction.Alter, TypeObjectId = TypeObject.Table, ResumeDatabase = del.BlocDatabase, ResumeSchema = del.BlocSchema, ResumeName = tableName });
 
                         // les blocs intermédiares ne sont plus intéressant pour le résumé
                         del.BlocExcludeFromResume = true;
@@ -520,7 +520,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                 // tout ce qui n'est pas code client, ou execution en dehors des appels aux procédures stockées
                 this.myresumes.AddRange(this.myblocs.Where(x => !x.BlocExcludeFromResume
                                                         && x.SqlActionId != SqlAction.CodeClient && x.SqlActionId != SqlAction.DbComparer
-                                                        && ((x.SqlActionId == SqlAction.Execute && x.SqlWhatId == SqlWhat.Procedure)
+                                                        && ((x.SqlActionId == SqlAction.Execute && x.TypeObjectId == TypeObject.Procedure)
                                                              || x.SqlActionId != SqlAction.Execute)).Select(x => x.GetResume()).Distinct());
 
                 if (!this.myresumes.Any())
@@ -528,8 +528,8 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     this.myresumes.AddRange(this.myblocs.Where(x => !x.BlocExcludeFromResume
                                                           && x.SqlActionId != SqlAction.CodeClient && x.SqlActionId != SqlAction.DbComparer
                                                           && x.SqlActionId == SqlAction.Execute
-                                                          && (x.SqlWhatId != SqlWhat.Table ||
-                                                               (x.SqlWhatId == SqlWhat.Table && x.BlocSchema.ToLower() != "sys")))
+                                                          && (x.TypeObjectId != TypeObject.Table ||
+                                                               (x.TypeObjectId == TypeObject.Table && x.BlocSchema.ToLower() != "sys")))
                                                         .Select(x => x.GetResume(false))
                                                         .Distinct());
                 }
@@ -548,26 +548,26 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             {
                 var sqlStart = $@"
 DECLARE @ScriptId INT = {SqlFormat.ForeignKey(this.ScriptId)}; 
-DECLARE @tmpB TABLE(ScriptId INT, SqlActionId INT, SqlWhatId INT, ClientCodeId INT, BlocIndex INT, BlocLength INT, BlocDataBase VARCHAR(100), BlocSchema VARCHAR(20), BlocName VARCHAR(100), BlocExcludeFromResume BIT, BlocColumn VARCHAR(100));
+DECLARE @tmpB TABLE(ScriptId INT, SqlActionId INT, TypeObjectId INT, ClientCodeId INT, BlocIndex INT, BlocLength INT, BlocDataBase VARCHAR(100), BlocSchema VARCHAR(20), BlocName VARCHAR(100), BlocExcludeFromResume BIT, BlocColumn VARCHAR(100));
 ";
                 var sqlInsert = @"
-INSERT INTO @tmpB(ScriptId, SqlActionId, SqlWhatId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn)
+INSERT INTO @tmpB(ScriptId, SqlActionId, TypeObjectId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn)
 VALUES 
 ";
                 var valuesTemplate = "({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10})";
                 var sqlEnd = @"
 MERGE dbo.Bloc AS t
    USING 
-     (SELECT ScriptId, SqlActionId, SqlWhatId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn FROM @tmpB) 
+     (SELECT ScriptId, SqlActionId, TypeObjectId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn FROM @tmpB) 
        AS s 
-   ON    t.SqlActionId = s.SqlActionId AND t.SqlWhatId = s.SqlWhatId AND ISNULL(t.ClientCodeId, 0) = ISNULL(s.ClientCodeId, 0) AND t.ScriptId = s.ScriptId
+   ON    t.SqlActionId = s.SqlActionId AND t.TypeObjectId = s.TypeObjectId AND ISNULL(t.ClientCodeId, 0) = ISNULL(s.ClientCodeId, 0) AND t.ScriptId = s.ScriptId
      AND t.BlocIndex = s.BlocIndex AND t.BlocLength = s.BlocLength 
      AND t.BlocDataBase = s.BlocDataBase AND t.BlocSchema = s.BlocSchema AND t.BlocName = s.BlocName
      AND t.BlocExcludeFromResume = s.BlocExcludeFromResume
      AND  ISNULL(t.BlocColumn, '') = ISNULL(s.BlocColumn, '')
   WHEN NOT MATCHED THEN 
-    INSERT (ScriptId, SqlActionId, SqlWhatId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn)
-    VALUES (ScriptId, SqlActionId, SqlWhatId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn)
+    INSERT (ScriptId, SqlActionId, TypeObjectId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn)
+    VALUES (ScriptId, SqlActionId, TypeObjectId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn)
   WHEN NOT MATCHED BY SOURCE AND t.ScriptId = @ScriptId THEN 
     DELETE
 ;
@@ -581,7 +581,7 @@ MERGE dbo.Bloc AS t
                         valuesTemplate,
                         SqlFormat.ForeignKey(x.ScriptId),
                         SqlFormat.Integer(x.SqlActionId),
-                        SqlFormat.Integer(x.SqlWhatId),
+                        SqlFormat.Integer(x.TypeObjectId),
                         SqlFormat.ForeignKey(x.ClientCodeId),
                         SqlFormat.Integer(x.BlocIndex),
                         SqlFormat.Integer(x.BlocLength),
@@ -609,23 +609,23 @@ MERGE dbo.Bloc AS t
             {
                 var sqlStart = $@"
 DECLARE @ScriptId INT = {SqlFormat.ForeignKey(this.ScriptId)}; 
-DECLARE @tmpO TABLE (ScriptId INT, SqlWhatId INT, DatabaseObjectDataBase VARCHAR(100), DatabaseObjectSchema VARCHAR(20), DatabaseObjectName VARCHAR(100));
+DECLARE @tmpO TABLE (ScriptId INT, TypeObjectId INT, DatabaseObjectDataBase VARCHAR(100), DatabaseObjectSchema VARCHAR(20), DatabaseObjectName VARCHAR(100));
 ";
                 var sqlInsert = @"
-INSERT INTO @tmpO (ScriptId, SqlWhatId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
+INSERT INTO @tmpO (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
 VALUES 
 ";
                 var valuesTemplate = " ({0}, {1}, {2}, {3}, {4})";
                 var sqlEnd = @"
 MERGE dbo.DataBaseObject AS t
    USING 
-     (SELECT ScriptId, SqlWhatId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName FROM @tmpO) 
+     (SELECT ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName FROM @tmpO) 
        AS s 
-   ON    t.ScriptId = s.ScriptId AND t.SqlWhatId = s.SqlWhatId
+   ON    t.ScriptId = s.ScriptId AND t.TypeObjectId = s.TypeObjectId
      AND t.DatabaseObjectDataBase = s.DatabaseObjectDataBase AND t.DatabaseObjectSchema = s.DatabaseObjectSchema AND t.DatabaseObjectName = s.DatabaseObjectName
   WHEN NOT MATCHED THEN 
-    INSERT (ScriptId, SqlWhatId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
-    VALUES (ScriptId, SqlWhatId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
+    INSERT (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
+    VALUES (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
   WHEN NOT MATCHED BY SOURCE AND t.ScriptId = @ScriptId  THEN 
     DELETE
 ;
@@ -638,7 +638,7 @@ MERGE dbo.DataBaseObject AS t
                     var values = blocs.Select(x => string.Format(
                         valuesTemplate,
                         SqlFormat.ForeignKey(x.ScriptId),
-                        SqlFormat.Integer(x.SqlWhatId),
+                        SqlFormat.Integer(x.TypeObjectId),
                         SqlFormat.String(x.DatabaseObjectDatabase),
                         SqlFormat.String(x.DatabaseObjectSchema),
                         SqlFormat.String(x.DatabaseObjectName)));
@@ -661,27 +661,27 @@ MERGE dbo.DataBaseObject AS t
             {
                 var sqlStart = $@"
 DECLARE @ScriptId INT = {SqlFormat.ForeignKey(this.ScriptId)}; 
-DECLARE @tmpR TABLE (ScriptId INT, SqlActionId INT, SqlWhatId INT, ResumeDatabase VARCHAR(100), ResumeSchema VARCHAR(20), ResumeName VARCHAR(100), ResumeColumn VARCHAR(100), ResumeForOtherClients BIT, ResumeManualValidationCode TINYINT);
+DECLARE @tmpR TABLE (ScriptId INT, SqlActionId INT, TypeObjectId INT, ResumeDatabase VARCHAR(100), ResumeSchema VARCHAR(20), ResumeName VARCHAR(100), ResumeColumn VARCHAR(100), ResumeForOtherClients BIT, ResumeManualValidationCode TINYINT);
 ";
                 var sqlInsert = @"
-INSERT INTO @tmpR (ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode)
+INSERT INTO @tmpR (ScriptId, SqlActionId, TypeObjectId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode)
 VALUES 
 ";
                 var valuesTemplate = "({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})";
                 var sqlEnd = @"
 MERGE dbo.[Resume] AS t
    USING 
-     (SELECT ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode FROM @tmpR) 
+     (SELECT ScriptId, SqlActionId, TypeObjectId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode FROM @tmpR) 
        AS s 
-   ON    t.SqlActionId = s.SqlActionId AND t.SqlWhatId = s.SqlWhatId AND t.ScriptId = s.ScriptId
+   ON    t.SqlActionId = s.SqlActionId AND t.TypeObjectId = s.TypeObjectId AND t.ScriptId = s.ScriptId
      AND t.ResumeDatabase = s.ResumeDatabase AND t.ResumeSchema = s.ResumeSchema AND t.ResumeName = s.ResumeName
      AND  ISNULL(t.ResumeColumn, '') = ISNULL(s.ResumeColumn, '')
   WHEN MATCHED AND (t.ResumeForOtherClients != s.ResumeForOtherClients OR t.ResumeManualValidationCode != s.ResumeManualValidationCode) THEN
    UPDATE SET ResumeForOtherClients = s.ResumeForOtherClients
             , ResumeManualValidationCode = s.ResumeManualValidationCode
   WHEN NOT MATCHED THEN 
-    INSERT (ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode)
-    VALUES (ScriptId, SqlActionId, SqlWhatId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode)
+    INSERT (ScriptId, SqlActionId, TypeObjectId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode)
+    VALUES (ScriptId, SqlActionId, TypeObjectId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode)
   WHEN NOT MATCHED BY SOURCE AND t.ScriptId = @ScriptId THEN 
     ---DELETE
     UPDATE SET ResumeManualValidationCode = 254
@@ -698,7 +698,7 @@ MERGE dbo.[Resume] AS t
                         valuesTemplate,
                         SqlFormat.ForeignKey(x.ScriptId),
                         SqlFormat.Integer(x.SqlActionId),
-                        SqlFormat.Integer(x.SqlWhatId),
+                        SqlFormat.Integer(x.TypeObjectId),
                         SqlFormat.String(x.ResumeDatabase),
                         SqlFormat.String(x.ResumeSchema),
                         SqlFormat.String(x.ResumeName),

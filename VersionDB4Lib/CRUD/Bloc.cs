@@ -29,7 +29,7 @@ namespace VersionDB4Lib.CRUD
         /// <summary>
         /// La clé du type d'objet
         /// </summary>
-        public int SqlWhatId { get; set; }
+        public int TypeObjectId { get; set; }
 
         /// <summary>
         /// La clé du script associé
@@ -74,8 +74,8 @@ namespace VersionDB4Lib.CRUD
         public SqlAction GetAction() => SqlAction.List().FirstOrDefault(x => x.SqlActionId == SqlActionId);
         public void SetAction(SqlAction value) => SqlActionId = (value == null ? 0 : value.SqlActionId);
 
-        public SqlWhat GetWhat() => SqlWhat.List().FirstOrDefault(x => x.SqlWhatId == SqlWhatId);
-        public void SetWhat(SqlWhat value) => SqlWhatId = (value == null ? 0 : value.SqlWhatId);
+        public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
+        public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
 
         public ClientCode GetClientCode() => ClientCodeId == null ? null : ClientCode.List().FirstOrDefault(x => x.ClientCodeId == ClientCodeId);
         public void SetClientCode(ClientCode value) => ClientCodeId = value == null ? null : (int?)value.ClientCodeId;
@@ -96,14 +96,14 @@ namespace VersionDB4Lib.CRUD
         }
 
         public override int GetHashCode()
-            => HashCode.Combine(SqlActionId, SqlWhatId, ClientCodeId, BlocDatabase, BlocSchema, BlocName, BlocColumn);
+            => HashCode.Combine(SqlActionId, TypeObjectId, ClientCodeId, BlocDatabase, BlocSchema, BlocName, BlocColumn);
 
         public override bool Equals(object obj)
         {
             if (obj is Bloc bl)
             {
                 return this.SqlActionId == bl.SqlActionId
-                    && this.SqlWhatId == bl.SqlWhatId
+                    && this.TypeObjectId == bl.TypeObjectId
                     && this.ClientCodeId == bl.ClientCodeId
                     && (this.BlocDatabase == bl.BlocDatabase || (string.IsNullOrWhiteSpace(this.BlocDatabase) && string.IsNullOrWhiteSpace(bl.BlocDatabase)))
                     && (this.BlocSchema == bl.BlocSchema || (string.IsNullOrWhiteSpace(this.BlocSchema) && string.IsNullOrWhiteSpace(bl.BlocSchema)))
@@ -116,7 +116,7 @@ namespace VersionDB4Lib.CRUD
 
         public static string SQLSelect
             => @"
-SELECT BlocId, ScriptId, SqlActionId, SqlWhatId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn
+SELECT BlocId, ScriptId, SqlActionId, TypeObjectId, ClientCodeId, BlocIndex, BlocLength, BlocDataBase, BlocSchema, BlocName, BlocExcludeFromResume, BlocColumn
 FROM dbo.Bloc
 ";
 
@@ -127,7 +127,7 @@ FROM dbo.Bloc
                 DatabaseObjectSchema = BlocSchema,
                 DatabaseObjectName = BlocName,
                 ScriptId = ScriptId,
-                SqlWhatId = SqlWhatId
+                TypeObjectId = TypeObjectId
             };
 
         /// <summary>
@@ -143,7 +143,7 @@ FROM dbo.Bloc
                 {
                     ScriptId = this.ScriptId,
                     SqlActionId = this.SqlActionId,
-                    SqlWhatId= this.SqlWhatId,
+                    TypeObjectId = this.TypeObjectId,
                     ResumeDatabase = this.BlocDatabase,
                     ResumeSchema = this.BlocSchema,
                     ResumeName = this.BlocName,
@@ -166,7 +166,7 @@ FROM dbo.Bloc
                 {
                     ScriptId = this.ScriptId,
                     SqlActionId = this.SqlActionId,
-                    SqlWhatId = this.SqlWhatId,
+                    TypeObjectId = this.TypeObjectId,
                 };
             }
         }

@@ -21,22 +21,33 @@ namespace VersionDB4Lib.CRUD
 
         public int? ClientCodeId { get; set; }
 
+        public int? ScriptId { get; set; }
+
         public override string ToString()
             => TypeObjectId == 11 ? ObjectName : $"{ObjectSchema}.{ObjectName}";  // un schéma (11) a juste un nom !
         public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.SqlObject;
 
         public static string SQLSelect => @"
-SELECT ObjectId, VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId
-FROM dbo.Object 
+SELECT ObjectId, VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ScriptId
+FROM dbo.Object o
 WHERE VersionId = @VersionId
+  AND o.ObjectDeleted = 0
 ";
+
         public static string SQlSelectWithVersionAndType => SQLSelect + " AND TypeObjectId = @TypeObjectId";
         public static string SQLInsert => @"
-INSERT INTO dbo.Object (VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId
+INSERT INTO dbo.Object (VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ScriptId
 ) VALUES (
-@VersionId, @TypeObjectId, @ObjectSchema, @ObjectName, @ObjectDeleted, @ObjectEmpty, @ObjectSql, @ObjectLockedBy, @ClientCodeId
+@VersionId, @TypeObjectId, @ObjectSchema, @ObjectName, @ObjectDeleted, @ObjectEmpty, @ObjectSql, @ObjectLockedBy, @ClientCodeId, @ScriptId
 );
-SELECT TOP 1 SCOPE_IDENTITY() AS [Key];
+SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
 ";
+
+        public static string SQLDelete => @"
+UPDATE dbo.Object 
+SET ObjectDeleted = 1
+WHERE ObjectId = @ObjectId
+";
+
     }
 }

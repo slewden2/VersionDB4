@@ -35,7 +35,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     {
                         col = m.Groups["col"]?.Value;
                     }
-                    else if (e.ApplyOn == SqlWhat.Index && SqlAction.IsForIndex(e.Action))
+                    else if (e.ApplyOn == TypeObject.Index && SqlAction.IsForIndex(e.Action))
                     {
                         col = m.Groups["col"]?.Value;
                     }
@@ -50,7 +50,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
                     {
                         ScriptId = scriptId,
                         SqlActionId = e.Action,
-                        SqlWhatId = e.ApplyOn,
+                        TypeObjectId = e.ApplyOn,
                         BlocIndex = m.Index,
                         BlocLength = m.Length,
                         BlocDatabase = RegexFounding.Filtre(db),

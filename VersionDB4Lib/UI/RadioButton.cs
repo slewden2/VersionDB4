@@ -39,6 +39,7 @@ namespace VersionDB4Lib.UI
             set
             {
                 isChecked = value;
+                UnselAssociedRadioButtons();
                 Invalidate();
             }
         }
@@ -107,7 +108,20 @@ namespace VersionDB4Lib.UI
             }
 
             isChecked = true;
-            foreach(var control in this.Parent.Controls)
+            UnselAssociedRadioButtons();
+            Invalidate();
+
+            base.OnClick(e);
+        }
+
+        private void UnselAssociedRadioButtons()
+        {
+            if (!isChecked)
+            {
+                return;
+            }
+
+            foreach (var control in this.Parent.Controls)
             {
                 if (control != this)
                 {
@@ -119,10 +133,6 @@ namespace VersionDB4Lib.UI
                     }
                 }
             }
-            Invalidate();
-
-            base.OnClick(e);
         }
-
     }
 }

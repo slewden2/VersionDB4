@@ -86,10 +86,20 @@ namespace VersionDB4.Control
             var row = richTextBox1.GetLineFromCharIndex(n);
             var col = n - richTextBox1.GetFirstCharIndexFromLine(row);
 
-            columnAtBegin = col == 0;
-            columnAtEnd = col >= richTextBox1.Lines[row].Length;
-            rowAtBegin = row == 0;
-            rowAtEnd = row >= richTextBox1.Lines.Length - 1; 
+            if (string.IsNullOrWhiteSpace(richTextBox1.Text))
+            {
+                columnAtBegin = true;
+                columnAtEnd = true;
+                rowAtBegin = true;
+                rowAtEnd = true;
+            }
+            else
+            {
+                columnAtBegin = col == 0;
+                columnAtEnd = col >= (richTextBox1?.Lines[row]?.Length ?? 0);
+                rowAtBegin = row == 0;
+                rowAtEnd = row >= (richTextBox1?.Lines?.Length ?? 0) - 1;
+            }
 
             lblPanleInfo.Text = $" Ln {row + 1}  Col {col + 1}";
         }
@@ -123,7 +133,7 @@ namespace VersionDB4.Control
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
-            else if (richTextBox1.SelectionStart >= richTextBox1.Text.Length && (e.KeyCode == Keys.Down || e.KeyCode == Keys.Right || e.KeyCode == Keys.PageDown || e.KeyCode == Keys.Enter))
+            else if (richTextBox1.SelectionStart >= richTextBox1.Text.Length && (e.KeyCode == Keys.Down || e.KeyCode == Keys.Right || e.KeyCode == Keys.PageDown))
             {  // remove bing !
                 e.Handled = true;
                 e.SuppressKeyPress = true;

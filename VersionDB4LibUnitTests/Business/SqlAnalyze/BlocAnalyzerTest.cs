@@ -15,7 +15,7 @@ namespace VersionDB4LibUnitTests.Business.SqlAnalyze
         [Fact]
         public void TestDBComparerProcedure()
         {
-            var e = RegexFounding.List.First(x => x.Action == SqlAction.DbComparer && x.ApplyOn == SqlWhat.Procedure);
+            var e = RegexFounding.List.First(x => x.Action == SqlAction.DbComparer && x.ApplyOn == TypeObject.Procedure);
             string text = @"
 --- DBComparer Création de la procédure base.dbo.Procedure2test
 ";
@@ -23,7 +23,7 @@ namespace VersionDB4LibUnitTests.Business.SqlAnalyze
             { 
                 ScriptId = 0,
                 SqlActionId = SqlAction.DbComparer,
-                SqlWhatId = SqlWhat.Procedure,
+                TypeObjectId = TypeObject.Procedure,
             };
 
             var ba = new BlocAnalyzer();
