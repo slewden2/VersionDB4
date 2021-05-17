@@ -41,7 +41,7 @@ namespace VersionDB4
             // rdChoice2
             // 
             this.rdChoice2.AutoSize = true;
-            this.rdChoice2.Location = new System.Drawing.Point(38, 113);
+            this.rdChoice2.Location = new System.Drawing.Point(38, 95);
             this.rdChoice2.Name = "rdChoice2";
             this.rdChoice2.Size = new System.Drawing.Size(59, 24);
             this.rdChoice2.TabIndex = 0;
@@ -52,7 +52,7 @@ namespace VersionDB4
             // rdChoice1
             // 
             this.rdChoice1.AutoSize = true;
-            this.rdChoice1.Location = new System.Drawing.Point(38, 68);
+            this.rdChoice1.Location = new System.Drawing.Point(38, 52);
             this.rdChoice1.Name = "rdChoice1";
             this.rdChoice1.Size = new System.Drawing.Size(59, 24);
             this.rdChoice1.TabIndex = 1;
@@ -63,7 +63,7 @@ namespace VersionDB4
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 15);
+            this.label1.Location = new System.Drawing.Point(12, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(285, 20);
             this.label1.TabIndex = 2;
@@ -76,13 +76,13 @@ namespace VersionDB4
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(320, 53);
+            this.panel1.Size = new System.Drawing.Size(340, 32);
             this.panel1.TabIndex = 3;
             // 
             // btOk
             // 
             this.btOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btOk.Location = new System.Drawing.Point(152, 167);
+            this.btOk.Location = new System.Drawing.Point(172, 123);
             this.btOk.Name = "btOk";
             this.btOk.Size = new System.Drawing.Size(75, 35);
             this.btOk.TabIndex = 4;
@@ -94,7 +94,7 @@ namespace VersionDB4
             // 
             this.BtCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtCancel.Location = new System.Drawing.Point(233, 167);
+            this.BtCancel.Location = new System.Drawing.Point(253, 123);
             this.BtCancel.Name = "BtCancel";
             this.BtCancel.Size = new System.Drawing.Size(75, 35);
             this.BtCancel.TabIndex = 5;
@@ -107,7 +107,7 @@ namespace VersionDB4
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.BtCancel;
-            this.ClientSize = new System.Drawing.Size(320, 214);
+            this.ClientSize = new System.Drawing.Size(340, 170);
             this.Controls.Add(this.BtCancel);
             this.Controls.Add(this.btOk);
             this.Controls.Add(this.panel1);
@@ -122,7 +122,6 @@ namespace VersionDB4
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Nouvelle version";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);

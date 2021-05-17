@@ -27,29 +27,29 @@ namespace VersionDB4Lib.Business
                     {
                         if (!sqlObject.ObjectDeleted)
                         {
-                            if (string.IsNullOrWhiteSpace(sqlObject.ObjectLockedBy))
-                            {
+                            ////if (string.IsNullOrWhiteSpace(sqlObject.ObjectLockedBy))
+                            ////{
                                 yield return EAction.SqlObjectEditBegin;
                                 yield return EAction.SqlObjectDelete;
-                                yield return EAction.SqlObjectLock;
+                                ////yield return EAction.SqlObjectLock;
 
-                                if (sqlObject.ObjectEmpty)
-                                {
-                                    yield return EAction.SqlObjectAddCustomClient;
-                                    yield return EAction.SqlObjectRemoveCustomClient;
-                                }
-                                else
-                                {
-                                    yield return EAction.SqlObjectMakeFullCustomClient;
-                                }
-                            }
-                            else
-                            {
-                                yield return EAction.SqlObjectUnlock;
-                            }
+                                ////if (sqlObject.ObjectEmpty)
+                                ////{
+                                ////    yield return EAction.SqlObjectAddCustomClient;
+                                ////    yield return EAction.SqlObjectRemoveCustomClient;
+                                ////}
+                                ////else
+                                ////{
+                                ////    yield return EAction.SqlObjectMakeFullCustomClient;
+                                ////}
+                            ////}
+                            ////else
+                            ////{
+                            ////    yield return EAction.SqlObjectUnlock;
+                            ////}
                         }
 
-                        yield return EAction.SqlObjectSaveSqlToDisk;
+                       // yield return EAction.SqlObjectSaveSqlToDisk;
                     }
 
                     break;

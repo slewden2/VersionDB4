@@ -19,6 +19,7 @@ LEFT JOIN (SELECT o.TypeObjectId, COUNT(*) AS nb
            WHERE o.VersionId = @VersionId
              AND o.ObjectDeleted = 0
            GROUP BY o.TypeObjectId) ox ON t.TypeObjectId = ox.TypeObjectId
+WHERE t.TypeObjectId > 0
 ;
 ";
     }

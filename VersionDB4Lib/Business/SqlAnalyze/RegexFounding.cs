@@ -19,21 +19,26 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             // TODO SQL Action PRINT = 18 = identifier RaiseError du print no wait
 
 
-            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\s+procédure", SqlAction.DbComparer, TypeObject.Procedure),
-            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\s+fonction", SqlAction.DbComparer, TypeObject.Function),
-            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\s+vue", SqlAction.DbComparer, TypeObject.View),
-            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\s+déclencheur", SqlAction.DbComparer, TypeObject.Trigger),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\sprocédure", SqlAction.DbComparer, TypeObject.Procedure),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\sfonction\sscalaire", SqlAction.DbComparer, TypeObject.FunctionScalaire),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\sfonction\stable\sen\sligne", SqlAction.DbComparer, TypeObject.FunctionTableEnligne),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\sfonction\stable\sà\sinstructions\smultiples", SqlAction.DbComparer, TypeObject.FunctionTable),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\svue", SqlAction.DbComparer, TypeObject.View),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\sdéclencheur", SqlAction.DbComparer, TypeObject.Trigger),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?l'index", SqlAction.DbComparer, TypeObject.Index),
-            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\s+schéma", SqlAction.DbComparer, TypeObject.Schema),
-            ////new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?L'état\s+perso\s+(\S+\s+)*?etli_nom\s+=\s+''(?<name>(\S+?\s*?)+?)''", SqlAction.DbComparer, TypeObject.None), 
-            //// ici on ne gère pas les scripts d'état perso (inutile pour le projet)
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\sschéma", SqlAction.DbComparer, TypeObject.Schema),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\stable", SqlAction.DbComparer, TypeObject.Table),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\stype\sde\sdonnées\stable", SqlAction.DbComparer, TypeObject.TypeTable),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\stype\sde\sdonnées\sélémentaire", SqlAction.DbComparer, TypeObject.TypeElementaire),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\sréférence", SqlAction.DbComparer, TypeObject.ForeignKey),
+            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\scontrainte", SqlAction.DbComparer, TypeObject.Constraint),
 
             new RegexFounding(@"CodeClientIs\((?<codeClient>\d+)\)", SqlAction.CodeClient, TypeObject.None),
             //// IF\s+\(\s*EXISTS\s*\(\s*SELECT\s+(\S+?\s*?)+?FROM\s+DBO\.CodeClientIs\((?<codeClient>\d+)\)\s*?\)\s*?\)\s*?(--(.*?)\n)*BEGIN(\s+?\S*?)*?END
-            new RegexFounding(@"(?m)--(.*?)\n", SqlAction.Comment, TypeObject.None),
-            new RegexFounding(@"/\*+([^*]|[\r\n]| \*([^/]|[\r\n]))*?\*+/", SqlAction.Comment, TypeObject.None),
+            new RegexFounding(@"(?m)--(.*?)(\n|$)", SqlAction.Comment, TypeObject.None),
+            new RegexFounding(@"/\*+([^*]|[\r\n]|\*[^/])*? \*+/(([^*/]*)\*+/)*", SqlAction.Comment, TypeObject.None),
 
-            new RegexFounding(@"RAISERROR\s*\(", SqlAction.RaiseError, TypeObject.None),
+            new RegexFounding(@"RAISERROR\s*\( ('.*?')+\s*,\s*1[12345678]\s*", SqlAction.RaiseError, TypeObject.None),
 
             new RegexFounding(@"CREATE\s+TABLE\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)\s*\(", SqlAction.Create, TypeObject.Table),
             new RegexFounding(@"SELECT\s+(\S+\s+(?!(FROM|CREATE|BEGIN|INSERT)))*?INTO\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)\s", SqlAction.Create, TypeObject.Table),
@@ -63,9 +68,9 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             new RegexFounding(@"DROP\s+PROCEDURE\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Drop, TypeObject.Procedure),
             new RegexFounding(@"\s(EXEC|EXECUTE)\s+(@\S+\s+=\s+)?((?<shema>\S+)\.)?\[?(?<name>\w+)", SqlAction.Execute, TypeObject.Procedure),
 
-            new RegexFounding(@"CREATE\s+FUNCTION\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\S+)\s*\(", SqlAction.Create, TypeObject.Function),
-            new RegexFounding(@"ALTER\s+FUNCTION\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\S+)\s*\(", SqlAction.Alter, TypeObject.Function),
-            new RegexFounding(@"DROP\s+FUNCTION\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Drop, TypeObject.Function),
+            new RegexFounding(@"CREATE\s+FUNCTION\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\S+)\s*\(", SqlAction.Create, TypeObject.FunctionTable),
+            new RegexFounding(@"ALTER\s+FUNCTION\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\S+)\s*\(", SqlAction.Alter, TypeObject.FunctionTable),
+            new RegexFounding(@"DROP\s+FUNCTION\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Drop, TypeObject.FunctionTable),
 
             new RegexFounding(@"CREATE\s+VIEW\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Create, TypeObject.View),
             new RegexFounding(@"ALTER\s+VIEW\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Alter, TypeObject.View),
@@ -76,7 +81,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             new RegexFounding(@"ALTER\s+TRIGGER\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Alter, TypeObject.Trigger),
             new RegexFounding(@"DROP\s+TRIGGER\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Drop, TypeObject.Trigger),
 
-            new RegexFounding(@"CREATE\s+\S*\s+INDEX\s+(?<col>\S+)\s+ON\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)\s+", SqlAction.Create, TypeObject.Index),
+            new RegexFounding(@"CREATE\s+(\S*\s+)?INDEX\s+(?<col>\S+)\s+ON\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)\s+", SqlAction.Create, TypeObject.Index),
             new RegexFounding(@"ALTER\s+\S*\s+INDEX\s+(?<col>\S+)\s+ON\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?(?<name>\S+)\s+", SqlAction.Alter, TypeObject.Index),
             new RegexFounding(@"DROP\s+INDEX\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)\.\[?(?<col>\S+)\s+", SqlAction.Drop, TypeObject.Index),
             new RegexFounding(@"DROP\s+INDEX\s+\[?(?<col>\S+)\s+ON\s+(?<database>\S+?\.)?(?<schema>\S+?\.)?\[?(?<name>\w+)", SqlAction.Drop, TypeObject.Index),
@@ -85,10 +90,10 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             new RegexFounding(@"ALTER\s+SCHEMA\s+\[?(?<name>[a-z_][\w]*)TRANSFERT\s", SqlAction.Alter, TypeObject.Schema),
             new RegexFounding(@"DROP\s+SCHEMA\s+(IF\s+EXISTS\s+)?\[?(?<name>[a-z_][\w]*)", SqlAction.Drop, TypeObject.Schema),
 
-            new RegexFounding(@"CREATE\s+TYPE\s+?((?<schema>\S+?)\.)?(?<name>\S+)\s+?AS", SqlAction.Create, TypeObject.Type),
-            new RegexFounding(@"DROP\s+TYPE\s+?((?<schema>\S+?)\.)?(?<name>\S+)\s+?", SqlAction.Drop, TypeObject.Type),
+            new RegexFounding(@"CREATE\s+TYPE\s+?((?<schema>\S+?)\.)?(?<name>\S+)\s+?AS", SqlAction.Create, TypeObject.TypeTable),
+            new RegexFounding(@"DROP\s+TYPE\s+?((?<schema>\S+?)\.)?(?<name>\S+)\s+?", SqlAction.Drop, TypeObject.TypeTable),
 
-            new RegexFounding(@"(FROM\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)(?<name>\w+)\s*\()|(JOIN\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)(?<name>\w+)\s*\()", SqlAction.Execute, TypeObject.Function),
+            new RegexFounding(@"(FROM\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)(?<name>\w+)\s*\()|(JOIN\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)(?<name>\w+)\s*\()", SqlAction.Execute, TypeObject.FunctionTable),
             new RegexFounding(@"(FROM\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)(?<name>\w+)\s)|(JOIN\s+((?<database>\S+?)\.)?((?<schema>\S+?)\.)(?<name>\w+)\s)", SqlAction.Execute, TypeObject.Table), // VA y avoir des ambiguités !!
         };
 

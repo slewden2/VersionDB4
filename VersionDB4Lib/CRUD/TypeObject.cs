@@ -74,15 +74,19 @@ namespace VersionDB4Lib.CRUD
 
         public static int None => 0;
         public static int Procedure => 1;
-        public static int Function => 4;   // TODO faire l
+        public static int FunctionScalaire => 2;
+        public static int FunctionTableEnligne => 3;
+        public static int FunctionTable => 4;
         public static int View => 5;
         public static int Trigger => 6;
         public static int Index => 7;
 
         public static int Schema => 8;
         public static int Table => 9;
-        public static int Type => 10;
-        public static int Constraint => 12;
+        public static int TypeTable => 10;
+        public static int TypeElementaire => 11;
+        public static int ForeignKey => 12;
+        public static int Constraint => 13;
 
 
         public static List<TypeObject> List()
@@ -97,19 +101,40 @@ namespace VersionDB4Lib.CRUD
                     new TypeObject(){ TypeObjectId = 1,  TypeObjectName = "Procédure stockée",       TypeObjectSqlServerCode = "P",   TypeObjectPlurial = "Les procédures stockées",                      TypeObjectPrestentOrder = 3},
                     new TypeObject(){ TypeObjectId = 2,  TypeObjectName = "Fonction scalaire",       TypeObjectSqlServerCode = "FN",  TypeObjectPlurial = "Les fonctions scalaires",                      TypeObjectPrestentOrder = 4},
                     new TypeObject(){ TypeObjectId = 3,  TypeObjectName = "Fonction table en ligne", TypeObjectSqlServerCode = "IF",  TypeObjectPlurial = "Les fonctions tables (en ligne)",              TypeObjectPrestentOrder = 5},
-                    new TypeObject(){ TypeObjectId = 4,  TypeObjectName = "Fonction table",          TypeObjectSqlServerCode = "TF",  TypeObjectPlurial = "Les fonctions table (instructions multiples)", TypeObjectPrestentOrder = 6},
+                    new TypeObject(){ TypeObjectId = 4,  TypeObjectName = "Fonction table",          TypeObjectSqlServerCode = "TF",  TypeObjectPlurial = "Les fonctions tables (instructions multiples)", TypeObjectPrestentOrder = 6},
                     new TypeObject(){ TypeObjectId = 5,  TypeObjectName = "Vue",                     TypeObjectSqlServerCode = "V",   TypeObjectPlurial = "Les vues",                                     TypeObjectPrestentOrder = 2},
-                    new TypeObject(){ TypeObjectId = 6,  TypeObjectName = "Trigger",                 TypeObjectSqlServerCode = "TR",  TypeObjectPlurial = "Les triggers",                                 TypeObjectPrestentOrder = 11},
-                    new TypeObject(){ TypeObjectId = 7,  TypeObjectName = "Index",                   TypeObjectSqlServerCode = "IDX", TypeObjectPlurial = "Les index",                                    TypeObjectPrestentOrder = 10},
-                    new TypeObject(){ TypeObjectId = 8,  TypeObjectName = "Schéma",                  TypeObjectSqlServerCode = "SCH", TypeObjectPlurial = "Les schémas",                                  TypeObjectPrestentOrder = 12},
+                    new TypeObject(){ TypeObjectId = 6,  TypeObjectName = "Trigger",                 TypeObjectSqlServerCode = "TR",  TypeObjectPlurial = "Les triggers",                                 TypeObjectPrestentOrder = 12},
+                    new TypeObject(){ TypeObjectId = 7,  TypeObjectName = "Index",                   TypeObjectSqlServerCode = "IDX", TypeObjectPlurial = "Les index",                                    TypeObjectPrestentOrder = 11},
+                    new TypeObject(){ TypeObjectId = 8,  TypeObjectName = "Schéma",                  TypeObjectSqlServerCode = "SCH", TypeObjectPlurial = "Les schémas",                                  TypeObjectPrestentOrder = 13},
                     new TypeObject(){ TypeObjectId = 9,  TypeObjectName = "Table",                   TypeObjectSqlServerCode = "U",   TypeObjectPlurial = "Les tables",                                   TypeObjectPrestentOrder = 1},
-                    new TypeObject(){ TypeObjectId = 10, TypeObjectName = "Type de table",           TypeObjectSqlServerCode = "TT",  TypeObjectPlurial = "Les types de données Table",                   TypeObjectPrestentOrder = 7},
+                    new TypeObject(){ TypeObjectId = 10, TypeObjectName = "Type de table",           TypeObjectSqlServerCode = "TT",  TypeObjectPlurial = "Les types de données table",                   TypeObjectPrestentOrder = 7},
                     new TypeObject(){ TypeObjectId = 11, TypeObjectName = "Type de données",         TypeObjectSqlServerCode = "TD",  TypeObjectPlurial = "Les types de données",                         TypeObjectPrestentOrder = 8},
                     new TypeObject(){ TypeObjectId = 12, TypeObjectName = "Référence",               TypeObjectSqlServerCode = "F",   TypeObjectPlurial = "Les références",                               TypeObjectPrestentOrder = 9},
+                    new TypeObject(){ TypeObjectId = 13, TypeObjectName = "Contrainte",              TypeObjectSqlServerCode = "C",   TypeObjectPlurial = "Les contraintes",                              TypeObjectPrestentOrder = 10},
                 };
             }
 
             return list;
         }
+
+        public static string FileEntete(int typeObjectId)
+            => typeObjectId switch
+            { 
+                0 => throw new ArgumentException("No entête for typeObjectId = 0"),
+                1 => "la procédure",
+                2 => "la fonction scalaire",
+                3 => "la fonction table en ligne",
+                4 => "la fonction table à instructions multiples",
+                5 => "la vue",
+                6 => "le déclencheur",
+                7 => "l'index",
+                8 => "le schéma",
+                9 => "la table",
+                10 => "le type de données table",
+                11 => "le type de données élémentaire",
+                12 => "la référence",
+                13 => "la contrainte",
+                _ => string.Empty
+            };
     }
 }

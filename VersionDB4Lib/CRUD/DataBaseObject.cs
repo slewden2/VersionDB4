@@ -39,15 +39,21 @@ namespace VersionDB4Lib.CRUD
         /// </summary>
         public string DatabaseObjectName { get; set; }
 
+        /// <summary>
+        /// Le nom de l'objet pour les colonne, index et contraintes
+        /// </summary>
+        public string DatabaseObjectColumn { get; set; }
+
 
         public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
         public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
 
-        public override string ToString() => $"{GetWhat().TypeObjectName} {EnumHelper.ToString(DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName)}";
+        public override string ToString() 
+            => $"{GetWhat().TypeObjectName} {EnumHelper.ToString(DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName)}";
 
         public static string SQLSelect
             => @"
-SELECT DatabaseObjectId, ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName
+SELECT DatabaseObjectId, ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn
 FROM dbo.DatabaseObject
 ";
 

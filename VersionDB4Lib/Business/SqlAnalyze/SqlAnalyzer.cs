@@ -609,23 +609,23 @@ MERGE dbo.Bloc AS t
             {
                 var sqlStart = $@"
 DECLARE @ScriptId INT = {SqlFormat.ForeignKey(this.ScriptId)}; 
-DECLARE @tmpO TABLE (ScriptId INT, TypeObjectId INT, DatabaseObjectDataBase VARCHAR(100), DatabaseObjectSchema VARCHAR(20), DatabaseObjectName VARCHAR(100));
+DECLARE @tmpO TABLE (ScriptId INT, TypeObjectId INT, DatabaseObjectDataBase VARCHAR(100), DatabaseObjectSchema VARCHAR(20), DatabaseObjectName VARCHAR(100), DatabaseObjectColumn VARCHAR(100));
 ";
                 var sqlInsert = @"
-INSERT INTO @tmpO (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
+INSERT INTO @tmpO (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn)
 VALUES 
 ";
-                var valuesTemplate = " ({0}, {1}, {2}, {3}, {4})";
+                var valuesTemplate = " ({0}, {1}, {2}, {3}, {4}, {5})";
                 var sqlEnd = @"
 MERGE dbo.DataBaseObject AS t
    USING 
-     (SELECT ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName FROM @tmpO) 
+     (SELECT ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn FROM @tmpO) 
        AS s 
    ON    t.ScriptId = s.ScriptId AND t.TypeObjectId = s.TypeObjectId
-     AND t.DatabaseObjectDataBase = s.DatabaseObjectDataBase AND t.DatabaseObjectSchema = s.DatabaseObjectSchema AND t.DatabaseObjectName = s.DatabaseObjectName
+     AND t.DatabaseObjectDataBase = s.DatabaseObjectDataBase AND t.DatabaseObjectSchema = s.DatabaseObjectSchema AND t.DatabaseObjectName = s.DatabaseObjectName AND ISNULL(t.DatabaseObjectColumn, '') = ISNULL(s.DatabaseObjectColumn, '')
   WHEN NOT MATCHED THEN 
-    INSERT (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
-    VALUES (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName)
+    INSERT (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn)
+    VALUES (ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn)
   WHEN NOT MATCHED BY SOURCE AND t.ScriptId = @ScriptId  THEN 
     DELETE
 ;
@@ -641,7 +641,8 @@ MERGE dbo.DataBaseObject AS t
                         SqlFormat.Integer(x.TypeObjectId),
                         SqlFormat.String(x.DatabaseObjectDatabase),
                         SqlFormat.String(x.DatabaseObjectSchema),
-                        SqlFormat.String(x.DatabaseObjectName)));
+                        SqlFormat.String(x.DatabaseObjectName),
+                        SqlFormat.String(x.DatabaseObjectColumn)));
                     sql.Append(sqlInsert + string.Join(", ", values) + ";");
                 }
 

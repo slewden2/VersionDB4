@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DatabaseAndLogLibrary.DataBase;
-using VersionDB4Lib.CRUD;
-using Version = VersionDB4Lib.CRUD.Version;
-using Object = VersionDB4Lib.CRUD.Object;
 using VersionDB4Lib.Business;
-using VersionDB4Lib.ForUI;
-using VersionDB4Lib.UI;
 using VersionDB4Lib.Business.SqlAnalyze;
+using VersionDB4Lib.CRUD;
+using VersionDB4Lib.ForUI;
+using Object = VersionDB4Lib.CRUD.Object;
+using Version = VersionDB4Lib.CRUD.Version;
 
 namespace VersionDB4
 {
@@ -29,6 +25,7 @@ namespace VersionDB4
 
         private Script currentScriptEdited = null;
         private Object currentObjectEdited = null;
+        private Button buttonOk = null;
         #endregion
 
         public FVersionDB()
@@ -51,7 +48,7 @@ namespace VersionDB4
         }
 
         #region Events
-        private void FVersionDB_Load(object sender, EventArgs e) 
+        private void FVersionDB_Load(object sender, EventArgs e)
             => ProcessAction(EAction.ProjectScriptReload);
 
         private void CbVersions_SelectedIndexChanged(object sender, EventArgs e)
@@ -72,7 +69,7 @@ namespace VersionDB4
             }
         }
 
-        private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e) 
+        private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
             => NodeSelected(e.Node);
 
         private void BtActions_Click(object sender, EventArgs e)
@@ -101,6 +98,11 @@ namespace VersionDB4
             }
         }
 
+        private void SqlTextBox1_OnChange(object sender, EventArgs e)
+        {
+            AnalyseEntete();
+            GereBoutonOk();
+        }
         #endregion
 
         private void ProcessAction(EAction action)
@@ -152,7 +154,7 @@ namespace VersionDB4
                             cnn.Execute(Base.SQLDelete, clientDel);
                             FillClientTreeView();
                         }
-                        
+
                     }
 
                     break;
@@ -202,7 +204,7 @@ namespace VersionDB4
                         lblResumes.Text = string.Empty;
                         sqlTextBox1.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
-                        ActionsFill(new List<EAction>() { EAction.ScriptAddEnd, EAction.Cancel });
+                        ActionsFill(new List<EAction>() { EAction.ScriptAddEnd, EAction.Cancel }, 0);
                     }
 
                     break;
@@ -228,7 +230,7 @@ namespace VersionDB4
                         lblResumes.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
                         currentScriptEdited = script;
-                        ActionsFill(new List<EAction>() { EAction.ScriptEditEnd, EAction.Cancel });
+                        ActionsFill(new List<EAction>() { EAction.ScriptEditEnd, EAction.Cancel }, 0);
                     }
 
                     break;
@@ -266,11 +268,9 @@ namespace VersionDB4
                 case EAction.ScriptAnalyze:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script scriptA)
                     {
-                        using (var frm = new FDetailScript())
-                        {
-                            frm.Script = scriptA;
-                            frm.ShowDialog(this);
-                        }
+                        using var frm = new FDetailScript();
+                        frm.Script = scriptA;
+                        frm.ShowDialog(this);
                     }
 
                     break;
@@ -288,71 +288,29 @@ namespace VersionDB4
                         lblResumes.Text = string.Empty;
                         sqlTextBox1.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
-                        ActionsFill(new List<EAction>() { EAction.SqlObjectAddEnd, EAction.Cancel });
+                        ActionsFill(new List<EAction>() { EAction.SqlObjectAddEnd, EAction.Cancel }, 0);
                     }
 
                     break;
                 case EAction.SqlObjectAddEnd:
-                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is TypeObjectCounter typeObjetAddEnd && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterAddEnd)
+                    ProcessSqlObjectEndAdd();
+                    break;
+                case EAction.SqlObjectEditBegin:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Object objectEdited && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterEdit)
                     {
-                        currentObjectEdited.ObjectSql = sqlTextBox1.Text;
-                        var analyzer = SqlAnalyzer.Analyse(0, currentObjectEdited.ObjectSql);
-                        if (analyzer.Resumes.Count() != 1)
-                        {
-                            MessageBox.Show(this, "L'analyse du script a échoué.\nPas ou trop de résumé\nL'opération est annulée", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-
-                        Resume resume = analyzer.Resumes.First();
-                        if (string.IsNullOrWhiteSpace(resume.ResumeName))
-                        {
-                            MessageBox.Show(this, "L'analyse du script a échoué.\nImpossible de trouver le nom de l'objet inséré.\nL'opération est annulée", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-
-                        if (resume.TypeObjectId != typeObjetAddEnd.TypeObjectId && MessageBox.Show($"Le script saisit ne correspond pas à la catégorie choisie. Voulez vous continuer l'ajout ?\nCatégorie choisie : {typeObjetAddEnd.TypeObjectName}\nDans le script : {resume.TypeObjectId}", "Confirmez continuer", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.No)
-                        {
-                            return;
-                        }
-
-                        currentObjectEdited.ObjectSchema = resume.ResumeSchema;
-                        currentObjectEdited.ObjectName = resume.ResumeName;
-                        currentObjectEdited.ObjectDeleted = false;
-                        currentObjectEdited.ObjectEmpty = false;
-
-
-                        using var cnn = new DatabaseConnection();
-                        int id = cnn.ExecuteScalar(Object.SQLInsert, currentObjectEdited);
-                        
-                        // TODO : Ajouter un script à la version ?
-                        
-                        ////    analyzer.Save(cnn);
-                        CancelEdition(null);
-                        FillReferentialTypeObject(treeView1.SelectedNode, versionObjectCounterAddEnd, typeObjetAddEnd, true);
-                        treeView1.SelectedNode.Expand();
-                        SelectNodeObject(treeView1.SelectedNode, id);
+                        lblType.Text = $"Modification de {objectEdited}";
+                        lblResumes.Text = string.Empty;
+                        SetRightPanel(ERightPanelMode.TextSqlEdition);
+                        currentObjectEdited = objectEdited;
+                        ActionsFill(new List<EAction>() { EAction.SqlObjectEditEnd, EAction.Cancel }, 0);
                     }
 
                     break;
+                case EAction.SqlObjectEditEnd:
+                    ProcessSqlObjectEndEdit();
+                    break;
                 case EAction.SqlObjectDelete:
-                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Object objectDel && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterDel)
-                    {
-                        if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer {objectDel} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                        {
-                            // TODO : Générer les script SQL pour suppression de la base
-
-                            using var cnn = new DatabaseConnection();
-                            cnn.Execute(Object.SQLDelete, objectDel);
-
-                            var parent = treeView1.SelectedNode.Parent;
-                            if (parent != null && parent.Tag != null && parent.Tag is TypeObjectCounter typeObjectCounterDel)
-                            {
-                                FillReferentialTypeObject(parent, versionObjectCounterDel, typeObjectCounterDel);
-                                treeView1.SelectedNode.Expand();
-                                NodeSelected(parent);
-                            }
-                        }
-                    }
+                    PRocessSqlObjectDelete();
 
                     break;
                 #endregion
@@ -380,7 +338,7 @@ namespace VersionDB4
 
         private void SelectionneVersionObjet(int versionId)
         {
-            foreach(VersionObjectCounter v in cbVersions.Items)
+            foreach (VersionObjectCounter v in cbVersions.Items)
             {
                 if (v.VersionId == versionId)
                 {
@@ -687,14 +645,28 @@ namespace VersionDB4
                 }
             }
         }
-      
+
         #endregion
 
         #region Edition
+        private void GereBoutonOk()
+        {
+            if (buttonOk != null)
+            {
+                if (currentObjectEdited != null)
+                {
+                    buttonOk.Enabled = !string.IsNullOrWhiteSpace(sqlTextBox1.Text) && !string.IsNullOrWhiteSpace(currentObjectEdited.ObjectName);
+                }
+                else if (currentScriptEdited != null)
+                {
+                    buttonOk.Enabled = !string.IsNullOrWhiteSpace(sqlTextBox1.Text);
+                }
+            }
+        }
 
         private void SetRightPanel(ERightPanelMode mode)
         {
-            switch(mode)
+            switch (mode)
             {
                 case ERightPanelMode.BaseClient:
                     versionScriptControl1.Visible = false;
@@ -728,6 +700,7 @@ namespace VersionDB4
 
         private void ActionsClear()
         {
+            buttonOk = null;
             foreach (var ctrl in pnlActions.Controls)
             {
                 if (ctrl is Button bt)
@@ -739,10 +712,11 @@ namespace VersionDB4
             pnlActions.Controls.Clear();
         }
 
-        private void ActionsFill(IEnumerable<EAction> lstAction)
+        private void ActionsFill(IEnumerable<EAction> lstAction, int indexBtOk = -1)
         {
             ActionsClear();
             int mw = 0;
+            int i = 0;
             foreach (EAction action in lstAction)
             {
                 Button bt = new Button
@@ -764,6 +738,13 @@ namespace VersionDB4
                 pnlActions.Controls.Add(bt);
                 bt.Click += BtActions_Click;
                 mw += bt.Width + 10;
+                if (i == indexBtOk)
+                {
+                    buttonOk = bt;
+                    GereBoutonOk();
+                }
+
+                i++;
             }
         }
 
@@ -771,6 +752,7 @@ namespace VersionDB4
         {
             SetRightPanel(ERightPanelMode.TextSqlReadOnly);
             currentScriptEdited = null;
+            currentObjectEdited = null;
             NodeSelected(selectedNode);
         }
 
@@ -818,7 +800,6 @@ namespace VersionDB4
         }
         #endregion
 
-
         private enum ERightPanelMode
         {
             TextSqlReadOnly,
@@ -827,13 +808,5 @@ namespace VersionDB4
             VersionScript,
             List
         }
-
-        private void SplitContainer1_Paint(object sender, PaintEventArgs e) 
-            => e.Graphics.DrawLine(new Pen(Color.FromArgb(212, 212, 212)), splitContainer1.SplitterDistance, 0, splitContainer1.SplitterDistance, splitContainer1.ClientSize.Height);
-
-        private void SplitContainer1_Panel2_Paint(object sender, PaintEventArgs e) 
-            => e.Graphics.DrawLine(new Pen(Color.FromArgb(212, 212, 212)), 0, 80, splitContainer1.Panel2.ClientSize.Width, 80);
-
-   
     }
 }

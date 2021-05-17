@@ -41,9 +41,9 @@ namespace VersionDB4
             this.lblResumes = new System.Windows.Forms.Label();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.lblType = new System.Windows.Forms.Label();
-            this.versionScriptControl1 = new VersionDB4.Control.VersionScriptControl();
             this.sqlTextBox1 = new VersionDB4.Control.SqlTextBox();
             this.baseClientControl1 = new VersionDB4.Control.BaseClientControl();
+            this.versionScriptControl1 = new VersionDB4.Control.VersionScriptControl();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -158,9 +158,9 @@ namespace VersionDB4
             this.splitContainer1.Panel2.Controls.Add(this.lblResumes);
             this.splitContainer1.Panel2.Controls.Add(this.pnlActions);
             this.splitContainer1.Panel2.Controls.Add(this.lblType);
-            this.splitContainer1.Panel2.Controls.Add(this.versionScriptControl1);
             this.splitContainer1.Panel2.Controls.Add(this.sqlTextBox1);
             this.splitContainer1.Panel2.Controls.Add(this.baseClientControl1);
+            this.splitContainer1.Panel2.Controls.Add(this.versionScriptControl1);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.SplitContainer1_Panel2_Paint);
             this.splitContainer1.Size = new System.Drawing.Size(1012, 450);
             this.splitContainer1.SplitterDistance = 400;
@@ -170,7 +170,7 @@ namespace VersionDB4
             // 
             // pnlVersion
             // 
-            this.pnlVersion.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(247)))));
             this.pnlVersion.Controls.Add(this.cbVersions);
             this.pnlVersion.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlVersion.Location = new System.Drawing.Point(0, 0);
@@ -223,18 +223,6 @@ namespace VersionDB4
             this.lblType.TabIndex = 1;
             this.lblType.Text = "lblType";
             // 
-            // versionScriptControl1
-            // 
-            this.versionScriptControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.versionScriptControl1.Location = new System.Drawing.Point(11, 83);
-            this.versionScriptControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.versionScriptControl1.Name = "versionScriptControl1";
-            this.versionScriptControl1.Size = new System.Drawing.Size(597, 367);
-            this.versionScriptControl1.TabIndex = 7;
-            this.versionScriptControl1.OnLinkReferential += new System.EventHandler(this.VersionScriptControl1_OnLinkReferential);
-            // 
             // sqlTextBox1
             // 
             this.sqlTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -247,6 +235,7 @@ namespace VersionDB4
             this.sqlTextBox1.Size = new System.Drawing.Size(597, 367);
             this.sqlTextBox1.TabIndex = 8;
             this.sqlTextBox1.WordWrap = true;
+            this.sqlTextBox1.OnChange += new System.EventHandler(this.SqlTextBox1_OnChange);
             // 
             // baseClientControl1
             // 
@@ -258,6 +247,18 @@ namespace VersionDB4
             this.baseClientControl1.Name = "baseClientControl1";
             this.baseClientControl1.Size = new System.Drawing.Size(597, 369);
             this.baseClientControl1.TabIndex = 6;
+            // 
+            // versionScriptControl1
+            // 
+            this.versionScriptControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.versionScriptControl1.Location = new System.Drawing.Point(11, 83);
+            this.versionScriptControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.versionScriptControl1.Name = "versionScriptControl1";
+            this.versionScriptControl1.Size = new System.Drawing.Size(597, 367);
+            this.versionScriptControl1.TabIndex = 7;
+            this.versionScriptControl1.OnLinkReferential += new System.EventHandler(this.VersionScriptControl1_OnLinkReferential);
             // 
             // FVersionDB
             // 

@@ -40,13 +40,13 @@ FROM dbo.Script
 
         public static string SQLInsert
             => @"
-INSERT INTO dbo.Script (
-VersionId, ScriptOrder, ScriptText
-) VALUES (
-@VersionId, @ScriptOrder, @ScriptText
-);
-SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
+INSERT INTO dbo.Script (ScriptOrder, ScriptText, VersionId)
+SELECT COALESCE(MAX(s.ScriptOrder), 0) + 1, @ScriptText, @VersionId
+FROM dbo.Script s
+WHERE s.VersionId = @VersionId
+;
 ";
+
         public static string SQLUpdate
             => @"
 UPDATE dbo.Script 

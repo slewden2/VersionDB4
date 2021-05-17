@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using VersionDB4Lib.Business;
 
@@ -13,6 +14,8 @@ namespace VersionDB4Lib.CRUD
         public string ObjectSchema { get; set; }
         public string ObjectName { get; set; }
 
+        public string ObjectColumn { get; set; }  // nom utilisé pour les colonnes, les index et les contraintes
+
         public bool ObjectDeleted { get; set; }
         public bool ObjectEmpty { get; set; }
         public string ObjectSql { get; set; }
@@ -21,14 +24,30 @@ namespace VersionDB4Lib.CRUD
 
         public int? ClientCodeId { get; set; }
 
-        public int? ScriptId { get; set; }
+        public string TypeObjectName() => TypeObject.List().First(x => x.TypeObjectId == TypeObjectId).TypeObjectName;
 
         public override string ToString()
-            => TypeObjectId == 11 ? ObjectName : $"{ObjectSchema}.{ObjectName}";  // un schéma (11) a juste un nom !
+        {
+            if (TypeObjectId == TypeObject.Schema)
+            {
+                return ObjectName;
+            }
+            else if (TypeObjectId == TypeObject.Index || TypeObjectId == TypeObject.ForeignKey || TypeObjectId == TypeObject.Constraint)
+            {
+                string sch = string.IsNullOrWhiteSpace(ObjectSchema) ? string.Empty : $"{ObjectSchema}.";
+                return $"{ObjectColumn} de la table {sch}{ObjectName}"; 
+            }
+            else
+            {
+                string sch = string.IsNullOrWhiteSpace(ObjectSchema) ? string.Empty : $"{ObjectSchema}.";
+                return $"{sch}{ObjectName}";
+            }
+        }
+
         public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.SqlObject;
 
         public static string SQLSelect => @"
-SELECT ObjectId, VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ScriptId
+SELECT ObjectId, VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ObjectColumn
 FROM dbo.Object o
 WHERE VersionId = @VersionId
   AND o.ObjectDeleted = 0
@@ -36,11 +55,22 @@ WHERE VersionId = @VersionId
 
         public static string SQlSelectWithVersionAndType => SQLSelect + " AND TypeObjectId = @TypeObjectId";
         public static string SQLInsert => @"
-INSERT INTO dbo.Object (VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ScriptId
+INSERT INTO dbo.Object (VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ObjectColumn
 ) VALUES (
-@VersionId, @TypeObjectId, @ObjectSchema, @ObjectName, @ObjectDeleted, @ObjectEmpty, @ObjectSql, @ObjectLockedBy, @ClientCodeId, @ScriptId
+@VersionId, @TypeObjectId, @ObjectSchema, @ObjectName, @ObjectDeleted, @ObjectEmpty, @ObjectSql, @ObjectLockedBy, @ClientCodeId, @ObjectColumn
 );
 SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
+";
+        public static string SQLUpdate => @"
+UPDATE dbo.Object 
+SET ObjectSchema  = @ObjectSchema
+  , ObjectName    = @ObjectName
+  , ObjectDeleted = @ObjectDeleted
+  , ObjectEmpty   = @ObjectEmpty
+  , ObjectSql     = @ObjectSql
+  , ClientCodeId  = @ClientCodeId
+  , ObjectColumn  = @ObjectColumn  
+WHERE ObjectId = @ObjectId
 ";
 
         public static string SQLDelete => @"

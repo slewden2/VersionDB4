@@ -1,26 +1,30 @@
 
 --- référentiel des types a gérer
 
-DELETE FROM dbo.Object
-DELETE FROM dbo.TypeObject
+--DELETE FROM dbo.Object
+--DELETE FROM dbo.TypeObject
 
 SET IDENTITY_INSERT dbo.TypeObject ON;
-
 INSERT INTO dbo.TypeObject (TypeObjectId, TypeObjectSqlServerCode, TypeObjectName, TypeObjectPlurial, TypeObjectPrestentOrder) VALUES 
   (0, '', 'Aucun', '', 255) 
 , (1, 'P', 'Procédure stockée', 'Les procédures stockées', 3)
 , (2, 'FN', 'Fonction scalaire', 'Les fonctions scalaires', 4)
 , (3, 'IF', 'Fonction table en ligne', 'Les fonctions tables (en ligne)', 5)
-, (4, 'TF', 'Fonction table', 'Les fonctions table (instructions multiples)', 6)
+, (4, 'TF', 'Fonction table', 'Les fonctions tables (instructions multiples)', 6)
 , (5, 'V', 'Vue', 'Les vues', 2)
-, (6, 'TR', 'Trigger', 'Les triggers', 11)
-, (7, 'IDX', 'Index', 'Les index', 10)
-, (8, 'SCH', 'Schema', 'Les schémas', 12)
+, (6, 'TR', 'Trigger', 'Les triggers', 12)
+, (7, 'IDX', 'Index', 'Les index', 11)
+, (8, 'SCH', 'Schema', 'Les schémas', 13)
 , (9, 'U', 'Table', 'Les tables', 1)
-, (10, 'TT', 'Type de table', 'Les types de données Table', 7)
+, (10, 'TT', 'Type de table', 'Les types de données table', 7)
 , (11, 'TD', 'Type de données', 'Les types de données', 8)
 , (12, 'F', 'Référence', 'Les références', 9)
+, (13, 'C', 'Contrainte', 'Les contraintes', 10)
+
 SET IDENTITY_INSERT dbo.TypeObject OFF;
+
+---UPDATE dbo.TypeObject SET TypeObjectPlurial = 'Les contraintes' WHERE TypeObjectId = 13
+---UPDATE dbo.TypeObject SET TypeObjectSqlServerCode = 'C' WHERE TypeObjectId = 13
 
 SELECT *  From TypeObject ORDER BY TypeObjectPrestentOrder
 
@@ -61,3 +65,4 @@ SELECt * FRom dbo.SqlAction
 --        , (14, 'Delete', 0, 1, 0, 'Suppression de données dans'), (15, 'Execute', 0, 0, 0, 'Execution de')
 --        , (16, 'AddColumNotNull', 1, 1, 0, 'Ajout de colonne non nulle à'), (17, 'RaiseError', 0, 0, 0, 'Erreur programmée'), (18, 'Print', 0, 0, 0, 'Affichage d''un message');
 --SET IDENTITY_INSERT dbo.SqlAction OFF;
+

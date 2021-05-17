@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace VersionDB4Lib.CRUD
+namespace VersionDB4Lib.Business.Scripting
 {
     public class AnalyzeBase
     {

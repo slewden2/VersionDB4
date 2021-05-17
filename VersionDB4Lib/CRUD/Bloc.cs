@@ -89,7 +89,7 @@ namespace VersionDB4Lib.CRUD
         {
             if (this.SqlActionId == SqlAction.CodeClient)
             {
-                return $"Bloc CodeClientIs({GetClientCode().ClientCodeName}) at ({BlocIndex}, {BlocLength})";
+                return $"Bloc CodeClientIs({GetClientCode()?.ClientCodeName ?? ClientCodeId.ToString()}) at ({BlocIndex}, {BlocLength})";
             }
 
             return EnumHelper.ToString(GetAction(), GetWhat(), BlocDatabase, BlocSchema, BlocName, BlocColumn) + $" at ({BlocIndex}, {BlocLength})";
@@ -126,6 +126,7 @@ FROM dbo.Bloc
                 DatabaseObjectDatabase = BlocDatabase,
                 DatabaseObjectSchema = BlocSchema,
                 DatabaseObjectName = BlocName,
+                DatabaseObjectColumn = BlocColumn,
                 ScriptId = ScriptId,
                 TypeObjectId = TypeObjectId
             };

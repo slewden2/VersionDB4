@@ -1,9 +1,7 @@
 ﻿using System;
 using DatabaseAndLogLibrary.DataBase;
-using VersionDB4Lib.CRUD;
-using Version = VersionDB4Lib.CRUD.Version;
+using VersionDB4Lib.Business.Scripting;
 using Object = VersionDB4Lib.CRUD.Object;
-
 
 namespace Tests
 {
@@ -70,6 +68,6 @@ namespace Tests
                 Console.WriteLine($"  Version {o}");
             }
 
-        } 
+        }
     }
 }

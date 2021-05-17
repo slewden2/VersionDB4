@@ -1,0 +1,110 @@
+[
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 1,
+    "Text": "--- DBComparer la procédure",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 1,
+    "Text": "--- DBComparer procedure",
+    "Result": false
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 2,
+    "Text": "--- DBComparer création de la fonction scalaire xxxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 3,
+    "Text": "--- DBComparer création de la fonction table en ligne xxxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 2,
+    "Text": "--- DBComparer création de la fonction  scalaire xxxx",
+    "Result": false
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 3,
+    "Text": "--- DBComparer création de la fonction  table xxxx",
+    "Result": false
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 4,
+    "Text": "--- DBComparer création de la fonction table à instructions multiples xxxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 5,
+    "Text": "--- DBComparer création de la vue xxxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 6,
+    "Text": "--- DBComparer création le déclencheur xxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 7,
+    "Text": "--- DBComparer création le l'index xxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 8,
+    "Text": "--- DBComparer création le schéma xxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 9,
+    "Text": "--- DBComparer création de la table xxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 10,
+    "Text": "--- DBComparer création le type de données table xxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 11,
+    "Text": "--- DBComparer création le type de données table xxx",
+    "Result": false
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 11,
+    "Text": "--- DBComparer création le type de données élémentaire xxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 10,
+    "Text": "--- DBComparer création le type de données élémentaire xxx",
+    "Result": false
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 12,
+    "Text": "--- DBComparer création de la référence xxx",
+    "Result": true
+  },
+  {
+    "SqlActionId": 1,
+    "SqlWhatId": 13,
+    "Text": "--- DBComparer création de la contrainte xxx",
+    "Result": true
+  }
+]

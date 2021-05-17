@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VersionDB4Lib", "VersionDB4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VersionDB4", "VersionDB4\VersionDB4.csproj", "{127FC8BC-6FAA-4B2A-9612-33980DD6BB48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersionDB4LibUnitTests", "VersionDB4LibUnitTests\VersionDB4LibUnitTests.csproj", "{19ADCBCE-6B01-40EB-9440-9A84507B7885}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VersionDB4LibUnitTests", "VersionDB4LibUnitTests\VersionDB4LibUnitTests.csproj", "{19ADCBCE-6B01-40EB-9440-9A84507B7885}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLangage", "TestLangage\TestLangage.csproj", "{A78B0B7A-4342-429B-9637-50579F8B9F2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{19ADCBCE-6B01-40EB-9440-9A84507B7885}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19ADCBCE-6B01-40EB-9440-9A84507B7885}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19ADCBCE-6B01-40EB-9440-9A84507B7885}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A78B0B7A-4342-429B-9637-50579F8B9F2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A78B0B7A-4342-429B-9637-50579F8B9F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A78B0B7A-4342-429B-9637-50579F8B9F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A78B0B7A-4342-429B-9637-50579F8B9F2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
