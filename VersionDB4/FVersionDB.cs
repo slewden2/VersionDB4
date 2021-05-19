@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DatabaseAndLogLibrary.DataBase;
 using VersionDB4Lib.Business;
 using VersionDB4Lib.Business.SqlAnalyze;
 using VersionDB4Lib.CRUD;
 using VersionDB4Lib.ForUI;
+using VersionDB4Lib.UI;
 using Object = VersionDB4Lib.CRUD.Object;
 using Version = VersionDB4Lib.CRUD.Version;
 
@@ -31,6 +33,8 @@ namespace VersionDB4
         public FVersionDB()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
+            this.ResizeRedraw = true;
 
             rdClients.Checked = false;
             rdReferential.Checked = false;
@@ -42,12 +46,14 @@ namespace VersionDB4
             var filter = new { ProjectId = projectId };
             project = cnn.QueryFirstOrDefault<Project>(Project.SQLSelect + " WHERE ProjectId = @ProjectId;", filter);
 
-            this.Text = $"VersionDB4 - {project}";
+            lblTitle.Text = $"VersionDB4 - {project}";
 
             FillReferentialListOfVersions();
         }
 
         #region Events
+
+
         private void FVersionDB_Load(object sender, EventArgs e)
             => ProcessAction(EAction.ProjectScriptReload);
 
@@ -95,6 +101,7 @@ namespace VersionDB4
             {
                 SelectionneVersionObjet(version.VersionId);
                 rdReferential.Checked = true;
+                ProcessAction(EAction.ProjectReferentialReload);
             }
         }
 
@@ -117,17 +124,20 @@ namespace VersionDB4
                     pnlVersion.Visible = false;
                     lblVersion.Visible = true;
                     FillClientTreeView();
+                    SetRightPanel(ERightPanelMode.Clients);
                     break;
                 case EAction.ProjectScriptReload:
                     pnlVersion.Visible = false;
                     lblVersion.Visible = false;
                     FillScriptTreeView();
+                    SetRightPanel(ERightPanelMode.Versions);
                     break;
                 case EAction.ProjectReferentialReload:
                     FillReferentialListOfVersions();
                     pnlVersion.Visible = true;
                     lblVersion.Visible = false;
                     FillReferentialTreeView();
+                    SetRightPanel(ERightPanelMode.Referential);
                     break;
                 #endregion
                 #region Clients
@@ -269,8 +279,10 @@ namespace VersionDB4
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script scriptA)
                     {
                         using var frm = new FDetailScript();
+                        Program.Settings.PositionLoad(frm);
                         frm.Script = scriptA;
                         frm.ShowDialog(this);
+                        Program.Settings.PositionSave(frm);
                     }
 
                     break;
@@ -559,7 +571,7 @@ namespace VersionDB4
                 switch (cat)
                 {
                     case ETypeObjectPresentable.Project:
-                        SetRightPanel(ERightPanelMode.List);
+                        SetRightPanel(ERightPanelMode.Versions);
                         break;
                     case ETypeObjectPresentable.VersionScript:
                         if (selectedNode.Tag is VersionScriptCounter version)
@@ -571,7 +583,7 @@ namespace VersionDB4
                         SetRightPanel(ERightPanelMode.VersionScript);
                         break;
                     case ETypeObjectPresentable.Clients:
-                        SetRightPanel(ERightPanelMode.List);
+                        SetRightPanel(ERightPanelMode.Clients);
                         break;
                     case ETypeObjectPresentable.Client:
                         if (selectedNode.Tag != null && selectedNode.Tag is Base baseClient)
@@ -582,11 +594,11 @@ namespace VersionDB4
                         break;
                     case ETypeObjectPresentable.VersionReferential:
                         lblType.Text = $"Version {presentable}";
-                        SetRightPanel(ERightPanelMode.List);
+                        SetRightPanel(ERightPanelMode.Referential);
                         break;
                     case ETypeObjectPresentable.SqlGroup:
                         lblType.Text = $"Liste des {presentable}";
-                        SetRightPanel(ERightPanelMode.List);
+                        SetRightPanel(ERightPanelMode.Referential);
                         break;
                     case ETypeObjectPresentable.SqlObject:
                         SetRightPanel(ERightPanelMode.TextSqlReadOnly);
@@ -669,6 +681,7 @@ namespace VersionDB4
             switch (mode)
             {
                 case ERightPanelMode.BaseClient:
+                    pictureBox1.Visible = false;
                     versionScriptControl1.Visible = false;
                     sqlTextBox1.Visible = false;
                     baseClientControl1.Visible = true;
@@ -678,22 +691,47 @@ namespace VersionDB4
                     sqlTextBox1.Visible = true;
                     sqlTextBox1.ReadOnly = false;
                     baseClientControl1.Visible = false;
+                    pictureBox1.Visible = false;
                     break;
                 case ERightPanelMode.TextSqlReadOnly:
                     versionScriptControl1.Visible = false;
                     sqlTextBox1.Visible = true;
                     sqlTextBox1.ReadOnly = true;
                     baseClientControl1.Visible = false;
+                    pictureBox1.Visible = false;
                     break;
                 case ERightPanelMode.VersionScript:
                     versionScriptControl1.Visible = true;
                     sqlTextBox1.Visible = false;
                     baseClientControl1.Visible = false;
+                    pictureBox1.Visible = false;
+                    break;
+                case ERightPanelMode.Clients:
+                    versionScriptControl1.Visible = false;
+                    sqlTextBox1.Visible = false;
+                    baseClientControl1.Visible = false;
+                    pictureBox1.BackgroundImage = Properties.Resources.Client;
+                    pictureBox1.Visible = true;
+                    break;
+                case ERightPanelMode.Referential:
+                    versionScriptControl1.Visible = false;
+                    sqlTextBox1.Visible = false;
+                    baseClientControl1.Visible = false;
+                    pictureBox1.BackgroundImage = Properties.Resources.Referentiel;
+                    pictureBox1.Visible = true;
+                    break;
+                case ERightPanelMode.Versions:
+                    versionScriptControl1.Visible = false;
+                    sqlTextBox1.Visible = false;
+                    baseClientControl1.Visible = false;
+                    pictureBox1.BackgroundImage = Properties.Resources.Table;
+                    pictureBox1.Visible = true;
                     break;
                 default:
                     versionScriptControl1.Visible = false;
                     sqlTextBox1.Visible = false;
                     baseClientControl1.Visible = false;
+                    pictureBox1.Visible = false;
                     break;
             }
         }
@@ -759,44 +797,51 @@ namespace VersionDB4
         private int NewVersion()
         {
             using var frm = new FNewVersion();
+            Program.Settings.PositionLoad(frm);
             frm.SetVersion(
                     new Version() { ProjectId = projectId, VersionPrincipal = lastVersion.VersionPrincipal, VersionSecondary = lastVersion.VersionSecondary + 1 },
                     new Version() { ProjectId = projectId, VersionPrincipal = lastVersion.VersionPrincipal + 1, VersionSecondary = 0 });
+            int id = 0;
             if (frm.ShowDialog(this) == DialogResult.OK)
             {
                 using var cnn = new DatabaseConnection();
-                return cnn.ExecuteScalar(Version.SQLInsert, frm.Choice());
+                id = cnn.ExecuteScalar(Version.SQLInsert, frm.Choice());
             }
 
-            return 0;
+            Program.Settings.PositionSave(frm);
+            return id;
         }
 
         private int ClientNew()
         {
             using var frm = new FEditBase();
+            Program.Settings.PositionLoad(frm);
             bool res = frm.ShowDialog(this) == DialogResult.OK;
+            int id = 0;
             if (res)
             {
                 using var cnn = new DatabaseConnection();
-                return cnn.ExecuteScalar(Base.SQLInsert, frm.Base);
+                id = cnn.ExecuteScalar(Base.SQLInsert, frm.Base);
             }
 
-            return 0;
+            Program.Settings.PositionSave(frm);
+            return id;
         }
 
         private bool ClientEdit(Base client)
         {
             using var frm = new FEditBase();
+            Program.Settings.PositionLoad(frm); 
             frm.Base = client;
             bool res = frm.ShowDialog(this) == DialogResult.OK;
             if (res)
             {
                 using var cnn = new DatabaseConnection();
                 cnn.Execute(Base.SQLUpdate, frm.Base);
-                return true;
             }
 
-            return false;
+            Program.Settings.PositionSave(frm);
+            return res;
         }
         #endregion
 
@@ -806,7 +851,10 @@ namespace VersionDB4
             TextSqlEdition,
             BaseClient,
             VersionScript,
-            List
+            Clients,
+            Referential,
+            Versions
         }
+
     }
 }

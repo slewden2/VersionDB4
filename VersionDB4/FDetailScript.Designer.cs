@@ -30,13 +30,14 @@ namespace VersionDB4
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtSql = new System.Windows.Forms.RichTextBox();
+            this.txtSql = new VersionDB4.Control.SqlTextBox();
             this.panel5 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.lstResume = new System.Windows.Forms.ListBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.controlWindow1 = new VersionDB4Lib.UI.ControlWindow();
             this.BtnRefuseAll = new System.Windows.Forms.Button();
             this.btnValidAll = new System.Windows.Forms.Button();
             this.btReload = new System.Windows.Forms.Button();
@@ -68,9 +69,8 @@ namespace VersionDB4
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(1, 1);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -82,31 +82,30 @@ namespace VersionDB4
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(985, 611);
-            this.splitContainer1.SplitterDistance = 600;
+            this.splitContainer1.Size = new System.Drawing.Size(984, 610);
+            this.splitContainer1.SplitterDistance = 599;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.TabStop = false;
             // 
             // txtSql
             // 
-            this.txtSql.AcceptsTab = true;
+            this.txtSql.BackColor = System.Drawing.SystemColors.Window;
             this.txtSql.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtSql.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSql.Enabled = false;
-            this.txtSql.HideSelection = false;
             this.txtSql.Location = new System.Drawing.Point(20, 100);
             this.txtSql.Name = "txtSql";
-            this.txtSql.Size = new System.Drawing.Size(580, 511);
+            this.txtSql.ReadOnly = true;
+            this.txtSql.Size = new System.Drawing.Size(579, 510);
             this.txtSql.TabIndex = 0;
             this.txtSql.Text = "";
             // 
             // panel5
             // 
-            this.panel5.BackColor = System.Drawing.SystemColors.Control;
+            this.panel5.BackColor = System.Drawing.SystemColors.Window;
             this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel5.Location = new System.Drawing.Point(0, 100);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(20, 511);
+            this.panel5.Size = new System.Drawing.Size(20, 510);
             this.panel5.TabIndex = 2;
             // 
             // panel1
@@ -115,18 +114,21 @@ namespace VersionDB4
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(600, 100);
+            this.panel1.Size = new System.Drawing.Size(599, 100);
             this.panel1.TabIndex = 1;
             // 
             // lblTitle
             // 
-            this.lblTitle.AutoSize = true;
+            this.lblTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblTitle.Location = new System.Drawing.Point(12, 9);
+            this.lblTitle.Location = new System.Drawing.Point(0, -1);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(74, 32);
+            this.lblTitle.Size = new System.Drawing.Size(599, 40);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "Script";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblTitle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LblTitle_MouseDown);
             // 
             // splitContainer2
             // 
@@ -143,8 +145,8 @@ namespace VersionDB4
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(381, 611);
-            this.splitContainer2.SplitterDistance = 200;
+            this.splitContainer2.Size = new System.Drawing.Size(381, 610);
+            this.splitContainer2.SplitterDistance = 199;
             this.splitContainer2.TabIndex = 0;
             // 
             // lstResume
@@ -156,11 +158,12 @@ namespace VersionDB4
             this.lstResume.ItemHeight = 20;
             this.lstResume.Location = new System.Drawing.Point(0, 100);
             this.lstResume.Name = "lstResume";
-            this.lstResume.Size = new System.Drawing.Size(381, 100);
+            this.lstResume.Size = new System.Drawing.Size(381, 99);
             this.lstResume.TabIndex = 1;
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.controlWindow1);
             this.panel2.Controls.Add(this.BtnRefuseAll);
             this.panel2.Controls.Add(this.btnValidAll);
             this.panel2.Controls.Add(this.btReload);
@@ -170,6 +173,19 @@ namespace VersionDB4
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(381, 100);
             this.panel2.TabIndex = 0;
+            // 
+            // controlWindow1
+            // 
+            this.controlWindow1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.controlWindow1.Font = new System.Drawing.Font("Segoe MDL2 Assets", 7.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.controlWindow1.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.controlWindow1.Location = new System.Drawing.Point(246, 0);
+            this.controlWindow1.MaximumSize = new System.Drawing.Size(135, 31);
+            this.controlWindow1.MinimumSize = new System.Drawing.Size(135, 31);
+            this.controlWindow1.Name = "controlWindow1";
+            this.controlWindow1.Size = new System.Drawing.Size(135, 31);
+            this.controlWindow1.TabIndex = 4;
+            this.controlWindow1.Text = "controlWindow1";
             // 
             // BtnRefuseAll
             // 
@@ -307,17 +323,22 @@ namespace VersionDB4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(985, 611);
+            this.ClientSize = new System.Drawing.Size(986, 612);
             this.Controls.Add(this.splitContainer1);
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FDetailScript";
+            this.Padding = new System.Windows.Forms.Padding(1);
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "FDetailScript";
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.FDetailScript_Paint);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
@@ -339,7 +360,7 @@ namespace VersionDB4
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.RichTextBox txtSql;
+        private VersionDB4.Control.SqlTextBox txtSql;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ListBox lstResume;
@@ -357,5 +378,6 @@ namespace VersionDB4
         private System.Windows.Forms.Button btnValidAll;
         private System.Windows.Forms.Button BtnRefuseAll;
         private System.Windows.Forms.Panel panel5;
+        private VersionDB4Lib.UI.ControlWindow controlWindow1;
     }
 }

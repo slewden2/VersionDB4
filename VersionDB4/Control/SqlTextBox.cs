@@ -64,6 +64,10 @@ namespace VersionDB4.Control
             get => richTextBox1.ContextMenuStrip;
             set => richTextBox1.ContextMenuStrip = value;
         }
+
+
+        public void Select(int start, int length)
+            => richTextBox1.Select(start, length);
         #endregion
 
         #region  Events interne

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -15,11 +16,19 @@ namespace VersionDB4Lib.UI
             DrawMode = DrawMode.OwnerDrawFixed;
         }
 
+        [DefaultValue(typeof(Color), "0xFF92CE0")]
+        public Color SelectedColor { get; set; } = Color.FromArgb(146, 192, 224);
+
+
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
-            e.DrawBackground();
+
             if (e.Index >= 0)
             {
+                var color = ((e.State & DrawItemState.Selected) == DrawItemState.Selected) ? SelectedColor : BackColor;
+                using var br = new SolidBrush(color);
+                e.Graphics.FillRectangle(br, e.Bounds);
+
                 // texte
                 var txt = this.Items[e.Index].ToString() + " ";
                 var sz = e.Graphics.MeasureString(txt, Font);

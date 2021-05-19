@@ -98,18 +98,18 @@ namespace VersionDB4Lib.Business.Scripting
             => myobject.TypeObjectId switch
             {
                 1 => $"DROP PROCEDURE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                2 => $"DROP FUNCTION  [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                3 => $"DROP FUNCTION  [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                4 => $"DROP FUNCTION  [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                5 => $"DROP VIEW      [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                6 => $"DROP TRIGGER   [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                7 => $"DROP INDEX  [{myobject.ObjectColumn}] ON  [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                8 => $"DROP SCHEMA [{myobject.ObjectName}]",
-                9 => $"DROP TABLE     [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                10 => $"DROP TYPE     [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                11 => $"DROP TYPE     [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                12 => $"ALTER TABLE   [{myobject.ObjectSchema}].[{myobject.ObjectName}]  DROP CONSTRAINT [{myobject.ObjectColumn}];",
-                13 => $"ALTER TABLE   [{myobject.ObjectSchema}].[{myobject.ObjectName}]  DROP CONSTRAINT [{myobject.ObjectColumn}];",
+                2 => $"DROP FUNCTION [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                3 => $"DROP FUNCTION [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                4 => $"DROP FUNCTION [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                5 => $"DROP VIEW [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                6 => $"DROP TRIGGER [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                7 => $"DROP INDEX [{myobject.ObjectColumn}] ON  [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                8 => $"DROP SCHEMA [{myobject.ObjectName}];",
+                9 => $"DROP TABLE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                10 => $"DROP TYPE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                11 => $"DROP TYPE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                12 => $"ALTER TABLE [{myobject.ObjectSchema}].[{myobject.ObjectName}] DROP CONSTRAINT [{myobject.ObjectColumn}];",
+                13 => $"ALTER TABLE [{myobject.ObjectSchema}].[{myobject.ObjectName}] DROP CONSTRAINT [{myobject.ObjectColumn}];",
                 _ => string.Empty
             };
     }

@@ -76,7 +76,12 @@ namespace VersionDB4
                     ScriptText = script.ToString(),
                     VersionId = currentObjectEdited.VersionId,
                 };
-                cnn.ExecuteScalar(Script.SQLInsert, crudScript);
+                var scriptId = cnn.ExecuteScalar(Script.SQLInsert, crudScript);
+
+                // Ajouter l'anlyse pour ce script
+                var analyzer = SqlAnalyzer.Analyse(scriptId, crudScript.ScriptText);
+                analyzer.Save(cnn);
+
 
                 CancelEdition(null);
                 FillReferentialTypeObject(treeView1.SelectedNode, versionObjectCounterAddEnd, typeObjetAddEnd, true);
@@ -90,38 +95,44 @@ namespace VersionDB4
         {
             if (currentObjectEdited != null)
             {
-                currentObjectEdited.ObjectSql = sqlTextBox1.Text;
-                AnalyseEntete();
-                if (string.IsNullOrWhiteSpace(currentObjectEdited.ObjectName))
+                if (sqlTextBox1.Text != currentObjectEdited.ObjectSql)
                 {
-                    MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.TypeObjectName()}", "Mise à jour imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                    currentObjectEdited.ObjectSql = sqlTextBox1.Text;
+                    AnalyseEntete();
+                    if (string.IsNullOrWhiteSpace(currentObjectEdited.ObjectName))
+                    {
+                        MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.TypeObjectName()}", "Mise à jour imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
 
-                currentObjectEdited.ObjectDeleted = false;
-                currentObjectEdited.ObjectEmpty = false;
-                using var cnn = new DatabaseConnection();
-                cnn.Execute(Object.SQLUpdate, currentObjectEdited);
+                    currentObjectEdited.ObjectDeleted = false;
+                    currentObjectEdited.ObjectEmpty = false;
+                    using var cnn = new DatabaseConnection();
+                    cnn.Execute(Object.SQLUpdate, currentObjectEdited);
 
-                // Ajouter un script à la version 
-                var script = new ScriptObject(currentObjectEdited, new SqlAction() { SqlActionId = SqlAction.Alter });
-                var crudScript = new Script()
-                {
-                    ScriptText = script.ToString(),
-                    VersionId = currentObjectEdited.VersionId,
-                };
-                cnn.ExecuteScalar(Script.SQLInsert, crudScript);
+                    // Ajouter un script à la version 
+                    var script = new ScriptObject(currentObjectEdited, new SqlAction() { SqlActionId = SqlAction.Alter });
+                    var crudScript = new Script()
+                    {
+                        ScriptText = script.ToString(),
+                        VersionId = currentObjectEdited.VersionId,
+                    };
+                    var scriptId = cnn.ExecuteScalar(Script.SQLInsert, crudScript);
 
-                if (treeView1.SelectedNode.Text != currentObjectEdited.ToString())
-                {
-                    treeView1.SelectedNode.Text = currentObjectEdited.ToString();
-                    treeView1.SelectedNode.Tag = currentObjectEdited;
+                    // Ajouter l'anlyse pour ce script
+                    var analyzer = SqlAnalyzer.Analyse(scriptId, crudScript.ScriptText);
+                    analyzer.Save(cnn);
+
+                    if (treeView1.SelectedNode.Text != currentObjectEdited.ToString())
+                    {
+                        treeView1.SelectedNode.Text = currentObjectEdited.ToString();
+                        treeView1.SelectedNode.Tag = currentObjectEdited;
+                    }
                 }
 
                 CancelEdition(treeView1.SelectedNode);
             }
         }
-
 
         private void PRocessSqlObjectDelete()
         {
@@ -141,7 +152,11 @@ namespace VersionDB4
                         ScriptText = script.ToString(),
                         VersionId = currentObjectEdited.VersionId,
                     };
-                    cnn.ExecuteScalar(Script.SQLInsert, crudScript);
+                    var scriptId = cnn.ExecuteScalar(Script.SQLInsert, crudScript);
+                    
+                    // Ajouter l'anlyse pour ce script
+                    var analyzer = SqlAnalyzer.Analyse(scriptId, crudScript.ScriptText);
+                    analyzer.Save(cnn);
 
                     var parent = treeView1.SelectedNode.Parent;
                     if (parent != null && parent.Tag != null && parent.Tag is TypeObjectCounter typeObjectCounterDel)

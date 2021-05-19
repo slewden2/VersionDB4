@@ -72,7 +72,7 @@ namespace VersionDB4Lib.CRUD
         public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
         public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
 
-        public IEnumerable<ClientCode> Clients { get; set; }
+        public IEnumerable<ClientCode> Clients { get; set; } = new List<ClientCode>();
 
         /// <summary>
         /// Pour affichage

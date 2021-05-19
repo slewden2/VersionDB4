@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using DatabaseAndLogLibrary.DataBase;
@@ -14,6 +15,10 @@ namespace VersionDB4
 {
     public partial class FDetailScript : Form
     {
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+
         private Script myScript;
         public FDetailScript() => InitializeComponent();
 
@@ -27,8 +32,6 @@ namespace VersionDB4
                 {
                     lblTitle.Text = myScript.ToString();
                     txtSql.Text = myScript.ScriptText;
-                    SqlColorizer.Colorise(txtSql);
-
                     LoadScriptAnalyses();
                 }
             }
@@ -86,5 +89,33 @@ namespace VersionDB4
             cnn.Execute(Script.SQLRefuseAll, myScript);
             LoadScriptAnalyses();
         }
+
+        #region Look
+
+        [DllImportAttribute("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImportAttribute("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        protected override void WndProc(ref Message m)
+        {
+            if (!ControlWindow.ProcessWndProcForSizingWindow(this, ref m))
+            {
+                base.WndProc(ref m);
+            }
+        }
+
+        private void LblTitle_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(this.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+
+        private void FDetailScript_Paint(object sender, PaintEventArgs e)
+            => e.Graphics.DrawRectangle(SystemPens.ControlDark, 0, 0, ClientSize.Width - 1, ClientSize.Height - 1);
+        #endregion
     }
 }

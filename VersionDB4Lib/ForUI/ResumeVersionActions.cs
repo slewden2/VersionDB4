@@ -17,7 +17,7 @@ namespace VersionDB4Lib.ForUI
 
         public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
 
-        public override string ToString() => $"{GetAction().SqlActionTitle} {GetWhat().TypeObjectName}";
+        public override string ToString() => $"{GetAction().SqlActionTitle} {GetWhat().TypeObjectName.ToLower()}";
 
         public static string SQLSelect => @"
 SELECT r.SqlActionId, r.TypeObjectId, COUNT(*) AS [Count]

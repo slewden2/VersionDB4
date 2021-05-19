@@ -216,7 +216,7 @@ namespace VersionDB4Lib.Business
             }
             else
             {
-                return $"{action.SqlActionTitle} {applyOn.TypeObjectName} {ToString(database, schema, name)}";
+                return $"{action.SqlActionTitle} {applyOn.TypeObjectName.ToLower()} {ToString(database, schema, name)}";
             }
         }
 

@@ -44,6 +44,12 @@ namespace VersionDB4Lib.CRUD
         /// </summary>
         public string DatabaseObjectColumn { get; set; }
 
+        public static string SQLSelect
+            => @"
+SELECT DatabaseObjectId, ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn
+FROM dbo.DatabaseObject
+";
+
 
         public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
         public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
@@ -51,11 +57,24 @@ namespace VersionDB4Lib.CRUD
         public override string ToString() 
             => $"{GetWhat().TypeObjectName} {EnumHelper.ToString(DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName)}";
 
-        public static string SQLSelect
-            => @"
-SELECT DatabaseObjectId, ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn
-FROM dbo.DatabaseObject
-";
+
+        public override int GetHashCode()
+            => HashCode.Combine(ScriptId, TypeObjectId, DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn);
+
+        public override bool Equals(object obj)
+        {
+            if (obj is DataBaseObject bl)
+            {
+                return this.ScriptId == bl.ScriptId
+                    && this.TypeObjectId == bl.TypeObjectId
+                    && (this.DatabaseObjectDatabase == bl.DatabaseObjectDatabase || (string.IsNullOrWhiteSpace(this.DatabaseObjectDatabase) && string.IsNullOrWhiteSpace(bl.DatabaseObjectDatabase)))
+                    && (this.DatabaseObjectSchema == bl.DatabaseObjectSchema || (string.IsNullOrWhiteSpace(this.DatabaseObjectSchema) && string.IsNullOrWhiteSpace(bl.DatabaseObjectSchema)))
+                    && (this.DatabaseObjectName == bl.DatabaseObjectName || (string.IsNullOrWhiteSpace(this.DatabaseObjectName) && string.IsNullOrWhiteSpace(bl.DatabaseObjectName)))
+                    && (this.DatabaseObjectColumn == bl.DatabaseObjectColumn || (string.IsNullOrWhiteSpace(this.DatabaseObjectColumn) && string.IsNullOrWhiteSpace(bl.DatabaseObjectColumn)));
+            }
+
+            return false;
+        }
 
 
     }

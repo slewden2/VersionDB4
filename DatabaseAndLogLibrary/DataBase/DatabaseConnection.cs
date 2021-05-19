@@ -32,7 +32,7 @@ namespace DatabaseAndLogLibrary.DataBase
         protected DbTransaction transaction;
         protected bool bufferd = true;
 
-        private string customConnectionString = string.Empty;
+        private readonly string customConnectionString = string.Empty;
 
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="DatabaseConnection"/>

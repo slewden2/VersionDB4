@@ -29,6 +29,7 @@ namespace VersionDB4
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FVersionDB));
             this.treeView1 = new VersionDB4Lib.UI.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblVersion = new System.Windows.Forms.Label();
@@ -38,6 +39,10 @@ namespace VersionDB4
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pnlVersion = new System.Windows.Forms.Panel();
             this.cbVersions = new VersionDB4Lib.UI.ComboBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.controlWindow1 = new VersionDB4Lib.UI.ControlWindow();
             this.lblResumes = new System.Windows.Forms.Label();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.lblType = new System.Windows.Forms.Label();
@@ -50,11 +55,13 @@ namespace VersionDB4
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.pnlVersion.SuspendLayout();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // treeView1
             // 
-            this.treeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.treeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(247)))));
             this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
@@ -62,24 +69,24 @@ namespace VersionDB4
             this.treeView1.HideSelection = false;
             this.treeView1.HotTracking = true;
             this.treeView1.ItemHeight = 24;
-            this.treeView1.Location = new System.Drawing.Point(0, 40);
+            this.treeView1.Location = new System.Drawing.Point(0, 91);
             this.treeView1.Name = "treeView1";
             this.treeView1.ShowLines = false;
             this.treeView1.ShowRootLines = false;
-            this.treeView1.Size = new System.Drawing.Size(400, 370);
+            this.treeView1.Size = new System.Drawing.Size(400, 317);
             this.treeView1.TabIndex = 0;
             this.treeView1.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.TreeView1_BeforeExpand);
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeView1_AfterSelect);
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(247)))));
             this.panel1.Controls.Add(this.lblVersion);
             this.panel1.Controls.Add(this.rdReferential);
             this.panel1.Controls.Add(this.rdClients);
             this.panel1.Controls.Add(this.rdScript);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 410);
+            this.panel1.Location = new System.Drawing.Point(0, 408);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(400, 40);
             this.panel1.TabIndex = 1;
@@ -141,10 +148,12 @@ namespace VersionDB4
             // 
             // splitContainer1
             // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.BackColor = System.Drawing.SystemColors.Window;
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(1, 1);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -152,9 +161,12 @@ namespace VersionDB4
             this.splitContainer1.Panel1.Controls.Add(this.treeView1);
             this.splitContainer1.Panel1.Controls.Add(this.pnlVersion);
             this.splitContainer1.Panel1.Controls.Add(this.panel1);
+            this.splitContainer1.Panel1.Controls.Add(this.panel2);
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.controlWindow1);
             this.splitContainer1.Panel2.Controls.Add(this.lblResumes);
             this.splitContainer1.Panel2.Controls.Add(this.pnlActions);
             this.splitContainer1.Panel2.Controls.Add(this.lblType);
@@ -162,7 +174,7 @@ namespace VersionDB4
             this.splitContainer1.Panel2.Controls.Add(this.baseClientControl1);
             this.splitContainer1.Panel2.Controls.Add(this.versionScriptControl1);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.SplitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(1012, 450);
+            this.splitContainer1.Size = new System.Drawing.Size(1010, 448);
             this.splitContainer1.SplitterDistance = 400;
             this.splitContainer1.TabIndex = 2;
             this.splitContainer1.TabStop = false;
@@ -173,7 +185,7 @@ namespace VersionDB4
             this.pnlVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(247)))));
             this.pnlVersion.Controls.Add(this.cbVersions);
             this.pnlVersion.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlVersion.Location = new System.Drawing.Point(0, 0);
+            this.pnlVersion.Location = new System.Drawing.Point(0, 51);
             this.pnlVersion.Name = "pnlVersion";
             this.pnlVersion.Size = new System.Drawing.Size(400, 40);
             this.pnlVersion.TabIndex = 2;
@@ -187,9 +199,60 @@ namespace VersionDB4
             this.cbVersions.FormattingEnabled = true;
             this.cbVersions.Location = new System.Drawing.Point(3, 6);
             this.cbVersions.Name = "cbVersions";
+            this.cbVersions.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(146)))), ((int)(((byte)(192)))), ((int)(((byte)(224)))));
             this.cbVersions.Size = new System.Drawing.Size(395, 28);
             this.cbVersions.TabIndex = 1;
             this.cbVersions.SelectedIndexChanged += new System.EventHandler(this.CbVersions_SelectedIndexChanged);
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(247)))));
+            this.panel2.Controls.Add(this.lblTitle);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(400, 51);
+            this.panel2.TabIndex = 3;
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblTitle.Location = new System.Drawing.Point(0, 0);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(400, 40);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "label1";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblTitle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.BackgroundImage = global::VersionDB4.Properties.Resources.Referentiel;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(0, 83);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(606, 365);
+            this.pictureBox1.TabIndex = 10;
+            this.pictureBox1.TabStop = false;
+            // 
+            // controlWindow1
+            // 
+            this.controlWindow1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.controlWindow1.Font = new System.Drawing.Font("Segoe MDL2 Assets", 7.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.controlWindow1.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.controlWindow1.Location = new System.Drawing.Point(472, 0);
+            this.controlWindow1.MaximumSize = new System.Drawing.Size(135, 31);
+            this.controlWindow1.MinimumSize = new System.Drawing.Size(135, 31);
+            this.controlWindow1.Name = "controlWindow1";
+            this.controlWindow1.Size = new System.Drawing.Size(135, 31);
+            this.controlWindow1.TabIndex = 9;
+            this.controlWindow1.Text = "controlWindow1";
             // 
             // lblResumes
             // 
@@ -216,12 +279,14 @@ namespace VersionDB4
             this.lblType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblType.AutoEllipsis = true;
-            this.lblType.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblType.Location = new System.Drawing.Point(11, 11);
+            this.lblType.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblType.Location = new System.Drawing.Point(0, 0);
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(586, 30);
+            this.lblType.Size = new System.Drawing.Size(473, 40);
             this.lblType.TabIndex = 1;
             this.lblType.Text = "lblType";
+            this.lblType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             // 
             // sqlTextBox1
             // 
@@ -267,9 +332,13 @@ namespace VersionDB4
             this.ClientSize = new System.Drawing.Size(1012, 450);
             this.Controls.Add(this.splitContainer1);
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FVersionDB";
+            this.Padding = new System.Windows.Forms.Padding(1);
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "VersionDB4";
             this.Load += new System.EventHandler(this.FVersionDB_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.FVersionDB_Paint);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -277,6 +346,8 @@ namespace VersionDB4
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.pnlVersion.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -298,6 +369,10 @@ namespace VersionDB4
         private Control.BaseClientControl baseClientControl1;
         private Control.VersionScriptControl versionScriptControl1;
         private VersionDB4.Control.SqlTextBox sqlTextBox1;
+        private VersionDB4Lib.UI.ControlWindow controlWindow1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

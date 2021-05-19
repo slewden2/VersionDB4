@@ -45,6 +45,7 @@ SELECT COALESCE(MAX(s.ScriptOrder), 0) + 1, @ScriptText, @VersionId
 FROM dbo.Script s
 WHERE s.VersionId = @VersionId
 ;
+SELECT COALESCE(SCOPE_IDENTITY(), @@Identity) AS [Key];
 ";
 
         public static string SQLUpdate
