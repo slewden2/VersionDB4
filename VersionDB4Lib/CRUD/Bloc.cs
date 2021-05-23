@@ -6,7 +6,8 @@ using VersionDB4Lib.Business;
 namespace VersionDB4Lib.CRUD
 {
     /// <summary>
-    /// Un bloc de texte identifié
+    /// Un bloc de texte identifié lors de l'analyse SQL
+    /// Contient  : l'action le type et l'identifier de l'objet
     /// </summary>
     public class Bloc
     {
@@ -72,13 +73,12 @@ namespace VersionDB4Lib.CRUD
         public string BlocColumn { get; set; }
         #endregion
         public SqlAction GetAction() => SqlAction.List().FirstOrDefault(x => x.SqlActionId == SqlActionId);
-        public void SetAction(SqlAction value) => SqlActionId = (value == null ? 0 : value.SqlActionId);
 
         public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
-        public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
 
         public ClientCode GetClientCode() => ClientCodeId == null ? null : ClientCode.List().FirstOrDefault(x => x.ClientCodeId == ClientCodeId);
-        public void SetClientCode(ClientCode value) => ClientCodeId = value == null ? null : (int?)value.ClientCodeId;
+
+        public ObjectIdentifier Identifier => new ObjectIdentifier(BlocName) { DataBase = BlocDatabase, Schema = BlocSchema, Column = BlocColumn };
 
 
         /// <summary>
@@ -92,11 +92,11 @@ namespace VersionDB4Lib.CRUD
                 return $"Bloc CodeClientIs({GetClientCode()?.ClientCodeName ?? ClientCodeId.ToString()}) at ({BlocIndex}, {BlocLength})";
             }
 
-            return EnumHelper.ToString(GetAction(), GetWhat(), BlocDatabase, BlocSchema, BlocName, BlocColumn) + $" at ({BlocIndex}, {BlocLength})";
+            return EnumHelper.ToString(GetAction(), GetWhat(), Identifier) + $" at ({BlocIndex}, {BlocLength})";
         }
 
         public override int GetHashCode()
-            => HashCode.Combine(SqlActionId, TypeObjectId, ClientCodeId, BlocDatabase, BlocSchema, BlocName, BlocColumn);
+            => HashCode.Combine(SqlActionId, TypeObjectId, ClientCodeId, Identifier);
 
         public override bool Equals(object obj)
         {
@@ -105,10 +105,7 @@ namespace VersionDB4Lib.CRUD
                 return this.SqlActionId == bl.SqlActionId
                     && this.TypeObjectId == bl.TypeObjectId
                     && this.ClientCodeId == bl.ClientCodeId
-                    && (this.BlocDatabase == bl.BlocDatabase || (string.IsNullOrWhiteSpace(this.BlocDatabase) && string.IsNullOrWhiteSpace(bl.BlocDatabase)))
-                    && (this.BlocSchema == bl.BlocSchema || (string.IsNullOrWhiteSpace(this.BlocSchema) && string.IsNullOrWhiteSpace(bl.BlocSchema)))
-                    && (this.BlocName == bl.BlocName || (string.IsNullOrWhiteSpace(this.BlocName) && string.IsNullOrWhiteSpace(bl.BlocName)))
-                    && (this.BlocColumn == bl.BlocColumn || (string.IsNullOrWhiteSpace(this.BlocColumn) && string.IsNullOrWhiteSpace(bl.BlocColumn)));
+                    && this.Identifier.Equals(bl.Identifier);
             }
 
             return false;
@@ -123,12 +120,9 @@ FROM dbo.Bloc
         public DataBaseObject GetDatabaseObject()
             => new DataBaseObject() 
             { 
-                DatabaseObjectDatabase = BlocDatabase,
-                DatabaseObjectSchema = BlocSchema,
-                DatabaseObjectName = BlocName,
-                DatabaseObjectColumn = BlocColumn,
                 ScriptId = ScriptId,
-                TypeObjectId = TypeObjectId
+                TypeObjectId = TypeObjectId,
+                Identifier = Identifier
             };
 
         /// <summary>
@@ -145,10 +139,7 @@ FROM dbo.Bloc
                     ScriptId = this.ScriptId,
                     SqlActionId = this.SqlActionId,
                     TypeObjectId = this.TypeObjectId,
-                    ResumeDatabase = this.BlocDatabase,
-                    ResumeSchema = this.BlocSchema,
-                    ResumeName = this.BlocName,
-                    ResumeColumn = this.BlocColumn,
+                    Identifier = Identifier
                 };
 
                 if (this.ClientCodeId.HasValue && this.ClientCodeId > 0)
@@ -167,13 +158,13 @@ FROM dbo.Bloc
                 {
                     ScriptId = this.ScriptId,
                     SqlActionId = this.SqlActionId,
-                    TypeObjectId = this.TypeObjectId,
+                    TypeObjectId = this.TypeObjectId
                 };
             }
         }
 
         public string GetFullName()
-         => EnumHelper.ToString(BlocDatabase, BlocSchema, BlocName) + (string.IsNullOrWhiteSpace(BlocColumn) ? string.Empty : $".{BlocColumn}");
+         => Identifier.ToString();
 
         /// <summary>
         /// Indique si l'élément fournit est entièrement à l'intérieur de celui-ci

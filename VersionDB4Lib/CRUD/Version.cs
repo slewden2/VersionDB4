@@ -14,7 +14,7 @@ namespace VersionDB4Lib.CRUD
 
         public static Version Empty => new Version();
 
-        public int VersionNumber() => (VersionPrincipal * 10000) + VersionSecondary;
+        public long FullVersion => (VersionPrincipal * 1000) + VersionSecondary;
 
         public static Version operator ++(Version v1)
         {
@@ -43,6 +43,7 @@ namespace VersionDB4Lib.CRUD
 
             return v1;
         }
+
         public static bool operator ==(Version v1, Version v2)
             => v1 is object ? v1.IsEquals(v2) : v2 is null;
 
@@ -74,10 +75,8 @@ SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
 DELETE FROM dbo.Version WHERE VersionId = @VersionId;
 ";
 
+        public override string ToString() => $"Version {VersionPrincipal}.{VersionSecondary}";
 
-        public string FullVersion => $"Version {VersionPrincipal}.{VersionSecondary}";
-
-        public override string ToString() => FullVersion;
         public override bool Equals(object obj)
          => (obj is Version v) && IsEquals(v);
 

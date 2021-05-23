@@ -7,7 +7,7 @@ namespace Tests
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.WriteLine("Hello World!");
 
@@ -61,12 +61,12 @@ namespace Tests
             ////////baseClient.BaseId = conn.ExecuteScalar(Base.SQLInsert, baseClient);
             ////////Console.WriteLine($"Client  {baseClient} id={baseClient.BaseId}");
 
-            var objects = conn.Query<Object>(AnalyzeBase.SQLLoadObjects, new { VersionId = 3 });
-            foreach (var o in objects)
-            {
-                //o.ObjectId = conn.ExecuteScalar(Object.SQLInsert, o);
-                Console.WriteLine($"  Version {o}");
-            }
+            ////var objects = conn.Query<Object>(AnalyzeBase.SQLLoadObjects, new { VersionId = 3 });
+            ////foreach (var o in objects)
+            ////{
+            ////    //o.ObjectId = conn.ExecuteScalar(Object.SQLInsert, o);
+            ////    Console.WriteLine($"  Version {o}");
+            ////}
 
         }
     }

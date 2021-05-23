@@ -27,7 +27,7 @@ namespace VersionDB4Lib.Business.SqlAnalyze
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\sdéclencheur", SqlAction.DbComparer, TypeObject.Trigger),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?l'index", SqlAction.DbComparer, TypeObject.Index),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\sschéma", SqlAction.DbComparer, TypeObject.Schema),
-            new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\stable", SqlAction.DbComparer, TypeObject.Table),
+            new RegexFounding(@"\s*---\sDBComparer\s((?!référence|l'index|contrainte)(\S+\s+))*?la\stable", SqlAction.DbComparer, TypeObject.Table),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\stype\sde\sdonnées\stable", SqlAction.DbComparer, TypeObject.TypeTable),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?le\stype\sde\sdonnées\sélémentaire", SqlAction.DbComparer, TypeObject.TypeElementaire),
             new RegexFounding(@"\s*---\sDBComparer\s+(\S+\s+)*?la\sréférence", SqlAction.DbComparer, TypeObject.ForeignKey),

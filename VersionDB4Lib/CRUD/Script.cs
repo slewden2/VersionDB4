@@ -22,6 +22,8 @@ namespace VersionDB4Lib.CRUD
         /// </summary>
         public int VersionId { get; set; }
 
+        public Version Version { get; set; }
+
         /// <summary>
         /// Ordre du script dans la varsion
         /// </summary>
@@ -31,6 +33,29 @@ namespace VersionDB4Lib.CRUD
         /// Contenu du texte SQL du script
         /// </summary>
         public string ScriptText { get; set; }
+
+        public long FullVersion => Version == null ? ScriptOrder : (Version.FullVersion * 1000 ) + ScriptOrder;
+
+        public override string ToString()
+            => Version == null ? $"Script N° {ScriptOrder}" : $"Script V{Version.VersionPrincipal}.{Version.VersionSecondary}.{ScriptOrder}";
+
+        public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.Script;
+
+        public SqlAnalyzer GetAnalyzer(bool force = false)
+        {
+            if (myAnalyser != null && !force)
+            {
+                return myAnalyser;
+            }
+
+            if (ScriptId > 0)
+            {
+                var cnn = new DatabaseConnection();
+                myAnalyser = SqlAnalyzer.Load(cnn, this.ScriptId);
+            }
+
+            return myAnalyser;
+        }
 
         public static string SQLSelect
             => @"
@@ -82,28 +107,5 @@ WHERE s2.ScriptId = @ScriptId;
 DELETE FROM dbo.Script WHERE ScriptId = @ScriptId;
 ";
 
-
-        public Version Version { get; set; }
-
-        public override string ToString()
-            => Version == null ? $"Script N° {ScriptOrder}" : $"Script V{Version.VersionPrincipal}.{Version.VersionSecondary}.{ScriptOrder}";
-
-        public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.Script;
-
-        public SqlAnalyzer GetAnalyzer(bool force = false)
-        {
-            if (myAnalyser != null && !force)
-            {
-                return myAnalyser;
-            }
-
-            if (ScriptId > 0)
-            {
-                var cnn = new DatabaseConnection();
-                myAnalyser = SqlAnalyzer.Load(cnn, this.ScriptId);
-            }
-
-            return myAnalyser;
-        }
     }
 }

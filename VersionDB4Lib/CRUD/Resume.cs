@@ -44,7 +44,7 @@ namespace VersionDB4Lib.CRUD
         /// <summary>
         /// Nom de l'objet concerné par ce résumé
         /// </summary>
-        public string ResumeName { get; set; }
+        public string ResumeName { get; set; } = string.Empty;
 
         /// <summary>
         /// Nom de la colonne concernée par ce résumé
@@ -61,18 +61,27 @@ namespace VersionDB4Lib.CRUD
         /// </summary>
         public byte ResumeManualValidationCode { get; set; }
 
+        public IEnumerable<ClientCode> Clients { get; set; } = new List<ClientCode>();
+
+        public ObjectIdentifier Identifier
+        {
+            get => new ObjectIdentifier(ResumeName) { DataBase = ResumeDatabase, Schema = ResumeSchema, Column = ResumeColumn };
+            set
+            {
+                ResumeDatabase = value?.DataBase;
+                ResumeSchema = value?.Schema;
+                ResumeName = value?.Name;
+                ResumeColumn = value?.Column;
+            }
+        }
+
         #endregion
 
         public EValidation GetResumeManualValidationCode() => (EValidation)ResumeManualValidationCode;
-        public void SetResumeManualValidationCode(EValidation value) => ResumeManualValidationCode = (byte)value;
 
         public SqlAction GetAction() => SqlAction.List().FirstOrDefault(x => x.SqlActionId == SqlActionId);
-        public void SetAction(SqlAction value) => SqlActionId = (value == null ? 0 : value.SqlActionId);
 
         public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
-        public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
-
-        public IEnumerable<ClientCode> Clients { get; set; } = new List<ClientCode>();
 
         /// <summary>
         /// Pour affichage
@@ -80,7 +89,7 @@ namespace VersionDB4Lib.CRUD
         /// <returns>Le texte à afficher</returns>
         public override string ToString()
         {
-            string valid = GetResumeManualValidationCode().Libelle(); 
+            string valid = GetResumeManualValidationCode().Libelle();
 
             if (SqlActionId == SqlAction.CodeClient)
             {
@@ -89,23 +98,26 @@ namespace VersionDB4Lib.CRUD
             }
             else
             {
-                return $"{valid} : {EnumHelper.ToString(GetAction(), GetWhat(), ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn)}";
+                return $"{valid} : {EnumHelper.ToString(GetAction(), GetWhat(), Identifier)}";
             }
         }
+        public string GetFullName()
+             => Identifier.ToString();
+
 
         public override bool Equals(object obj)
         {
             if (obj is Resume res)
             {
                 return this.ScriptId == res.ScriptId && this.SqlActionId == res.SqlActionId && this.TypeObjectId == res.TypeObjectId
-                    && this.ResumeDatabase == res.ResumeDatabase && this.ResumeSchema == res.ResumeSchema && this.ResumeName == res.ResumeName && this.ResumeColumn == res.ResumeColumn;
+                    && this.Identifier.Equals(res.Identifier);
             }
 
             return false;
         }
 
         public override int GetHashCode()
-            => HashCode.Combine(ScriptId, SqlActionId, TypeObjectId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn);
+            => HashCode.Combine(ScriptId, SqlActionId, TypeObjectId, Identifier);
 
         public static string SQLSelect
             => @"
@@ -119,17 +131,5 @@ SET ResumeManualValidationCode = @ResumeManualValidationCode
 WHERE ScriptId = @ScriptId
 ;
 ";
-
-        public bool IsSame(Resume res)
-            => this.SqlActionId == res.SqlActionId 
-            && this.TypeObjectId == res.TypeObjectId
-            && this.ScriptId == res.ScriptId 
-            && ((string.IsNullOrWhiteSpace(this.ResumeDatabase) && string.IsNullOrWhiteSpace(res.ResumeDatabase)) || this.ResumeDatabase == res.ResumeDatabase)
-            && ((string.IsNullOrWhiteSpace(this.ResumeSchema) && string.IsNullOrWhiteSpace(res.ResumeSchema)) || this.ResumeSchema == res.ResumeSchema)
-            && ((string.IsNullOrWhiteSpace(this.ResumeName) && string.IsNullOrWhiteSpace(res.ResumeName)) || this.ResumeName == res.ResumeName) 
-            && ((string.IsNullOrWhiteSpace(this.ResumeColumn) && string.IsNullOrWhiteSpace(res.ResumeColumn)) || this.ResumeColumn == res.ResumeColumn);
-
-        public string GetFullName()
-         => EnumHelper.ToString(ResumeDatabase, ResumeSchema, ResumeName) + (string.IsNullOrWhiteSpace(ResumeColumn) ? string.Empty : $".{ResumeColumn}");
     }
 }

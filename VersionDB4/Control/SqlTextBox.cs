@@ -32,7 +32,7 @@ namespace VersionDB4.Control
                 richTextBox1.Text = value;
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    SqlColorizer.Colorise(richTextBox1); //, function: () => MessageBox.Show("fini"));
+                    SqlColorizer.Colorise(richTextBox1, function: () => richTextBox1.BackColor = base.BackColor); 
                 }
             }
         }
@@ -65,6 +65,15 @@ namespace VersionDB4.Control
             set => richTextBox1.ContextMenuStrip = value;
         }
 
+        public override Color BackColor
+        {
+            get => base.BackColor;
+            set
+            {
+                base.BackColor = value;
+                richTextBox1.BackColor = value;
+            }
+        }
 
         public void Select(int start, int length)
             => richTextBox1.Select(start, length);

@@ -6,19 +6,21 @@ using VersionDB4Lib.Business;
 
 namespace VersionDB4Lib.CRUD
 {
+    /// <summary>
+    /// Représente une base de données client
+    /// </summary>
     public class Base : IPresentable
     {
         public int BaseId { get; set; }
         public int ClientCodeId { get; set; }
- 
         public string BaseName { get; set; }
         public string BaseConnectionString { get; set; }
 
-        public override string ToString()
-        {
-            var cni = new ConnectionStringInfo(BaseConnectionString);
-            return cni.Base;
-        }
+        public override string ToString() => BaseName;
+        ////{
+        ////    var cni = new ConnectionStringInfo(BaseConnectionString);
+        ////    return cni.Base;
+        ////}
 
         public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.Client;
 
@@ -27,7 +29,6 @@ namespace VersionDB4Lib.CRUD
 SELECT b.BaseId, b.ClientCodeId, b.BaseName, b.BaseConnectionString 
 FROM dbo.Base b
 ";
-
         public static string SQLInsert => @"
 INSERT INTO dbo.Base (
 ClientCodeId, BaseName, BaseConnectionString

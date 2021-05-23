@@ -10,7 +10,7 @@ namespace VersionDB4Lib.ForUI
         public int Count { get; set; }
 
 
-        public static new string SQLSelect => @"
+        public static string SQLSelect => @"
 SELECT t.TypeObjectId, t.TypeObjectName, t.TypeObjectSqlServerCode, t.TypeObjectPlurial, t.TypeObjectPrestentOrder 
   , ox.nb AS [Count] 
 FROM dbo.TypeObject t

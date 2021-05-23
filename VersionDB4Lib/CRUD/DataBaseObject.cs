@@ -4,7 +4,7 @@ using VersionDB4Lib.Business;
 
 namespace VersionDB4Lib.CRUD
 {
-     /// <summary>
+    /// <summary>
     /// Un objet pointé dans un script
     /// </summary>
     public class DataBaseObject
@@ -44,6 +44,19 @@ namespace VersionDB4Lib.CRUD
         /// </summary>
         public string DatabaseObjectColumn { get; set; }
 
+
+        public ObjectIdentifier Identifier
+        {
+            get => new ObjectIdentifier(DatabaseObjectName) { DataBase = DatabaseObjectDatabase, Schema = DatabaseObjectSchema, Column = DatabaseObjectColumn };
+            set
+            {
+                DatabaseObjectDatabase = value?.DataBase;
+                DatabaseObjectSchema = value?.Schema;
+                DatabaseObjectName = value?.Name;
+                DatabaseObjectColumn = value?.Column;
+            }
+        }
+
         public static string SQLSelect
             => @"
 SELECT DatabaseObjectId, ScriptId, TypeObjectId, DatabaseObjectDataBase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn
@@ -54,12 +67,12 @@ FROM dbo.DatabaseObject
         public TypeObject GetWhat() => TypeObject.List().FirstOrDefault(x => x.TypeObjectId == TypeObjectId);
         public void SetWhat(TypeObject value) => TypeObjectId = (value == null ? 0 : value.TypeObjectId);
 
-        public override string ToString() 
-            => $"{GetWhat().TypeObjectName} {EnumHelper.ToString(DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName)}";
+        public override string ToString()
+            => $"{GetWhat().TypeObjectName} {Identifier}";
 
 
         public override int GetHashCode()
-            => HashCode.Combine(ScriptId, TypeObjectId, DatabaseObjectDatabase, DatabaseObjectSchema, DatabaseObjectName, DatabaseObjectColumn);
+            => HashCode.Combine(ScriptId, TypeObjectId, Identifier);
 
         public override bool Equals(object obj)
         {
@@ -67,15 +80,10 @@ FROM dbo.DatabaseObject
             {
                 return this.ScriptId == bl.ScriptId
                     && this.TypeObjectId == bl.TypeObjectId
-                    && (this.DatabaseObjectDatabase == bl.DatabaseObjectDatabase || (string.IsNullOrWhiteSpace(this.DatabaseObjectDatabase) && string.IsNullOrWhiteSpace(bl.DatabaseObjectDatabase)))
-                    && (this.DatabaseObjectSchema == bl.DatabaseObjectSchema || (string.IsNullOrWhiteSpace(this.DatabaseObjectSchema) && string.IsNullOrWhiteSpace(bl.DatabaseObjectSchema)))
-                    && (this.DatabaseObjectName == bl.DatabaseObjectName || (string.IsNullOrWhiteSpace(this.DatabaseObjectName) && string.IsNullOrWhiteSpace(bl.DatabaseObjectName)))
-                    && (this.DatabaseObjectColumn == bl.DatabaseObjectColumn || (string.IsNullOrWhiteSpace(this.DatabaseObjectColumn) && string.IsNullOrWhiteSpace(bl.DatabaseObjectColumn)));
+                    && Identifier.Equals(bl.Identifier);
             }
 
             return false;
         }
-
-
     }
 }

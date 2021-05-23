@@ -62,9 +62,9 @@ namespace VersionDB4.Control
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(27, 79);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(46, 15);
+            this.label2.Size = new System.Drawing.Size(92, 15);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Serveur";
+            this.label2.Text = "Nom du serveur";
             // 
             // lblServer
             // 
@@ -98,18 +98,18 @@ namespace VersionDB4.Control
             this.lblBase.AutoSize = true;
             this.lblBase.Location = new System.Drawing.Point(147, 154);
             this.lblBase.Name = "lblBase";
-            this.lblBase.Size = new System.Drawing.Size(39, 15);
+            this.lblBase.Size = new System.Drawing.Size(31, 15);
             this.lblBase.TabIndex = 7;
-            this.lblBase.Text = "Server";
+            this.lblBase.Text = "base";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(27, 153);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(31, 15);
+            this.label5.Size = new System.Drawing.Size(95, 15);
             this.label5.TabIndex = 6;
-            this.label5.Text = "Base";
+            this.label5.Text = "Base de données";
             // 
             // BaseClientControl
             // 

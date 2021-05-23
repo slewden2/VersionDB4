@@ -12,7 +12,7 @@ INSERT INTO dbo.TypeObject (TypeObjectId, TypeObjectSqlServerCode, TypeObjectNam
 , (3, 'IF', 'Fonction table en ligne', 'Les fonctions tables (en ligne)', 5)
 , (4, 'TF', 'Fonction table', 'Les fonctions tables (instructions multiples)', 6)
 , (5, 'V', 'Vue', 'Les vues', 2)
-, (6, 'TR', 'Trigger', 'Les triggers', 12)
+, (6, 'TR', 'Déclencheur', 'Les déclencheurs', 12)
 , (7, 'IDX', 'Index', 'Les index', 11)
 , (8, 'SCH', 'Schema', 'Les schémas', 13)
 , (9, 'U', 'Table', 'Les tables', 1)
@@ -25,6 +25,7 @@ SET IDENTITY_INSERT dbo.TypeObject OFF;
 
 ---UPDATE dbo.TypeObject SET TypeObjectPlurial = 'Les contraintes' WHERE TypeObjectId = 13
 ---UPDATE dbo.TypeObject SET TypeObjectSqlServerCode = 'C' WHERE TypeObjectId = 13
+---UPDATE dbo.TypeObject SET TypeObjectName = 'Déclencheur', TypeObjectPlurial = 'Les déclencheurs' WHERE TypeObjectId = 6
 
 SELECT *  From TypeObject ORDER BY TypeObjectPrestentOrder
 

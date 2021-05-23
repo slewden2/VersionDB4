@@ -40,6 +40,44 @@ namespace VersionDB4Lib.Business
         Effacement = 254
     }
 
+    public enum EImportType
+    {
+        /// <summary>
+        /// Inconnu (ou non encore défini)
+        /// </summary>
+        Unkonw = 0,
+        
+        /// <summary>
+        /// Ne pas importer
+        /// </summary>
+        Nop = 1,
+
+        /// <summary>
+        /// Objets identiques (ne pas importer)
+        /// </summary>
+        Equal = 2,
+
+        /// <summary>
+        /// Objets différents (décider quoi faire)
+        /// </summary>
+        Different = 3,
+
+        /// <summary>
+        /// Importer en tant que nouvel objet
+        /// </summary>
+        New = 4,
+
+        /// <summary>
+        /// Objets différents, importer comme référentiel
+        /// </summary>
+        DifferentImportAsReferential = 5,
+
+        /// <summary>
+        /// Objets différents, importer comme spécifique client
+        /// </summary>
+        DifferentImportASCustomClient = 6
+    }
+
     public enum ETypeObjectPresentable
     {
         Project = 1,
@@ -93,7 +131,9 @@ namespace VersionDB4Lib.Business
         ClientAdd = 61,
         //ClientReload = 62,
         ClientEdit = 63,
-        ClientDel = 64
+        ClientDel = 64,
+
+        ClientDBToReferential = 65,
 
     }
 

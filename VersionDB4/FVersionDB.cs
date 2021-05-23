@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DatabaseAndLogLibrary.DataBase;
+using VersionDB4.Synchronisation;
 using VersionDB4Lib.Business;
 using VersionDB4Lib.Business.SqlAnalyze;
 using VersionDB4Lib.CRUD;
@@ -52,7 +53,6 @@ namespace VersionDB4
         }
 
         #region Events
-
 
         private void FVersionDB_Load(object sender, EventArgs e)
             => ProcessAction(EAction.ProjectScriptReload);
@@ -168,6 +168,20 @@ namespace VersionDB4
                     }
 
                     break;
+                case EAction.ClientDBToReferential:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Base clientImport && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionImport)
+                    {
+                        using var frm = new FImportFromBdd();
+                        Program.Settings.PositionLoad(frm);
+                        frm.Initialize(projectId, clientImport, versionImport);
+                        if (frm.ShowDialog(this) == DialogResult.OK)
+                        {
+                            // NOTHING TODO !!
+                        }
+                        Program.Settings.PositionSave(frm);
+
+                    }
+                    break;
                 #endregion
                 #region Versions 
                 case EAction.ProjectVersionAdd:
@@ -210,7 +224,7 @@ namespace VersionDB4
                             Version = versionCounterAdd,
                             ScriptOrder = versionCounterAdd.Count + 1
                         };
-                        lblType.Text = $"Ajout d'un script à la version {versionCounterAdd.FullVersion}";
+                        lblType.Text = $"Ajout d'un script à la version {versionCounterAdd}";
                         lblResumes.Text = string.Empty;
                         sqlTextBox1.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
@@ -296,7 +310,7 @@ namespace VersionDB4
                             VersionId = versionObjectCounterAdd.VersionId,
                             TypeObjectId = typeObjetAdd.TypeObjectId,
                         };
-                        lblType.Text = $"Ajout d'un {typeObjetAdd.TypeObjectName} à la version {versionObjectCounterAdd.FullVersion}";
+                        lblType.Text = $"Ajout d'un {typeObjetAdd.TypeObjectName} à la version {versionObjectCounterAdd}";
                         lblResumes.Text = string.Empty;
                         sqlTextBox1.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
@@ -308,7 +322,7 @@ namespace VersionDB4
                     ProcessSqlObjectEndAdd();
                     break;
                 case EAction.SqlObjectEditBegin:
-                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Object objectEdited && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterEdit)
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Object objectEdited && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter)
                     {
                         lblType.Text = $"Modification de {objectEdited}";
                         lblResumes.Text = string.Empty;
@@ -322,7 +336,7 @@ namespace VersionDB4
                     ProcessSqlObjectEndEdit();
                     break;
                 case EAction.SqlObjectDelete:
-                    PRocessSqlObjectDelete();
+                    ProcessSqlObjectDelete();
 
                     break;
                 #endregion
@@ -343,7 +357,7 @@ namespace VersionDB4
             {
                 cbVersions.DataSource = null;
                 using var conn = new DatabaseConnection();
-                cbVersions.DataSource = conn.Query<VersionObjectCounter>(VersionObjectCounter.SQLSelect, new { ProjectId = projectId }).OrderByDescending(x => x.VersionNumber()).ToList();
+                cbVersions.DataSource = conn.Query<VersionObjectCounter>(VersionObjectCounter.SQLSelect, new { ProjectId = projectId }).OrderByDescending(x => x.FullVersion).ToList();
                 versionListIsDirty = false;
             }
         }
@@ -416,7 +430,7 @@ namespace VersionDB4
                 using var conn = new DatabaseConnection();
                 var lstCounter = conn.Query<VersionScriptCounter>(VersionScriptCounter.SQLSelect + ";", new { ProjectId = projectId });
 
-                foreach (var versionCounter in lstCounter.OrderBy(x => x.VersionNumber()))
+                foreach (var versionCounter in lstCounter.OrderBy(x => x.FullVersion))
                 {
                     TreeNode nod = new TreeNode(versionCounter.ToString())
                     {
@@ -504,7 +518,7 @@ namespace VersionDB4
             var conn = new DatabaseConnection();
             var lst = conn.Query<Script>(Script.SQLSelect + " WHERE VersionId = @VersionId;", new { versionCounter.VersionId });
             int count = 0;
-            foreach (var script in lst.OrderBy(x => x.ToString()))
+            foreach (var script in lst.OrderBy(x => x.FullVersion))
             {
                 script.Version = versionCounter;
                 TreeNode nod = new TreeNode(script.ToString())
@@ -576,7 +590,7 @@ namespace VersionDB4
                     case ETypeObjectPresentable.VersionScript:
                         if (selectedNode.Tag is VersionScriptCounter version)
                         {
-                            lblType.Text = version.FullVersion;
+                            lblType.Text = version.ToString();
                             versionScriptControl1.Version = version;
                         }
 

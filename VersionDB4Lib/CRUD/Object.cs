@@ -13,18 +13,17 @@ namespace VersionDB4Lib.CRUD
         public int TypeObjectId { get; set; }
         public string ObjectSchema { get; set; }
         public string ObjectName { get; set; }
-
         public string ObjectColumn { get; set; }  // nom utilisé pour les colonnes, les index et les contraintes
-
         public bool ObjectDeleted { get; set; }
         public bool ObjectEmpty { get; set; }
         public string ObjectSql { get; set; }
-
         public string ObjectLockedBy { get; set; }
-
         public int? ClientCodeId { get; set; }
 
         public string TypeObjectName() => TypeObject.List().First(x => x.TypeObjectId == TypeObjectId).TypeObjectName;
+
+        public ObjectIdentifier Identifier => new ObjectIdentifier(ObjectName) { Schema = ObjectSchema, Column = ObjectColumn };
+
 
         public override string ToString()
         {
@@ -35,7 +34,7 @@ namespace VersionDB4Lib.CRUD
             else if (TypeObjectId == TypeObject.Index || TypeObjectId == TypeObject.ForeignKey || TypeObjectId == TypeObject.Constraint)
             {
                 string sch = string.IsNullOrWhiteSpace(ObjectSchema) ? string.Empty : $"{ObjectSchema}.";
-                return $"{ObjectColumn} de la table {sch}{ObjectName}"; 
+                return $"{ObjectColumn} de la table {sch}{ObjectName}";
             }
             else
             {
@@ -63,13 +62,10 @@ SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
 ";
         public static string SQLUpdate => @"
 UPDATE dbo.Object 
-SET ObjectSchema  = @ObjectSchema
-  , ObjectName    = @ObjectName
-  , ObjectDeleted = @ObjectDeleted
+SET ObjectDeleted = @ObjectDeleted
   , ObjectEmpty   = @ObjectEmpty
   , ObjectSql     = @ObjectSql
   , ClientCodeId  = @ClientCodeId
-  , ObjectColumn  = @ObjectColumn  
 WHERE ObjectId = @ObjectId
 ";
 
@@ -78,6 +74,5 @@ UPDATE dbo.Object
 SET ObjectDeleted = 1
 WHERE ObjectId = @ObjectId
 ";
-
     }
 }

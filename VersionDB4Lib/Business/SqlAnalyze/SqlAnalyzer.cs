@@ -724,7 +724,7 @@ DELETE FROM dbo.[Resume]      WHERE ResumeId = @ResumeId;
                     }
                     else
                     {  // A synchroniser
-                        var resume = this.Resumes.FirstOrDefault(x => x.IsSame(resumeMerge));
+                        var resume = this.Resumes.FirstOrDefault(x => x.Equals(resumeMerge));
                         if (resume == null)
                         {
                             throw new ArgumentException($"Impossible de retrouver {resumeMerge}");

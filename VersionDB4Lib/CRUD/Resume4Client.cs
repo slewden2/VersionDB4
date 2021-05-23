@@ -4,6 +4,9 @@ using System.Text;
 
 namespace VersionDB4Lib.CRUD
 {
+    /// <summary>
+    /// Mémorise le fait que le résumé est spécifique à un code client
+    /// </summary>
     public class Resume4Client
     {
         /// <summary>

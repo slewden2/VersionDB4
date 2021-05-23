@@ -16,6 +16,11 @@ namespace VersionDB4
 {
     public partial class FVersionDB
     {
+    
+        /// <summary>
+        /// Verifie que dans le script en cours d'édition pour un objet on a bien le CREATE XXX qui correspond
+        /// (ET met à jour l'interface utilisateur pour le ui indiquer)
+        /// </summary>
         private void AnalyseEntete()
         {
             if (currentObjectEdited == null || currentObjectEdited.TypeObjectId <= 0)
@@ -29,7 +34,7 @@ namespace VersionDB4
                 return;
             }
 
-                RegexFounding pattern = RegexFounding.List.FirstOrDefault(x => x.Action == SqlAction.Create && x.ApplyOn == currentObjectEdited.TypeObjectId);
+            RegexFounding pattern = RegexFounding.List.FirstOrDefault(x => x.Action == SqlAction.Create && x.ApplyOn == currentObjectEdited.TypeObjectId);
             if (pattern == null)
             {
                 return;
@@ -63,25 +68,8 @@ namespace VersionDB4
                     return;
                 }
 
-                currentObjectEdited.ObjectDeleted = false;
-                currentObjectEdited.ObjectEmpty = false;
-
-                using var cnn = new DatabaseConnection();
-                int id = cnn.ExecuteScalar(Object.SQLInsert, currentObjectEdited);
-
-                // Ajouter un script à la version 
-                var script = new ScriptObject(currentObjectEdited, new SqlAction() { SqlActionId = SqlAction.Create });
-                var crudScript = new Script()
-                {
-                    ScriptText = script.ToString(),
-                    VersionId = currentObjectEdited.VersionId,
-                };
-                var scriptId = cnn.ExecuteScalar(Script.SQLInsert, crudScript);
-
-                // Ajouter l'anlyse pour ce script
-                var analyzer = SqlAnalyzer.Analyse(scriptId, crudScript.ScriptText);
-                analyzer.Save(cnn);
-
+                using var crudProcess = new CRUDObjectProcess();
+                int id = crudProcess.Add(currentObjectEdited);
 
                 CancelEdition(null);
                 FillReferentialTypeObject(treeView1.SelectedNode, versionObjectCounterAddEnd, typeObjetAddEnd, true);
@@ -89,8 +77,6 @@ namespace VersionDB4
                 SelectNodeObject(treeView1.SelectedNode, id);
             }
         }
-
-
         private void ProcessSqlObjectEndEdit()
         {
             if (currentObjectEdited != null)
@@ -105,23 +91,8 @@ namespace VersionDB4
                         return;
                     }
 
-                    currentObjectEdited.ObjectDeleted = false;
-                    currentObjectEdited.ObjectEmpty = false;
-                    using var cnn = new DatabaseConnection();
-                    cnn.Execute(Object.SQLUpdate, currentObjectEdited);
-
-                    // Ajouter un script à la version 
-                    var script = new ScriptObject(currentObjectEdited, new SqlAction() { SqlActionId = SqlAction.Alter });
-                    var crudScript = new Script()
-                    {
-                        ScriptText = script.ToString(),
-                        VersionId = currentObjectEdited.VersionId,
-                    };
-                    var scriptId = cnn.ExecuteScalar(Script.SQLInsert, crudScript);
-
-                    // Ajouter l'anlyse pour ce script
-                    var analyzer = SqlAnalyzer.Analyse(scriptId, crudScript.ScriptText);
-                    analyzer.Save(cnn);
+                    using var crudProcess = new CRUDObjectProcess();
+                    crudProcess.Edit(currentObjectEdited);
 
                     if (treeView1.SelectedNode.Text != currentObjectEdited.ToString())
                     {
@@ -133,30 +104,15 @@ namespace VersionDB4
                 CancelEdition(treeView1.SelectedNode);
             }
         }
-
-        private void PRocessSqlObjectDelete()
+        private void ProcessSqlObjectDelete()
         {
             if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Object objectDel && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterDel)
             {
                 if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer {objectDel} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
-                    objectDel.ObjectDeleted = true;
 
-                    using var cnn = new DatabaseConnection();
-                    cnn.Execute(Object.SQLDelete, objectDel);
-
-                    // Ajouter un script à la version 
-                    var script = new ScriptObject(currentObjectEdited, new SqlAction() { SqlActionId = SqlAction.Delete });
-                    var crudScript = new Script()
-                    {
-                        ScriptText = script.ToString(),
-                        VersionId = currentObjectEdited.VersionId,
-                    };
-                    var scriptId = cnn.ExecuteScalar(Script.SQLInsert, crudScript);
-                    
-                    // Ajouter l'anlyse pour ce script
-                    var analyzer = SqlAnalyzer.Analyse(scriptId, crudScript.ScriptText);
-                    analyzer.Save(cnn);
+                    using var crudProcess = new CRUDObjectProcess();
+                    crudProcess.Delete(objectDel);
 
                     var parent = treeView1.SelectedNode.Parent;
                     if (parent != null && parent.Tag != null && parent.Tag is TypeObjectCounter typeObjectCounterDel)
@@ -168,6 +124,5 @@ namespace VersionDB4
                 }
             }
         }
-
     }
 }

@@ -22,6 +22,7 @@ namespace VersionDB4Lib.CRUD
     /// 10 (ex 8) = Type Table
     /// 11  = Type de données (new : not détected TODO : Détecter ces types !)
     /// 12 (ex 9) = références (ou Constraint de FK)
+    /// 13 (New) Constraint
     /// </summary>
     public class TypeObject : IPresentable
     {
@@ -103,7 +104,7 @@ namespace VersionDB4Lib.CRUD
                     new TypeObject(){ TypeObjectId = 3,  TypeObjectName = "Fonction table en ligne", TypeObjectSqlServerCode = "IF",  TypeObjectPlurial = "Les fonctions tables (en ligne)",              TypeObjectPrestentOrder = 5},
                     new TypeObject(){ TypeObjectId = 4,  TypeObjectName = "Fonction table",          TypeObjectSqlServerCode = "TF",  TypeObjectPlurial = "Les fonctions tables (instructions multiples)", TypeObjectPrestentOrder = 6},
                     new TypeObject(){ TypeObjectId = 5,  TypeObjectName = "Vue",                     TypeObjectSqlServerCode = "V",   TypeObjectPlurial = "Les vues",                                     TypeObjectPrestentOrder = 2},
-                    new TypeObject(){ TypeObjectId = 6,  TypeObjectName = "Trigger",                 TypeObjectSqlServerCode = "TR",  TypeObjectPlurial = "Les triggers",                                 TypeObjectPrestentOrder = 12},
+                    new TypeObject(){ TypeObjectId = 6,  TypeObjectName = "Déclencheur",             TypeObjectSqlServerCode = "TR",  TypeObjectPlurial = "Les déclencheurs",                             TypeObjectPrestentOrder = 12},
                     new TypeObject(){ TypeObjectId = 7,  TypeObjectName = "Index",                   TypeObjectSqlServerCode = "IDX", TypeObjectPlurial = "Les index",                                    TypeObjectPrestentOrder = 11},
                     new TypeObject(){ TypeObjectId = 8,  TypeObjectName = "Schéma",                  TypeObjectSqlServerCode = "SCH", TypeObjectPlurial = "Les schémas",                                  TypeObjectPrestentOrder = 13},
                     new TypeObject(){ TypeObjectId = 9,  TypeObjectName = "Table",                   TypeObjectSqlServerCode = "U",   TypeObjectPlurial = "Les tables",                                   TypeObjectPrestentOrder = 1},

@@ -44,10 +44,7 @@ namespace DatabaseAndLogLibrary.DataBase
         }
 
         public DatabaseConnection(string connectionString)
-            : this()
-        {
-            customConnectionString = connectionString;
-        }
+            : this() => customConnectionString = connectionString;
 
         /// <summary>
         /// Renvoie le provider SQL server par default

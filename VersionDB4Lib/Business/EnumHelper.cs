@@ -9,6 +9,10 @@ namespace VersionDB4Lib.Business
 {
     public static class EnumHelper
     {
+        public static string Counter(this int n, string zero, string one, string plurial)
+            => n == 0 ? zero : n == 1 ? one : string.Format(plurial, n);
+
+
         public static IEnumerable<EAction> GetActions(this ETypeObjectPresentable typeObjectPresentable, object theObject)
         {
             switch (typeObjectPresentable)
@@ -29,19 +33,19 @@ namespace VersionDB4Lib.Business
                         {
                             ////if (string.IsNullOrWhiteSpace(sqlObject.ObjectLockedBy))
                             ////{
-                                yield return EAction.SqlObjectEditBegin;
-                                yield return EAction.SqlObjectDelete;
-                                ////yield return EAction.SqlObjectLock;
+                            yield return EAction.SqlObjectEditBegin;
+                            yield return EAction.SqlObjectDelete;
+                            ////yield return EAction.SqlObjectLock;
 
-                                ////if (sqlObject.ObjectEmpty)
-                                ////{
-                                ////    yield return EAction.SqlObjectAddCustomClient;
-                                ////    yield return EAction.SqlObjectRemoveCustomClient;
-                                ////}
-                                ////else
-                                ////{
-                                ////    yield return EAction.SqlObjectMakeFullCustomClient;
-                                ////}
+                            ////if (sqlObject.ObjectEmpty)
+                            ////{
+                            ////    yield return EAction.SqlObjectAddCustomClient;
+                            ////    yield return EAction.SqlObjectRemoveCustomClient;
+                            ////}
+                            ////else
+                            ////{
+                            ////    yield return EAction.SqlObjectMakeFullCustomClient;
+                            ////}
                             ////}
                             ////else
                             ////{
@@ -49,7 +53,7 @@ namespace VersionDB4Lib.Business
                             ////}
                         }
 
-                       // yield return EAction.SqlObjectSaveSqlToDisk;
+                        // yield return EAction.SqlObjectSaveSqlToDisk;
                     }
 
                     break;
@@ -82,6 +86,7 @@ namespace VersionDB4Lib.Business
                     //yield return EAction.ClientReload;
                     yield return EAction.ClientEdit;
                     yield return EAction.ClientDel;
+                    yield return EAction.ClientDBToReferential;
                     break;
             }
         }
@@ -96,17 +101,19 @@ namespace VersionDB4Lib.Business
                   //EAction.ClientReload => "",                  // 0xE72C;  Reload
                   EAction.ClientDel => "",                     // 0xE107;  Delete
                   EAction.ClientsReload => "",                 // 0xE72C;
-                  
+                  EAction.ClientDBToReferential => "",         // 0xEA53; client to référential (exporter)
+
+
                   EAction.ProjectReferentialReload => "",      // 0xE72C;
                   EAction.ProjectScriptReload => "",           // 0xE72C;
-                 
+
                   EAction.ScriptAddBegin => "",                // 0xE109;
                   EAction.ScriptEditBegin => "",               // 0xE104;
                   EAction.ScriptAddEnd => "",                  // 0xE081;  Valider
                   EAction.ScriptEditEnd => "",                 // 0xE081;
                   EAction.ScriptDelete => "",                  // 0xE107; 
                   EAction.ScriptAnalyze => "",                 // 0xE773;  Analyze
-                  
+
                   EAction.SqlObjectAddBegin => "",             // 0xE109;  
                   EAction.SqlObjectAddEnd => "",               // 0xE081; 
                   EAction.SqlObjectEditBegin => "",            // 0xE104;  
@@ -121,11 +128,11 @@ namespace VersionDB4Lib.Business
                   EAction.SqlObjectRemoveCustomClient => "",   // 0xE8CF;  Custom client Remove
                   EAction.SqlObjectSaveSqlToDisk => "",        // 0xEA35;  Save to disk
                   EAction.SqlObjectUnlock => "",               // 0xE785;  Unlock
-                  //EAction.VersionScriptAdd => "",              // 0xE109;
-                  
+                                                                //EAction.VersionScriptAdd => "",              // 0xE109;
+
                   EAction.ProjectVersionDelete => "",           // 0xE107;  Delete
                   EAction.ProjectVersionAdd => "",             // 0xE109;
-                                                                      //EAction.VersionScriptRefresh => "",          // 0xE72C;
+                                                                //EAction.VersionScriptRefresh => "",          // 0xE72C;
                   _ => string.Empty
               };
 
@@ -139,7 +146,8 @@ namespace VersionDB4Lib.Business
                     //EAction.ClientReload => Color.DeepSkyBlue,             // Reload  : Bleu clair
                     EAction.ClientsReload => Color.DeepSkyBlue,
                     EAction.ClientDel => Color.Red,                          // Delete  : rouge
-                    
+                    EAction.ClientDBToReferential => Color.Navy,              // Exporter : Bleu
+
                     EAction.ProjectReferentialReload => Color.DeepSkyBlue,
                     EAction.ProjectScriptReload => Color.DeepSkyBlue,
 
@@ -178,7 +186,7 @@ namespace VersionDB4Lib.Business
         /// Renvoie une chaine pour afficher la représentation de l'objet
         /// </summary>
         /// <returns>Le texte à afficher</returns>
-        public static string ToString(SqlAction action, TypeObject applyOn, string database, string schema, string name, string column)
+        public static string ToString(SqlAction action, TypeObject applyOn, ObjectIdentifier identifier)
         {
             if (action == null && applyOn == null)
             {
@@ -207,32 +215,16 @@ namespace VersionDB4Lib.Business
             ////        return $"Script DBComparer pour {this.ApplyOn.Name()}";
             ////    }
             ////}
-            else if (action.SqlActionIsForColumn && !string.IsNullOrWhiteSpace(column))
+            else if (action.SqlActionIsForColumn && !string.IsNullOrWhiteSpace(identifier.Column))
             { // Quand on a des infos de colonnes
-                string db = string.IsNullOrWhiteSpace(database) ? string.Empty : $"{database}.";
-                string sh = string.IsNullOrWhiteSpace(schema) ? string.Empty : $"{schema}.";
-                string theName = $"{db}{sh}{name}";
-                return $"{SqlAction.Name(action, column)} {applyOn.TypeObjectName} {theName}";
+                return $"{SqlAction.Name(action, identifier.Column)} {applyOn.TypeObjectName} {identifier}";
             }
             else
             {
-                return $"{action.SqlActionTitle} {applyOn.TypeObjectName.ToLower()} {ToString(database, schema, name)}";
+                return $"{action.SqlActionTitle} {applyOn.TypeObjectName.ToLower()} {identifier}";
             }
         }
 
-        /// <summary>
-        /// Renvoie le nom formatté d'un objet pour une base
-        /// </summary>
-        /// <param name="database">Le nom de la Base</param>
-        /// <param name="schema">Le nom du schéma</param>
-        /// <param name="name">Le nom de l'objet</param>
-        /// <returns></returns>
-        public static string ToString(string database, string schema, string name)
-        {
-            string db = string.IsNullOrWhiteSpace(database) ? string.Empty : $"{database}.";
-            string sh = string.IsNullOrWhiteSpace(schema) ? string.Empty : $"{schema}.";
-            return $"{db}{sh}{name}";
-        }
 
 
         public static string Libelle(this EValidation validation)
@@ -258,5 +250,34 @@ namespace VersionDB4Lib.Business
                 EValidation.Effacement => Color.DarkGray,
                 _ => Color.Black
             };
+
+        public static string Libelle(this EImportType import)
+            => import switch
+            {
+                EImportType.Unkonw => "...",
+                EImportType.Nop => "Ne pas importer",
+                EImportType.Equal => "Identique (Ne pas importer)",
+                EImportType.Different => "Différent [Choix à définir]",
+                EImportType.New => "Nouveau (importer dans le reférentiel)",
+                EImportType.DifferentImportAsReferential => "Remplacer le référentiel existant",
+                EImportType.DifferentImportASCustomClient => "Importer comme spécifique au client",
+                _ => ((int)import).ToString()
+            };
+        public static bool IsAction(this EImportType import)
+            => import switch
+            {
+                EImportType.Unkonw => false,
+                EImportType.Nop => false,
+                EImportType.Equal => false,
+                EImportType.Different => false,
+                EImportType.New => true,
+                EImportType.DifferentImportAsReferential => true,
+                EImportType.DifferentImportASCustomClient => true,
+                _ => false
+            };
+
+        public static bool IsChoice(this EImportType import)
+            => import == EImportType.Different || import == EImportType.Unkonw;
+
     }
 }

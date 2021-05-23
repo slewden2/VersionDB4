@@ -5,6 +5,9 @@ using VersionDB4Lib.Business;
 
 namespace VersionDB4Lib.CRUD
 {
+    /// <summary>
+    /// Un projet qui contient tous les objets
+    /// </summary>
     public class Project : IPresentable
     {
         public int ProjectId { get; set; }

@@ -24,7 +24,7 @@ namespace DatabaseAndLogLibrary.DataBase
         /// <summary>
         /// Obtient une valeur indiquant le fournisseur de database
         /// </summary>
-        private SqlClientFactory factory => SqlClientFactory.Instance;
+        private readonly SqlClientFactory factory = SqlClientFactory.Instance;
 
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="SqlServerDatabaseProvider"/>
