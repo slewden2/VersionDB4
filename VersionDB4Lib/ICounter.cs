@@ -8,4 +8,9 @@ namespace VersionDB4Lib
     {
         int Count { get; }
     }
+
+    public interface ILocked
+    {
+        bool VersionIsLocked { get; }
+    }
 }

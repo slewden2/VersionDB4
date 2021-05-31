@@ -6,6 +6,8 @@ using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using VersionDB4Lib.Business;
+using VersionDB4Lib.CRUD;
 
 namespace VersionDB4
 {
@@ -14,10 +16,13 @@ namespace VersionDB4
         private const string SETTINGFILE = "appsettings.json";
         private FormPositions formPositions;
 
-        public VersionDBSettings()
-        {
-            formPositions = new FormPositions();
-        }
+
+        public VersionDBSettings() 
+            => formPositions = new FormPositions();
+
+        public bool SqlTextWrap { get; set; }
+
+        public EAction FVersionDBDefaultSceen { get; set; }
 
         public void Load()
         {
@@ -28,6 +33,8 @@ namespace VersionDB4
                 dynamic jsonObj = JsonConvert.DeserializeObject(json);
 
                 formPositions = jsonObj[nameof(FormPositions)]?.ToObject(typeof(FormPositions)) ?? new FormPositions();
+                SqlTextWrap = jsonObj[nameof(SqlTextWrap)]?.ToObject(typeof(bool)) ?? false;
+                FVersionDBDefaultSceen = (EAction)(jsonObj[nameof(FVersionDBDefaultSceen)]?.ToObject(typeof(int)) ?? (int)EAction.ProjectScriptReload);
             }
             finally
             { }
@@ -41,6 +48,8 @@ namespace VersionDB4
                 dynamic jsonObj = JsonConvert.DeserializeObject(json);
 
                 jsonObj[nameof(FormPositions)] = JArray.FromObject(formPositions);
+                jsonObj[nameof(SqlTextWrap)] = SqlTextWrap;
+                jsonObj[nameof(FVersionDBDefaultSceen)] = (int)FVersionDBDefaultSceen;
 
                 string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
                 File.WriteAllText(fullPathFile, output);

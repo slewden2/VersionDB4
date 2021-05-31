@@ -128,8 +128,39 @@ FROM dbo.Resume r
             => @"
 UPDATE dbo.Resume
 SET ResumeManualValidationCode = @ResumeManualValidationCode
-WHERE ScriptId = @ScriptId
+WHERE ResumeId = @ResumeId
 ;
 ";
+
+        public static string SQLInsert 
+            => @"
+INSERT INTO dbo.Resume (ScriptId, SqlActionId, TypeObjectId, ResumeDatabase, ResumeSchema, ResumeName, ResumeColumn, ResumeForOtherClients, ResumeManualValidationCode)
+VALUES (@ScriptId, @SqlActionId, @TypeObjectId, @ResumeDatabase, @ResumeSchema, @ResumeName, @ResumeColumn, @ResumeForOtherClients, @ResumeManualValidationCode)
+;
+SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
+;
+";
+
+        public static string SQLUpdate
+            => @"
+UPDATE dbo.Resume 
+ SET  SqlActionId = @SqlActionId
+    , TypeObjectId = @TypeObjectId
+    , ResumeDatabase = @ResumeDatabase
+    , ResumeSchema = @ResumeSchema
+    , ResumeName = @ResumeName
+    , ResumeColumn = @ResumeColumn
+    , ResumeForOtherClients = @ResumeForOtherClients
+    , ResumeManualValidationCode = @ResumeManualValidationCode
+WHERE ResumeId = @ResumeId
+;
+";
+        public static string SQLDelete
+            => @"
+DELETE dbo.Resume 
+WHERE ResumeId = @ResumeId
+;
+";
+
     }
 }

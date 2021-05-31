@@ -82,9 +82,9 @@ namespace VersionDB4
             // btOk
             // 
             this.btOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btOk.Location = new System.Drawing.Point(172, 123);
+            this.btOk.Location = new System.Drawing.Point(86, 149);
             this.btOk.Name = "btOk";
-            this.btOk.Size = new System.Drawing.Size(75, 35);
+            this.btOk.Size = new System.Drawing.Size(113, 37);
             this.btOk.TabIndex = 4;
             this.btOk.Text = "Valider";
             this.btOk.UseVisualStyleBackColor = true;
@@ -94,9 +94,9 @@ namespace VersionDB4
             // 
             this.BtCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtCancel.Location = new System.Drawing.Point(253, 123);
+            this.BtCancel.Location = new System.Drawing.Point(215, 149);
             this.BtCancel.Name = "BtCancel";
-            this.BtCancel.Size = new System.Drawing.Size(75, 35);
+            this.BtCancel.Size = new System.Drawing.Size(113, 37);
             this.BtCancel.TabIndex = 5;
             this.BtCancel.Text = "Annuler";
             this.BtCancel.UseVisualStyleBackColor = true;
@@ -107,7 +107,7 @@ namespace VersionDB4
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.BtCancel;
-            this.ClientSize = new System.Drawing.Size(340, 170);
+            this.ClientSize = new System.Drawing.Size(340, 198);
             this.Controls.Add(this.BtCancel);
             this.Controls.Add(this.btOk);
             this.Controls.Add(this.panel1);
@@ -116,7 +116,9 @@ namespace VersionDB4
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(356, 237);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(356, 237);
             this.Name = "FNewVersion";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

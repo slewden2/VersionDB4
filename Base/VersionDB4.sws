@@ -4,7 +4,7 @@
 
 <Workspace>
 	<Local Expanded="Yes">
-		<Model Expanded="Yes" ID="{CE2CF138-85B1-4F6F-B235-D7288ED75204}" Name="VersionDB4" Selected="Yes" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="VersionDB4.pdm"/>
+		<Model Expanded="Yes" ID="{CE2CF138-85B1-4F6F-B235-D7288ED75204}" Name="VersionDB4" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="VersionDB4.pdm"/>
 		<Model Expanded="Yes" ID="{BDDD8D3D-3B01-493A-92EF-63435ABBFCAF}" Loaded="No" Name="VersionDB4" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="VersionDB4.oom"/>
 	</Local>
 	<BrowserModule Name="Repository"/>

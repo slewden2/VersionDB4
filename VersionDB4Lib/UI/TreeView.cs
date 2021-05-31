@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using VersionDB4Lib.Business;
 
 namespace VersionDB4Lib.UI
 {
@@ -29,6 +30,7 @@ namespace VersionDB4Lib.UI
             if (e.Node != null && e.Bounds.Top >= 0 && e.Bounds.Height > 0)
             {
                 int children = (e.Node.Tag != null && e.Node.Tag is ICounter counter) ? counter.Count : 0;
+                bool isLocked = e.Node.Tag != null && e.Node.Tag is ILocked locked && locked.VersionIsLocked;
                 bool hasChildren = children > 0;
                 
                 int indent = Math.Max(0, (e.Node.Level - (ShowRootLines ? 0 : 1))) * Indent;
@@ -46,18 +48,29 @@ namespace VersionDB4Lib.UI
                     e.Graphics.DrawString(picto, ft, new SolidBrush(Color.FromArgb(120, 120, 120)), new PointF(e.Bounds.Left + indent, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
                 }
 
+                // locked
+                float dx = 0;
+                if (isLocked)
+                {  // lock 
+                    var lo = $" ";
+                    using var ftlock = new Font("Segoe MDL2 Assets", Font.Size + 2);
+                    var sz0 = e.Graphics.MeasureString(lo, ftlock);
+                    dx = sz0.Width;
+                    e.Graphics.DrawString(lo, ftlock, new SolidBrush(EnumHelper.CSTLockColor), new PointF(e.Bounds.Left + indent + sz.Width, e.Bounds.Top + ((e.Bounds.Height - sz0.Height) / 2)));
+                }
+
                 // texte
                 var txt = e.Node.Text + " ";
                 using var ft2 = new Font(Font, (e.State & TreeNodeStates.Selected) != 0 ? FontStyle.Bold : FontStyle.Regular);
                 var sz2 = e.Graphics.MeasureString(txt, ft2);
-                e.Graphics.DrawString(txt, ft2, new SolidBrush(ForeColor), new PointF(e.Bounds.Left + indent + sz.Width, e.Bounds.Top + ((e.Bounds.Height - sz2.Height) / 2)));
+                e.Graphics.DrawString(txt, ft2, new SolidBrush(ForeColor), new PointF(e.Bounds.Left + indent + sz.Width + dx, e.Bounds.Top + ((e.Bounds.Height - sz2.Height) / 2)));
 
 
                 if (hasChildren)
                 {  // compteur
                     var cpt = children.ToString();
                     using var ft3 = new Font(Font, FontStyle.Bold);
-                    e.Graphics.DrawString(cpt, ft3, new SolidBrush(Color.FromArgb(97, 146, 198)), new PointF(e.Bounds.Left + indent + sz.Width + sz2.Width, e.Bounds.Top + ((e.Bounds.Height - sz2.Height) / 2)));
+                    e.Graphics.DrawString(cpt, ft3, new SolidBrush(Color.FromArgb(97, 146, 198)), new PointF(e.Bounds.Left + indent+ sz.Width + dx  + sz2.Width, e.Bounds.Top + ((e.Bounds.Height - sz2.Height) / 2)));
                 }
             }
         }

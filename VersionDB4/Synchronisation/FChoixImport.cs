@@ -14,7 +14,7 @@ namespace VersionDB4.Synchronisation
     public partial class FChoixImport : Form
     {
         private const string LBLCLIENTDEFAULT = "Base client (a importer)";
-        private const string LBLCLIENTCUSTOMCIENT = "Base client (a import en spécifique pour {0})";
+        private const string LBLCLIENTCUSTOMCIENT = "Base client (a importer en spécifique pour {0})";
         private string clientCode = string.Empty;
 
         public FChoixImport()

@@ -29,21 +29,21 @@ namespace VersionDB4Lib.CRUD
         {
             if (TypeObjectId == TypeObject.Schema)
             {
-                return ObjectName;
+                return $"{TypeObjectName()} {ObjectName}";
             }
             else if (TypeObjectId == TypeObject.Index || TypeObjectId == TypeObject.ForeignKey || TypeObjectId == TypeObject.Constraint)
             {
                 string sch = string.IsNullOrWhiteSpace(ObjectSchema) ? string.Empty : $"{ObjectSchema}.";
-                return $"{ObjectColumn} de la table {sch}{ObjectName}";
+                return $"{TypeObjectName()} {ObjectColumn} de la table {sch}{ObjectName}";
             }
             else
             {
                 string sch = string.IsNullOrWhiteSpace(ObjectSchema) ? string.Empty : $"{ObjectSchema}.";
-                return $"{sch}{ObjectName}";
+                return $"{TypeObjectName()} {sch}{ObjectName}";
             }
         }
 
-        public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.SqlObject;
+        public virtual ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.SqlObject;
 
         public static string SQLSelect => @"
 SELECT ObjectId, VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ObjectColumn
@@ -52,7 +52,6 @@ WHERE VersionId = @VersionId
   AND o.ObjectDeleted = 0
 ";
 
-        public static string SQlSelectWithVersionAndType => SQLSelect + " AND TypeObjectId = @TypeObjectId";
         public static string SQLInsert => @"
 INSERT INTO dbo.Object (VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ObjectColumn
 ) VALUES (

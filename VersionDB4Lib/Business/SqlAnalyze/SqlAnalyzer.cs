@@ -65,6 +65,17 @@ namespace VersionDB4Lib.Business.SqlAnalyze
         /// Obtient la liste des objets impactés par ce script
         /// </summary>
         public IEnumerable<DataBaseObject> SqlObjets => mysqlobjets;
+
+        public EValidation Valide
+        {
+            set
+            {
+                foreach (var r in Resumes)
+                {
+                    r.ResumeManualValidationCode = (byte)value;
+                }
+            }
+        }
         #endregion
 
         /// <summary>

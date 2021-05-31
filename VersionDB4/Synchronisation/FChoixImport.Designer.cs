@@ -55,9 +55,9 @@ namespace VersionDB4.Synchronisation
             // 
             this.btOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btOk.Location = new System.Drawing.Point(579, 12);
+            this.btOk.Location = new System.Drawing.Point(599, 17);
             this.btOk.Name = "btOk";
-            this.btOk.Size = new System.Drawing.Size(120, 42);
+            this.btOk.Size = new System.Drawing.Size(113, 37);
             this.btOk.TabIndex = 0;
             this.btOk.Text = "Valider";
             this.btOk.UseVisualStyleBackColor = true;
@@ -66,9 +66,9 @@ namespace VersionDB4.Synchronisation
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(718, 12);
+            this.btnCancel.Location = new System.Drawing.Point(728, 17);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(120, 42);
+            this.btnCancel.Size = new System.Drawing.Size(113, 37);
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Annuler";
             this.btnCancel.UseVisualStyleBackColor = true;

@@ -76,7 +76,7 @@ namespace VersionDB4.Control
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPanleInfo.AutoEllipsis = true;
             this.lblPanleInfo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblPanleInfo.Location = new System.Drawing.Point(0, 0);
+            this.lblPanleInfo.Location = new System.Drawing.Point(0, 1);
             this.lblPanleInfo.Name = "lblPanleInfo";
             this.lblPanleInfo.Size = new System.Drawing.Size(539, 23);
             this.lblPanleInfo.TabIndex = 1;
@@ -92,6 +92,7 @@ namespace VersionDB4.Control
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(560, 25);
             this.panel1.TabIndex = 3;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.Panel1_Paint);
             // 
             // SqlTextBox
             // 

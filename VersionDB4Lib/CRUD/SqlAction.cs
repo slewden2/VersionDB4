@@ -113,15 +113,15 @@ FROM dbo.SqlAction
                     new SqlAction() { SqlActionId = 5,  SqlActionName = "Alter",           SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = true,  SqlActionTitle = "Modification de"},
                     new SqlAction() { SqlActionId = 6,  SqlActionName = "Drop",            SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = true,  SqlActionTitle = "Suppression de"},
                     new SqlAction() { SqlActionId = 7,  SqlActionName = "Rename",          SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Changement de nom de"},
-                    new SqlAction() { SqlActionId = 8,  SqlActionName = "AddColumn",       SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Ajout de colonne à"},
-                    new SqlAction() { SqlActionId = 9,  SqlActionName = "AlterColumn",     SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Modification d'une colonne de"},
-                    new SqlAction() { SqlActionId = 10, SqlActionName = "DropColumn",      SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Suppression d'une colonne dans"},
-                    new SqlAction() { SqlActionId = 11, SqlActionName = "RenameColumn",    SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Changement de nom d'une colonne de"},
-                    new SqlAction() { SqlActionId = 12, SqlActionName = "Update",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Mise à jour de données dans"},
-                    new SqlAction() { SqlActionId = 13, SqlActionName = "Insert",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Insersion de données dans"},
-                    new SqlAction() { SqlActionId = 14, SqlActionName = "Delete",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Suppression de données dans"},
+                    new SqlAction() { SqlActionId = 8,  SqlActionName = "AddColumn",       SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Ajout de colonne à une"},
+                    new SqlAction() { SqlActionId = 9,  SqlActionName = "AlterColumn",     SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Modification d'une colonne d'une"},
+                    new SqlAction() { SqlActionId = 10, SqlActionName = "DropColumn",      SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Suppression d'une colonne dans une"},
+                    new SqlAction() { SqlActionId = 11, SqlActionName = "RenameColumn",    SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Changement de nom d'une colonne d'une"},
+                    new SqlAction() { SqlActionId = 12, SqlActionName = "Update",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Mise à jour de données dans la"},
+                    new SqlAction() { SqlActionId = 13, SqlActionName = "Insert",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Insersion de données dans la"},
+                    new SqlAction() { SqlActionId = 14, SqlActionName = "Delete",          SqlActionIsForColumn = false, SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Suppression de données dans la"},
                     new SqlAction() { SqlActionId = 15, SqlActionName = "Execute",         SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Execution de"},
-                    new SqlAction() { SqlActionId = 16, SqlActionName = "AddColumNotNull", SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Ajout de colonne non nulle à"},
+                    new SqlAction() { SqlActionId = 16, SqlActionName = "AddColumNotNull", SqlActionIsForColumn = true,  SqlActionIsForTable = true,  SqlActionIsForIndex = false, SqlActionTitle = "Ajout de colonne non nulle à une"},
                     new SqlAction() { SqlActionId = 17, SqlActionName = "RaiseError",      SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Erreur programmée"},
                     new SqlAction() { SqlActionId = 18, SqlActionName = "Print",           SqlActionIsForColumn = false, SqlActionIsForTable = false, SqlActionIsForIndex = false, SqlActionTitle = "Affichage d'un message"},
                 };
@@ -141,15 +141,15 @@ FROM dbo.SqlAction
             => action.SqlActionId switch
                 {
                     // SqlAction.AddColumn:
-                    8 => $"Ajout de colonne {colName} à",
+                    8 => $"Ajout de colonne {colName} à une",
                     // SqlAction.AddColumnNotNull:
-                    16 => $"Ajout de colonne non nulle {colName} à",
+                    16 => $"Ajout de colonne non nulle {colName} à une",
                     //SqlAction.AlterColumn:
-                    9 => $"Modification de la colonne {colName} de",
+                    9 => $"Modification de la colonne {colName} de la",
                     // SqlAction.DropColumn:
-                    10 => $"Suppression de la colonne {colName} dans",
+                    10 => $"Suppression de la colonne {colName} dans la",
                     // SqlAction.RenameColumn:
-                    11 => $"Changement de nom de la colonne {colName} de",
+                    11 => $"Changement de nom de la colonne {colName} de la",
                     _ => action.SqlActionName,
                 };
     }

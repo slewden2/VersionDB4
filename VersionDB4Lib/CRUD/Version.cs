@@ -5,12 +5,13 @@ using VersionDB4Lib.Business;
 
 namespace VersionDB4Lib.CRUD
 {
-    public class Version : IPresentable
+    public class Version : IPresentable, ILocked
     {
         public int VersionId { get; set; }
         public int ProjectId { get; set; }
         public int VersionPrincipal { get; set; }
         public int VersionSecondary { get; set; }
+        public bool VersionIsLocked { get; set; }
 
         public static Version Empty => new Version();
 
@@ -60,19 +61,26 @@ namespace VersionDB4Lib.CRUD
         public static bool operator >=(Version v1, Version v2) => v1 == v2 || v1 > v2;
 
         public static string SQLSelect => @"
-SELECT VersionId, ProjectId, VersionPrincipal, VersionSecondary
+SELECT VersionId, ProjectId, VersionPrincipal, VersionSecondary, VersionIsLocked
 FROM dbo.Version 
 ";
         public static string SQLInsert => @"
 INSERT INTO dbo.Version (
-ProjectId, VersionPrincipal, VersionSecondary
+ProjectId, VersionPrincipal, VersionSecondary, VersionIsLocked
 ) VALUES (
-@ProjectId, @VersionPrincipal, @VersionSecondary
+@ProjectId, @VersionPrincipal, @VersionSecondary, @VersionIsLocked
 );
 SELECT TOP 1 COALESCE(SCOPE_IDENTITY(), @@IDENTITY) AS [Key];
 ";
         public static string SQLDelete => @"
 DELETE FROM dbo.Version WHERE VersionId = @VersionId;
+";
+
+        public static string SQLUpdate => @"
+UPDATE dbo.Version
+ SET VersionIsLocked = @VersionIsLocked
+WHERE  VersionId = @VersionId
+;
 ";
 
         public override string ToString() => $"Version {VersionPrincipal}.{VersionSecondary}";

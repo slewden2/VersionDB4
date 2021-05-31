@@ -26,14 +26,10 @@ WHERE x = '5s33'
 
         }
 
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            richTextBox1.ReadOnly = !richTextBox1.ReadOnly;
-        }
+        private void Button1_Click(object sender, EventArgs e) 
+            => richTextBox1.ReadOnly = !richTextBox1.ReadOnly;
 
-        private void Button2_Click(object sender, EventArgs e)
-        {
-            richTextBox1.Visible = !richTextBox1.Visible;
-        }
+        private void Button2_Click(object sender, EventArgs e) 
+            => richTextBox1.Visible = !richTextBox1.Visible;
     }
 }

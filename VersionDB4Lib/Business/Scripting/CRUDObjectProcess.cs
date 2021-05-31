@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DatabaseAndLogLibrary.DataBase;
 using VersionDB4Lib.Business.SqlAnalyze;
 using VersionDB4Lib.CRUD;
+using VersionDB4Lib.ForUI;
 using Object = VersionDB4Lib.CRUD.Object;
 
 namespace VersionDB4Lib.Business.Scripting
@@ -43,12 +45,14 @@ namespace VersionDB4Lib.Business.Scripting
             AddScriptToObjectAction(objectEdited, SqlAction.Alter);
         }
 
-        public void Delete(Object objectDel)
+        public void Delete(Object objectDel, int numberOfImplementation)
         {
             objectDel.ObjectDeleted = true;
 
+            string sql = numberOfImplementation > 0 ? ObjectWithClientSpecific.SQLDelete : Object.SQLDelete;
+
             using var cnn = new DatabaseConnection();
-            cnn.Execute(Object.SQLDelete, objectDel);
+            cnn.Execute(sql, objectDel);
 
             AddScriptToObjectAction(objectDel, SqlAction.Delete);
         }
@@ -66,6 +70,7 @@ namespace VersionDB4Lib.Business.Scripting
 
             // Ajouter l'anlyse pour ce script
             var analyzer = SqlAnalyzer.Analyse(scriptId, crudScript.ScriptText);
+            analyzer.Valide = EValidation.Valide;
             analyzer.Save(cnn);
         }
     }

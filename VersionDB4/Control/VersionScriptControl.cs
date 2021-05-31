@@ -29,6 +29,11 @@ namespace VersionDB4.Control
                     lblInfoScripts.Text = Count(value.Count, "Aucun script dans cette version", "Un seul script dans cette version", $"{value.Count} scripts dans cette version");
                     lblInfoObjects.Text = Count(value.CountObject, string.Empty, "Un objet dans le référentiel pour cette version", $"{value.CountObject} objets sont dans le référentiel pour cette version");
 
+                    if (value.VersionIsLocked)
+                    {
+                        lblInfoScripts.Text += "; Cette version est figée.";
+                    }
+
                     if (value.CountObject == 1)
                     {
                         lblInfoObjects.LinkArea = new LinkArea(0, 8);
@@ -88,10 +93,14 @@ namespace VersionDB4.Control
             {
                 if (lstResume.Items[e.Index] is ResumeVersionActions resume)
                 {
-                    var txt = resume.Count.ToString();
+                    var txt = "999";
                     using var ft = new Font(lstResume.Font.FontFamily, lstResume.Font.Size + 2, FontStyle.Bold);
                     var sz = e.Graphics.MeasureString(txt, ft);
-                    e.Graphics.DrawString(txt, ft, new SolidBrush(this.ForeColor), new PointF(0, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
+                    
+                    
+                    txt = resume.Count.ToString();
+                    var sz1 = e.Graphics.MeasureString(txt, ft);
+                    e.Graphics.DrawString(txt, ft, new SolidBrush(this.ForeColor), new PointF(sz.Width - sz1.Width, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
 
 
                     txt = $"x {resume}";
@@ -100,10 +109,14 @@ namespace VersionDB4.Control
                 }
                 else if (lstResume.Items[e.Index] is ResumeVersionValidation valid)
                 {
-                    var txt = valid.Count.ToString();
+                    var txt = "999";
                     using var ft = new Font(lstResume.Font.FontFamily, lstResume.Font.Size, FontStyle.Bold);
                     var sz = e.Graphics.MeasureString(txt, ft);
-                    e.Graphics.DrawString(txt, ft, new SolidBrush(valid.Color), new PointF(0, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
+
+
+                    txt = valid.Count.ToString();
+                    var sz1 = e.Graphics.MeasureString(txt, ft);
+                    e.Graphics.DrawString(txt, ft, new SolidBrush(valid.Color), new PointF(sz.Width -sz1.Width, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
 
 
                     txt = $"x {valid}";

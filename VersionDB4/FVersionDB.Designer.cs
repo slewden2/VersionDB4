@@ -29,7 +29,9 @@ namespace VersionDB4
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FVersionDB));
+            this.sqlTextBox1 = new VersionDB4.Control.SqlTextBox();
             this.treeView1 = new VersionDB4Lib.UI.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblVersion = new System.Windows.Forms.Label();
@@ -41,14 +43,14 @@ namespace VersionDB4
             this.cbVersions = new VersionDB4Lib.UI.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.controlWindow1 = new VersionDB4Lib.UI.ControlWindow();
             this.lblResumes = new System.Windows.Forms.Label();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.lblType = new System.Windows.Forms.Label();
-            this.sqlTextBox1 = new VersionDB4.Control.SqlTextBox();
             this.baseClientControl1 = new VersionDB4.Control.BaseClientControl();
             this.versionScriptControl1 = new VersionDB4.Control.VersionScriptControl();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -58,6 +60,20 @@ namespace VersionDB4
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
+            // 
+            // sqlTextBox1
+            // 
+            this.sqlTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.sqlTextBox1.Location = new System.Drawing.Point(9, 85);
+            this.sqlTextBox1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.sqlTextBox1.Name = "sqlTextBox1";
+            this.sqlTextBox1.ReadOnly = false;
+            this.sqlTextBox1.Size = new System.Drawing.Size(597, 363);
+            this.sqlTextBox1.TabIndex = 7;
+            this.sqlTextBox1.WordWrap = true;
+            this.sqlTextBox1.OnChange += new System.EventHandler(this.SqlTextBox1_OnChange);
             // 
             // treeView1
             // 
@@ -113,6 +129,7 @@ namespace VersionDB4
             this.rdReferential.TabIndex = 2;
             this.rdReferential.Text = "";
             this.rdReferential.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.rdReferential, "Le référentiel");
             this.rdReferential.Click += new System.EventHandler(this.RdReferential_Click);
             // 
             // rdClients
@@ -128,6 +145,7 @@ namespace VersionDB4
             this.rdClients.TabIndex = 1;
             this.rdClients.Text = "";
             this.rdClients.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.rdClients, "Les bases clients");
             this.rdClients.Click += new System.EventHandler(this.RdClients_Click);
             // 
             // rdScript
@@ -144,6 +162,7 @@ namespace VersionDB4
             this.rdScript.TabStop = true;
             this.rdScript.Text = "";
             this.rdScript.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.rdScript, "Les versions et les scripts");
             this.rdScript.Click += new System.EventHandler(this.RdScript_Click);
             // 
             // splitContainer1
@@ -165,14 +184,14 @@ namespace VersionDB4
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.sqlTextBox1);
             this.splitContainer1.Panel2.Controls.Add(this.controlWindow1);
             this.splitContainer1.Panel2.Controls.Add(this.lblResumes);
             this.splitContainer1.Panel2.Controls.Add(this.pnlActions);
             this.splitContainer1.Panel2.Controls.Add(this.lblType);
-            this.splitContainer1.Panel2.Controls.Add(this.sqlTextBox1);
             this.splitContainer1.Panel2.Controls.Add(this.baseClientControl1);
             this.splitContainer1.Panel2.Controls.Add(this.versionScriptControl1);
+            this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.SplitContainer1_Panel2_Paint);
             this.splitContainer1.Size = new System.Drawing.Size(1010, 448);
             this.splitContainer1.SplitterDistance = 400;
@@ -227,26 +246,12 @@ namespace VersionDB4
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblTitle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BackgroundImage = global::VersionDB4.Properties.Resources.Referentiel;
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(0, 83);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(606, 365);
-            this.pictureBox1.TabIndex = 10;
-            this.pictureBox1.TabStop = false;
-            // 
             // controlWindow1
             // 
             this.controlWindow1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.controlWindow1.Font = new System.Drawing.Font("Segoe MDL2 Assets", 7.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.controlWindow1.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.controlWindow1.Location = new System.Drawing.Point(472, 0);
+            this.controlWindow1.Location = new System.Drawing.Point(471, 0);
             this.controlWindow1.MaximumSize = new System.Drawing.Size(135, 31);
             this.controlWindow1.MinimumSize = new System.Drawing.Size(135, 31);
             this.controlWindow1.Name = "controlWindow1";
@@ -288,27 +293,13 @@ namespace VersionDB4
             this.lblType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             // 
-            // sqlTextBox1
-            // 
-            this.sqlTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.sqlTextBox1.Location = new System.Drawing.Point(11, 83);
-            this.sqlTextBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.sqlTextBox1.Name = "sqlTextBox1";
-            this.sqlTextBox1.ReadOnly = false;
-            this.sqlTextBox1.Size = new System.Drawing.Size(597, 367);
-            this.sqlTextBox1.TabIndex = 8;
-            this.sqlTextBox1.WordWrap = true;
-            this.sqlTextBox1.OnChange += new System.EventHandler(this.SqlTextBox1_OnChange);
-            // 
             // baseClientControl1
             // 
             this.baseClientControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.baseClientControl1.Location = new System.Drawing.Point(11, 81);
-            this.baseClientControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.baseClientControl1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.baseClientControl1.Name = "baseClientControl1";
             this.baseClientControl1.Size = new System.Drawing.Size(597, 369);
             this.baseClientControl1.TabIndex = 6;
@@ -319,11 +310,25 @@ namespace VersionDB4
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.versionScriptControl1.Location = new System.Drawing.Point(11, 83);
-            this.versionScriptControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.versionScriptControl1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.versionScriptControl1.Name = "versionScriptControl1";
             this.versionScriptControl1.Size = new System.Drawing.Size(597, 367);
             this.versionScriptControl1.TabIndex = 7;
             this.versionScriptControl1.OnLinkReferential += new System.EventHandler(this.VersionScriptControl1_OnLinkReferential);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.BackgroundImage = global::VersionDB4.Properties.Resources.Referentiel;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(0, 83);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(606, 365);
+            this.pictureBox1.TabIndex = 10;
+            this.pictureBox1.TabStop = false;
             // 
             // FVersionDB
             // 
@@ -368,11 +373,12 @@ namespace VersionDB4
         private System.Windows.Forms.Label lblResumes;
         private Control.BaseClientControl baseClientControl1;
         private Control.VersionScriptControl versionScriptControl1;
-        private VersionDB4.Control.SqlTextBox sqlTextBox1;
         private VersionDB4Lib.UI.ControlWindow controlWindow1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private Control.SqlTextBox sqlTextBox1;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

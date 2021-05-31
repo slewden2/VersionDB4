@@ -18,8 +18,6 @@ namespace VersionDB4Lib.CRUD
         public static string SQLSelect => @"
 SELECT ClientCodeId, ClientCodeName FROM dbo.ClientCode
 ";
-        public override string ToString() => ClientCodeName;
-
 
         public static List<ClientCode> List()
         {
@@ -44,6 +42,18 @@ SELECT ClientCodeId, ClientCodeName FROM dbo.ClientCode
                 list = cnn.Query<ClientCode>(ClientCode.SQLSelect).ToList();
             }
         }
-    }
+        public override string ToString() => ClientCodeName;
 
+        public override int GetHashCode() => ClientCodeId.GetHashCode();
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ClientCode cl)
+            {
+                return this.ClientCodeId == cl.ClientCodeId;
+            }
+
+            return false;
+        }
+    }
 }

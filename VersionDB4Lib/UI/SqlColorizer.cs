@@ -283,38 +283,35 @@ namespace VersionDB4Lib.UI
         /// <param name="e">Paramètre de travail</param>
         private void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.mytextBox.SuspendLayout();
+            mytextBox.SuspendLayout();
             try
             {
                 Application.DoEvents();  // sans cela la commande suspendLayout ne fonctionne pas !
 
-                this.mytextBox.SelectionStart = 0;
-                this.mytextBox.SelectionLength = this.mytextBox.Text.Length;
-                this.mytextBox.SelectionColor = Color.Black;
+                mytextBox.SelectionStart = 0;
+                mytextBox.SelectionLength = mytextBox.Text.Length;
+                mytextBox.SelectionColor = Color.Black;
 
-                foreach (ColorMatch m in this.mymatches)
+                foreach (ColorMatch m in mymatches)
                 {
-                    this.mytextBox.SelectionStart = m.Index;
-                    this.mytextBox.SelectionLength = m.Length;
-                    this.mytextBox.SelectionColor = m.Color;
+                    mytextBox.SelectionStart = m.Index;
+                    mytextBox.SelectionLength = m.Length;
+                    mytextBox.SelectionColor = m.Color;
                 }
 
-                this.mytextBox.BackColor = this.myBackColor; // SystemColors.Window;
-                this.mytextBox.SelectionStart = this.myselectionStart;
-                this.mytextBox.SelectionLength = this.myselectionLength;
-                this.mytextBox.ResumeLayout();
+                mytextBox.BackColor = myBackColor; // SystemColors.Window;
+                mytextBox.SelectionStart = myselectionStart;
+                mytextBox.SelectionLength = myselectionLength;
+                
             }
             catch
             {
             }
             finally
             {
-                if (this.onFinsihed != null)
-                {
-                    this.onFinsihed.Invoke();
-                }
-
-                this.Dispose();
+                mytextBox.ResumeLayout();
+                onFinsihed?.Invoke();
+                Dispose();
             }
         }
 

@@ -11,7 +11,8 @@ namespace VersionDB4Lib.ForUI
 
         public int Count { get; private set; }
 
-        public override string ToString() => "Bases client";
+        public override string ToString() => "Bases de données du projet";
+
         public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.Clients;
     }
 }

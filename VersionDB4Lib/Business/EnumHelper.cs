@@ -12,8 +12,9 @@ namespace VersionDB4Lib.Business
         public static string Counter(this int n, string zero, string one, string plurial)
             => n == 0 ? zero : n == 1 ? one : string.Format(plurial, n);
 
+        public static readonly Color CSTLockColor = Color.Gold;  // Unlock  lock
 
-        public static IEnumerable<EAction> GetActions(this ETypeObjectPresentable typeObjectPresentable, object theObject)
+        public static IEnumerable<EAction> GetActions(this ETypeObjectPresentable typeObjectPresentable, bool versionIsLocked, object theObject)
         {
             switch (typeObjectPresentable)
             {
@@ -22,60 +23,64 @@ namespace VersionDB4Lib.Business
                     break;
 
                 case ETypeObjectPresentable.SqlGroup:
-                    //yield return EAction.SqlGroupReLoad;
-                    //yield return EAction.SqlGroupReoadFromBdd;
-                    yield return EAction.SqlObjectAddBegin;
+                    if (!versionIsLocked)
+                    {
+                        yield return EAction.SqlObjectAddBegin;
+                    }
+
                     break;
                 case ETypeObjectPresentable.SqlObject:
-                    if (theObject != null && theObject is CRUD.Object sqlObject)
+                    if (!versionIsLocked && theObject != null && theObject is CRUD.Object sqlObject && !sqlObject.ObjectDeleted)
                     {
-                        if (!sqlObject.ObjectDeleted)
-                        {
-                            ////if (string.IsNullOrWhiteSpace(sqlObject.ObjectLockedBy))
-                            ////{
-                            yield return EAction.SqlObjectEditBegin;
-                            yield return EAction.SqlObjectDelete;
-                            ////yield return EAction.SqlObjectLock;
-
-                            ////if (sqlObject.ObjectEmpty)
-                            ////{
-                            ////    yield return EAction.SqlObjectAddCustomClient;
-                            ////    yield return EAction.SqlObjectRemoveCustomClient;
-                            ////}
-                            ////else
-                            ////{
-                            ////    yield return EAction.SqlObjectMakeFullCustomClient;
-                            ////}
-                            ////}
-                            ////else
-                            ////{
-                            ////    yield return EAction.SqlObjectUnlock;
-                            ////}
-                        }
-
-                        // yield return EAction.SqlObjectSaveSqlToDisk;
+                        yield return EAction.SqlObjectEditBegin;
+                        yield return EAction.SqlObjectDelete;
+                        yield return EAction.SqlObjectAddCustomClient;
                     }
 
                     break;
+                case ETypeObjectPresentable.SQlObjectCustomClient:
+                    if (!versionIsLocked && theObject != null && theObject is CRUD.Object sqlObjectClient && !sqlObjectClient.ObjectDeleted)
+                    {
+                        yield return EAction.SqlObjectEditBegin;
+                        yield return EAction.SqlObjectRemoveCustomClient;
+                    }
 
+                    break;
                 case ETypeObjectPresentable.Project:
                     yield return EAction.ProjectScriptReload;
-                    yield return EAction.ProjectVersionAdd;
+                    yield return EAction.VersionAdd;
                     break;
                 case ETypeObjectPresentable.VersionScript:
-                    ////yield return EAction.VersionScriptRefresh;
-                    yield return EAction.ScriptAddBegin;
-
-                    if (theObject is VersionScriptCounter vc && vc.IsLastVersion && vc.Count == 0 && vc.CountObject == 0)
+                    if (versionIsLocked)
                     {
-                        yield return EAction.ProjectVersionDelete;
+                        yield return EAction.VersionUnLock;
                     }
+                    else
+                    {
+                        yield return EAction.ScriptAddBegin;
+
+                        if (theObject is VersionScriptCounter vc && vc.IsLastVersion && vc.Count == 0 && vc.CountObject == 0)
+                        {
+                            yield return EAction.VersionDelete;
+                        }
+
+                        yield return EAction.VersionLock;
+                    }
+
                     break;
 
                 case ETypeObjectPresentable.Script:
-                    yield return EAction.ScriptEditBegin;
-                    yield return EAction.ScriptAnalyze;
-                    yield return EAction.ScriptDelete;
+                    if (!versionIsLocked)
+                    {
+                        yield return EAction.ScriptEditBegin;
+                        yield return EAction.ScriptAnalyze;
+                        yield return EAction.ScriptDelete;
+                    }
+                    else
+                    {
+                        yield return EAction.ScriptAnalyze;
+                    }
+
                     break;
 
                 case ETypeObjectPresentable.Clients:
@@ -83,7 +88,6 @@ namespace VersionDB4Lib.Business
                     yield return EAction.ClientAdd;
                     break;
                 case ETypeObjectPresentable.Client:
-                    //yield return EAction.ClientReload;
                     yield return EAction.ClientEdit;
                     yield return EAction.ClientDel;
                     yield return EAction.ClientDBToReferential;
@@ -118,11 +122,11 @@ namespace VersionDB4Lib.Business
                   EAction.SqlObjectAddEnd => "",               // 0xE081; 
                   EAction.SqlObjectEditBegin => "",            // 0xE104;  
                   EAction.SqlObjectEditEnd => "",              // 0xE081; 
-
-                  //EAction.SqlGroupReLoad => "",                // 0xE72C;  
-                  //EAction.SqlGroupReoadFromBdd => "",          // 0xE72C;   
-                  EAction.SqlObjectAddCustomClient => "",      // 0xE8FA;  Custom client Add
                   EAction.SqlObjectDelete => "",               // 0xE107;  
+
+                  EAction.SqlObjectAddCustomClient => "",      // 0xE8FA;  Custom client Add
+                  EAction.SqlObjectAddCustomClientEnd => "",   // 0xE081; 
+
                   EAction.SqlObjectLock => "",                 // 0xE72E;  Lock
                   EAction.SqlObjectMakeFullCustomClient => "", // 0xE2AF;  Full client
                   EAction.SqlObjectRemoveCustomClient => "",   // 0xE8CF;  Custom client Remove
@@ -130,9 +134,12 @@ namespace VersionDB4Lib.Business
                   EAction.SqlObjectUnlock => "",               // 0xE785;  Unlock
                                                                 //EAction.VersionScriptAdd => "",              // 0xE109;
 
-                  EAction.ProjectVersionDelete => "",           // 0xE107;  Delete
-                  EAction.ProjectVersionAdd => "",             // 0xE109;
-                                                                //EAction.VersionScriptRefresh => "",          // 0xE72C;
+                  EAction.VersionDelete => "",                 // 0xE107;  Delete
+                  EAction.VersionAdd => "",                    // 0xE109;
+                  EAction.VersionLock => "",                   // 0xE72E;  Lock
+                  EAction.VersionUnLock => "",                 // 0xE785;  Unlock
+
+                  //EAction.VersionScriptRefresh => "",          // 0xE72C;
                   _ => string.Empty
               };
 
@@ -163,24 +170,60 @@ namespace VersionDB4Lib.Business
                     EAction.SqlObjectEditBegin => Color.DarkViolet,
                     EAction.SqlObjectEditEnd => Color.MediumSeaGreen,
                     EAction.SqlObjectDelete => Color.Red,
-
-                    //EAction.SqlGroupReLoad => Color.DeepSkyBlue,
-                    //EAction.SqlGroupReoadFromBdd => Color.DeepSkyBlue,
-
                     EAction.SqlObjectAddCustomClient => Color.Navy,          // Add Client    : Bleu ?
-                    EAction.SqlObjectLock => Color.Gold,                     // Lock : jaune foncé
+                    EAction.SqlObjectAddCustomClientEnd => Color.MediumSeaGreen,
+
+                    EAction.SqlObjectLock => CSTLockColor,                     // Lock : jaune foncé
                     EAction.SqlObjectMakeFullCustomClient => Color.Navy,     // Full Client    : Bleu ?
                     EAction.SqlObjectRemoveCustomClient => Color.Red,
                     EAction.SqlObjectSaveSqlToDisk => Color.Navy,            // Save disk     : Bleu ?
-                    EAction.SqlObjectUnlock => Color.Gold,                   // UnLock : jaune foncé 
+                    EAction.SqlObjectUnlock => CSTLockColor,                   // UnLock : jaune foncé 
                     //EAction.VersionScriptAdd => Color.Navy,
-                    EAction.ProjectVersionDelete => Color.Red,
-                    EAction.ProjectVersionAdd => Color.Navy,
+                    
+                    EAction.VersionDelete => Color.Red,
+                    EAction.VersionAdd => Color.Navy,
+                    EAction.VersionLock => CSTLockColor,                     // Lock : jaune foncé
+                    EAction.VersionUnLock => CSTLockColor,                   // UnLock : jaune foncé 
+
 
                     _ => Color.Black
                 };
 
-
+        public static string GetToolTipText(this EAction action)
+            => action switch
+            {
+                EAction.Cancel => "Annuler l'opération en cours",
+                EAction.SqlObjectAddBegin => "Ajouter un élément",
+                EAction.SqlObjectAddEnd => "Valider l'ajout",
+                EAction.SqlObjectEditBegin => "Modifier l'élément",
+                EAction.SqlObjectEditEnd => "Valider les modifications",
+                EAction.SqlObjectAddCustomClient => "Ajouter une implémentation client",
+                EAction.SqlObjectAddCustomClientEnd => "Valider l'implémentation client",
+                EAction.SqlObjectDelete => "Supprimer l'élément sélectionné",
+                EAction.SqlObjectLock => "Vérouiller l'objet",
+                EAction.SqlObjectUnlock => "Déverrouller l'objet",
+                EAction.SqlObjectRemoveCustomClient => "Supprimer cette implémentation client",
+                EAction.SqlObjectMakeFullCustomClient => "Vider l'implémentation par défaut",
+                EAction.SqlObjectSaveSqlToDisk => "Enregistrer sur disque",
+                EAction.ProjectScriptReload => "Recharger les scripts",
+                EAction.ProjectReferentialReload => "Recharger le référentiel",
+                EAction.VersionAdd => "Ajouter une version",
+                EAction.VersionDelete => "Supprimer cette version vide",
+                EAction.VersionLock => "Verrouiller cette version",
+                EAction.VersionUnLock => "Libérer cette version",
+                EAction.ScriptAddBegin => "Ajouter un script manuellement",
+                EAction.ScriptAddEnd => "Valider l'ajout du script",
+                EAction.ScriptEditBegin => "Modifier ce script",
+                EAction.ScriptEditEnd => "Valider la modification du script",
+                EAction.ScriptDelete => "Supprimer ce script",
+                EAction.ScriptAnalyze => "Voir les détails de l'analyse du script",
+                EAction.ClientsReload => "Recharger la liste des clients",
+                EAction.ClientAdd => "Ajouter un client",
+                EAction.ClientEdit => "Modifier ce client",
+                EAction.ClientDel => "Supprimer cette base client du référentiel",
+                EAction.ClientDBToReferential => "Importer les informations de la base client dans le référentiel",
+                _ => string.Empty
+            };
 
         /// <summary>
         /// Renvoie une chaine pour afficher la représentation de l'objet

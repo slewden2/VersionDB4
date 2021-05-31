@@ -97,20 +97,23 @@ namespace VersionDB4Lib.Business.Scripting
         private string SQLDrop()
             => myobject.TypeObjectId switch
             {
-                1 => $"DROP PROCEDURE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                2 => $"DROP FUNCTION [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                3 => $"DROP FUNCTION [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                4 => $"DROP FUNCTION [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                5 => $"DROP VIEW [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                6 => $"DROP TRIGGER [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                7 => $"DROP INDEX [{myobject.ObjectColumn}] ON  [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
+                1 => $"DROP PROCEDURE {QuotedSchema}[{myobject.ObjectName}];",
+                2 => $"DROP FUNCTION {QuotedSchema}[{myobject.ObjectName}];",
+                3 => $"DROP FUNCTION {QuotedSchema}[{myobject.ObjectName}];",
+                4 => $"DROP FUNCTION {QuotedSchema}[{myobject.ObjectName}];",
+                5 => $"DROP VIEW {QuotedSchema}[{myobject.ObjectName}];",
+                6 => $"DROP TRIGGER {QuotedSchema}[{myobject.ObjectName}];",
+                7 => $"DROP INDEX [{myobject.ObjectColumn}] ON  {QuotedSchema}[{myobject.ObjectName}];",
                 8 => $"DROP SCHEMA [{myobject.ObjectName}];",
-                9 => $"DROP TABLE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                10 => $"DROP TYPE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                11 => $"DROP TYPE [{myobject.ObjectSchema}].[{myobject.ObjectName}];",
-                12 => $"ALTER TABLE [{myobject.ObjectSchema}].[{myobject.ObjectName}] DROP CONSTRAINT [{myobject.ObjectColumn}];",
-                13 => $"ALTER TABLE [{myobject.ObjectSchema}].[{myobject.ObjectName}] DROP CONSTRAINT [{myobject.ObjectColumn}];",
+                9 => $"DROP TABLE {QuotedSchema}[{myobject.ObjectName}];",
+                10 => $"DROP TYPE {QuotedSchema}[{myobject.ObjectName}];",
+                11 => $"DROP TYPE {QuotedSchema}[{myobject.ObjectName}];",
+                12 => $"ALTER TABLE {QuotedSchema}[{myobject.ObjectName}] DROP CONSTRAINT [{myobject.ObjectColumn}];",
+                13 => $"ALTER TABLE {QuotedSchema}[{myobject.ObjectName}] DROP CONSTRAINT [{myobject.ObjectColumn}];",
                 _ => string.Empty
             };
+
+        private string QuotedSchema 
+            => string.IsNullOrWhiteSpace(myobject.ObjectSchema) ? string.Empty : $"[{myobject.ObjectSchema}].";
     }
 }

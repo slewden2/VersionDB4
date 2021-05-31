@@ -20,6 +20,12 @@ namespace VersionDB4.Control
             ChkWrap.Checked = richTextBox1.WordWrap;
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            WordWrap = Program.Settings.SqlTextWrap;
+            base.OnLoad(e);
+        }
+
         public event EventHandler OnChange;
 
         #region Properties
@@ -41,7 +47,11 @@ namespace VersionDB4.Control
         public bool WordWrap
         {
             get => ChkWrap.Checked;
-            set => ChkWrap.Checked = value;
+            set
+            {
+                ChkWrap.Checked = value;
+                Program.Settings.SqlTextWrap = value;
+            }
         }
 
         [Category("Look"), DefaultValue(true)]
@@ -79,6 +89,7 @@ namespace VersionDB4.Control
             => richTextBox1.Select(start, length);
         #endregion
 
+
         #region  Events interne
         private void RichTextBox1_Enter(object sender, EventArgs e) => UpdatePosition();
 
@@ -95,26 +106,28 @@ namespace VersionDB4.Control
 
         private void UpdatePosition()
         {
-            var n = richTextBox1.SelectionStart;
-            var row = richTextBox1.GetLineFromCharIndex(n);
-            var col = n - richTextBox1.GetFirstCharIndexFromLine(row);
-
             if (string.IsNullOrWhiteSpace(richTextBox1.Text))
             {
                 columnAtBegin = true;
                 columnAtEnd = true;
                 rowAtBegin = true;
                 rowAtEnd = true;
+                ClearPosition();
             }
             else
             {
+                var n = richTextBox1.SelectionStart;
+                var row = richTextBox1.GetLineFromCharIndex(n);
+                var col = n - richTextBox1.GetFirstCharIndexFromLine(row);
+                int rowLenght = (row >= 0 && row < richTextBox1.Lines.Length) ? richTextBox1.Lines[row].Length : -1;
+
                 columnAtBegin = col == 0;
-                columnAtEnd = col >= (richTextBox1?.Lines[row]?.Length ?? 0);
+                columnAtEnd = col >= rowLenght;
                 rowAtBegin = row == 0;
-                rowAtEnd = row >= (richTextBox1?.Lines?.Length ?? 0) - 1;
+                rowAtEnd = row >= (richTextBox1.Lines?.Length ?? 0) - 1;
+                lblPanleInfo.Text = $" Ln {row + 1}  Col {col + 1}";
             }
 
-            lblPanleInfo.Text = $" Ln {row + 1}  Col {col + 1}";
         }
 
         private void ClearPosition() => lblPanleInfo.Text = string.Empty;
@@ -165,5 +178,8 @@ namespace VersionDB4.Control
                 e.Handled = true;
             }
         }
+
+        private void Panel1_Paint(object sender, PaintEventArgs e) 
+            => e.Graphics.DrawLine(SystemPens.ControlDark, 0, 0, ClientSize.Width, 0);
     }
 }

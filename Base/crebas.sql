@@ -1,14 +1,10 @@
 /*==============================================================*/
 /* DBMS name:      Microsoft SQL Server 2008                    */
-/* Created on:     18/05/2021 01:22:08                          */
+/* Created on:     30/05/2021 19:29:13                          */
 /*==============================================================*/
 
 
-alter table dbo.DataBaseObject
-   add DatabaseObjectColumn varchar(100)         null
-;
-
-alter table dbo.Object
-   add ObjectColumn varchar(100)         null
+alter table dbo.Version
+   add VersionIsLocked bit                  not null default 0
 ;
 

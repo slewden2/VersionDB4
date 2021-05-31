@@ -24,11 +24,11 @@ namespace VersionDB4
 
         private readonly Project project;
         private Version lastVersion;
-        private bool versionListIsDirty = true;
 
         private Script currentScriptEdited = null;
         private Object currentObjectEdited = null;
         private Button buttonOk = null;
+        private bool processing;
         #endregion
 
         public FVersionDB()
@@ -36,12 +36,13 @@ namespace VersionDB4
             InitializeComponent();
             this.DoubleBuffered = true;
             this.ResizeRedraw = true;
+            this.controlWindow1.BringToFront();
 
-            rdClients.Checked = false;
-            rdReferential.Checked = false;
-            rdScript.Checked = true;
+            ////rdClients.Checked = false;
+            ////rdReferential.Checked = false;
+            ////rdScript.Checked = true;
 
-            SetRightPanel(ERightPanelMode.TextSqlReadOnly);
+            //SetRightPanel(ERightPanelMode.TextSqlReadOnly);
 
             using var cnn = new DatabaseConnection();
             var filter = new { ProjectId = projectId };
@@ -55,10 +56,37 @@ namespace VersionDB4
         #region Events
 
         private void FVersionDB_Load(object sender, EventArgs e)
-            => ProcessAction(EAction.ProjectScriptReload);
+        {
+            switch(Program.Settings.FVersionDBDefaultSceen)
+            {
+                case EAction.ProjectScriptReload:
+                    rdScript.Checked = true;
+                    break;
+                case EAction.ClientsReload:
+                    rdClients.Checked = true;
+                    break;
+                case EAction.ProjectReferentialReload:
+                    rdReferential.Checked = true;
+                    break;
+                default:
+                    Program.Settings.FVersionDBDefaultSceen = EAction.ProjectScriptReload;
+                    rdScript.Checked = true;
+                    break;
+
+            }
+
+            ProcessAction(Program.Settings.FVersionDBDefaultSceen);
+        }
 
         private void CbVersions_SelectedIndexChanged(object sender, EventArgs e)
-            => ProcessAction(EAction.ProjectReferentialReload);
+        {
+            if (!processing)
+            {
+                ProcessAction(EAction.ProjectReferentialReload);
+            }
+
+            lblVersion.Text = (cbVersions.SelectedItem != null && cbVersions.SelectedItem is Version version) ? version.ToString() : string.Empty;
+        }
 
         private void TreeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
@@ -68,15 +96,19 @@ namespace VersionDB4
                 { // faut remplir la collection de scripts
                     FillScriptVersion(e.Node, version);
                 }
-                else if (e.Node.Tag is TypeObjectCounter typ && cbVersions.SelectedItem is Version version2)
-                {
-                    FillReferentialTypeObject(e.Node, version2, typ);
+                else if (e.Node.Tag is TypeObjectCounter typObject && cbVersions.SelectedItem is Version version2)
+                { // Faut remplir la liste des objets d'un type
+                    FillReferentialTypeObject(e.Node, version2, typObject);
+                }
+                else if (e.Node.Tag is ObjectWithClientSpecific objectWithclientSpecific)
+                { // Faut remplir les implémentations clients d'un objet
+                    FillCustomClientList(e.Node, objectWithclientSpecific);
                 }
             }
         }
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
-            => NodeSelected(e.Node);
+            => DisplayNodeSelected(e.Node);
 
         private void BtActions_Click(object sender, EventArgs e)
         {
@@ -110,6 +142,8 @@ namespace VersionDB4
             AnalyseEntete();
             GereBoutonOk();
         }
+
+
         #endregion
 
         private void ProcessAction(EAction action)
@@ -123,12 +157,14 @@ namespace VersionDB4
                 case EAction.ClientsReload:
                     pnlVersion.Visible = false;
                     lblVersion.Visible = true;
+                    Program.Settings.FVersionDBDefaultSceen = EAction.ClientsReload; 
                     FillClientTreeView();
                     SetRightPanel(ERightPanelMode.Clients);
                     break;
                 case EAction.ProjectScriptReload:
                     pnlVersion.Visible = false;
                     lblVersion.Visible = false;
+                    Program.Settings.FVersionDBDefaultSceen = EAction.ProjectScriptReload;
                     FillScriptTreeView();
                     SetRightPanel(ERightPanelMode.Versions);
                     break;
@@ -136,6 +172,7 @@ namespace VersionDB4
                     FillReferentialListOfVersions();
                     pnlVersion.Visible = true;
                     lblVersion.Visible = false;
+                    Program.Settings.FVersionDBDefaultSceen = EAction.ProjectReferentialReload;
                     FillReferentialTreeView();
                     SetRightPanel(ERightPanelMode.Referential);
                     break;
@@ -184,35 +221,49 @@ namespace VersionDB4
                     break;
                 #endregion
                 #region Versions 
-                case EAction.ProjectVersionAdd:
+                case EAction.VersionAdd:
                     int versionNewId = NewVersion();
                     if (versionNewId > 0)
                     {
                         FillScriptTreeView(versionNewId);
-                        versionListIsDirty = true;
                     }
                     break;
-                case EAction.ProjectVersionDelete:
+                case EAction.VersionDelete:
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionDelete)
                     {
                         if (MessageBox.Show(this, $"Etes vous certain de vouloir supprimer la version {versionDelete} ?", "Confirmez la suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
                             using var cnn = new DatabaseConnection();
                             cnn.Execute(Version.SQLDelete, versionDelete);
-                            versionListIsDirty = true;
                             FillScriptTreeView();
                         }
                     }
 
                     break;
-                ////case EAction.VersionScriptRefresh:
-                ////    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionCounter)
-                ////    {
-                ////        FillScriptVersion(treeView1.SelectedNode, versionCounter);
-                ////        treeView1.SelectedNode.Expand();
-                ////    }
+                case EAction.VersionLock:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionLock)
+                    {
+                        if (MessageBox.Show(this, $"Etes vous certain de vouloir vérouiller la version {versionLock} ?", "Confirmez le verrouillage", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            using var cnn = new DatabaseConnection();
+                            versionLock.VersionIsLocked = true;
+                            cnn.Execute(Version.SQLUpdate, versionLock);
+                            FillScriptTreeView();
+                        }
+                    }
 
-                ////    break;
+                    break;
+                case EAction.VersionUnLock:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionUnlock)
+                    {
+                        using var cnn = new DatabaseConnection();
+                        versionUnlock.VersionIsLocked = false;
+                        cnn.Execute(Version.SQLUpdate, versionUnlock);
+                        FillScriptTreeView();
+
+                    }
+
+                    break;
                 #endregion
                 #region Scripts
                 case EAction.ScriptAddBegin:
@@ -225,7 +276,7 @@ namespace VersionDB4
                             ScriptOrder = versionCounterAdd.Count + 1
                         };
                         lblType.Text = $"Ajout d'un script à la version {versionCounterAdd}";
-                        lblResumes.Text = string.Empty;
+                        lblResumes.Visible = false;
                         sqlTextBox1.Text = string.Empty;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
                         ActionsFill(new List<EAction>() { EAction.ScriptAddEnd, EAction.Cancel }, 0);
@@ -240,7 +291,7 @@ namespace VersionDB4
                         int id = cnn.ExecuteScalar(Script.SQLInsert, currentScriptEdited);
                         var analyzer = SqlAnalyzer.Analyse(id, currentScriptEdited.ScriptText);
                         analyzer.Save(cnn);
-                        CancelEdition(null);
+                        CancelEdition(treeView1.SelectedNode);
                         FillScriptVersion(treeView1.SelectedNode, versionCounterAdd2);
                         treeView1.SelectedNode.Expand();
                         SelectNodeScript(treeView1.SelectedNode, id);
@@ -251,7 +302,7 @@ namespace VersionDB4
                     if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Script script)
                     {
                         lblType.Text = $"Modification du script {script}";
-                        lblResumes.Text = string.Empty;
+                        lblResumes.Visible = false;
                         SetRightPanel(ERightPanelMode.TextSqlEdition);
                         currentScriptEdited = script;
                         ActionsFill(new List<EAction>() { EAction.ScriptEditEnd, EAction.Cancel }, 0);
@@ -283,7 +334,7 @@ namespace VersionDB4
                             {
                                 FillScriptVersion(parent, versionWithDeletedScript, true);
                                 treeView1.SelectedNode.Expand();
-                                NodeSelected(parent);
+                                DisplayNodeSelected(parent);
                             }
                         }
                     }
@@ -303,41 +354,27 @@ namespace VersionDB4
                 #endregion
                 #region Objets SQL
                 case EAction.SqlObjectAddBegin:
-                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is TypeObjectCounter typeObjetAdd && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter versionObjectCounterAdd)
-                    {
-                        currentObjectEdited = new Object()
-                        {
-                            VersionId = versionObjectCounterAdd.VersionId,
-                            TypeObjectId = typeObjetAdd.TypeObjectId,
-                        };
-                        lblType.Text = $"Ajout d'un {typeObjetAdd.TypeObjectName} à la version {versionObjectCounterAdd}";
-                        lblResumes.Text = string.Empty;
-                        sqlTextBox1.Text = string.Empty;
-                        SetRightPanel(ERightPanelMode.TextSqlEdition);
-                        ActionsFill(new List<EAction>() { EAction.SqlObjectAddEnd, EAction.Cancel }, 0);
-                    }
-
+                    ProcessSqlObjectAddBegin();
                     break;
                 case EAction.SqlObjectAddEnd:
-                    ProcessSqlObjectEndAdd();
+                    ProcessSqlObjectAddEnd();
                     break;
                 case EAction.SqlObjectEditBegin:
-                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is Object objectEdited && cbVersions.SelectedItem != null && cbVersions.SelectedItem is VersionObjectCounter)
-                    {
-                        lblType.Text = $"Modification de {objectEdited}";
-                        lblResumes.Text = string.Empty;
-                        SetRightPanel(ERightPanelMode.TextSqlEdition);
-                        currentObjectEdited = objectEdited;
-                        ActionsFill(new List<EAction>() { EAction.SqlObjectEditEnd, EAction.Cancel }, 0);
-                    }
+                    ProcessSqlObjectEditBegin();
 
                     break;
                 case EAction.SqlObjectEditEnd:
-                    ProcessSqlObjectEndEdit();
+                    ProcessSqlObjectEditEnd();
                     break;
                 case EAction.SqlObjectDelete:
+                case EAction.SqlObjectRemoveCustomClient:
                     ProcessSqlObjectDelete();
-
+                    break;
+                case EAction.SqlObjectAddCustomClient:
+                    ProcessSqlObjectAddCustomClientBegin();
+                    break;
+                case EAction.SqlObjectAddCustomClientEnd:
+                    ProcessSqlObjectAddCustomClientEnd();
                     break;
                 #endregion
                 default:
@@ -353,12 +390,19 @@ namespace VersionDB4
         #region Remplissage du treeView
         private void FillReferentialListOfVersions()
         {
-            if (versionListIsDirty)
+            if (!processing)
             {
-                cbVersions.DataSource = null;
-                using var conn = new DatabaseConnection();
-                cbVersions.DataSource = conn.Query<VersionObjectCounter>(VersionObjectCounter.SQLSelect, new { ProjectId = projectId }).OrderByDescending(x => x.FullVersion).ToList();
-                versionListIsDirty = false;
+                processing = true;
+                try
+                {
+                    cbVersions.DataSource = null;
+                    using var conn = new DatabaseConnection();
+                    cbVersions.DataSource = conn.Query<VersionObjectCounter>(VersionObjectCounter.SQLSelect, new { ProjectId = projectId }).OrderByDescending(x => x.FullVersion).ToList();
+                }
+                finally
+                {
+                    processing = false;
+                }
             }
         }
 
@@ -464,54 +508,6 @@ namespace VersionDB4
             }
         }
 
-        private void FillReferentialTreeView(int typeObjectId = 0)
-        {
-            treeView1.Nodes.Clear();
-            lblVersion.Text = string.Empty;
-            if (cbVersions.SelectedItem is Version version)
-            {
-                lblVersion.Text = version.ToString();
-                TreeNode racine = new TreeNode($"Référentiel de la version {version}")
-                {
-                    Tag = version
-                };
-                treeView1.BeginUpdate();
-                try
-                {
-                    treeView1.Nodes.Add(racine);
-
-                    using var conn = new DatabaseConnection();
-                    var lstCounter = conn.Query<TypeObjectCounter>(TypeObjectCounter.SQLSelect, new { version.VersionId });
-
-                    foreach (var typObject in lstCounter.OrderBy(x => x.TypeObjectPrestentOrder))
-                    {
-                        TreeNode nod = new TreeNode(typObject.TypeObjectPlurial)
-                        {
-                            Tag = typObject
-                        };
-                        racine.Nodes.Add(nod);
-                        if (typObject.Count > 0)
-                        {
-                            nod.Nodes.Add(new TreeNode());
-                        }
-
-                        if (typObject.TypeObjectId == typeObjectId)
-                        {
-                            treeView1.SelectedNode = nod;
-                        }
-                    }
-                }
-                finally
-                {
-                    racine.Expand();
-                    treeView1.EndUpdate();
-                    if (treeView1.SelectedNode == null)
-                    {
-                        treeView1.SelectedNode = treeView1.Nodes[0];
-                    }
-                }
-            }
-        }
         private void FillScriptVersion(TreeNode node, VersionScriptCounter versionCounter, bool select = false)
         {
             node.Nodes.Clear();
@@ -542,110 +538,99 @@ namespace VersionDB4
             }
         }
 
-        private void FillReferentialTypeObject(TreeNode node, Version version, TypeObjectCounter typ, bool select = false)
-        {
-            node.Nodes.Clear();
-
-            using var conn = new DatabaseConnection();
-            var lst = conn.Query<Object>(Object.SQlSelectWithVersionAndType, new { version.VersionId, typ.TypeObjectId });
-            int count = 0;
-            foreach (var obj in lst.OrderBy(x => x.ToString()))
-            {
-                TreeNode nod = new TreeNode(obj.ToString())
-                {
-                    Tag = obj
-                };
-                node.Nodes.Add(nod);
-                count++;
-            }
-
-            if (count != typ.Count)
-            {
-                typ.Count = count;
-                node.Tag = typ;
-                node.Text = typ.ToString();
-            }
-
-            if (select)
-            {
-                treeView1.SelectedNode = node;
-            }
-        }
-
-        private void NodeSelected(TreeNode selectedNode)
+        private void DisplayNodeSelected(TreeNode selectedNode)
         {
             lblType.Text = string.Empty;
             sqlTextBox1.Text = string.Empty;
-            lblResumes.Text = string.Empty;
+            lblResumes.Visible = false;
 
-            if (selectedNode != null && selectedNode.Tag != null && selectedNode.Tag is IPresentable presentable)
-            {
-                lblType.Text = presentable.ToString();
-                var cat = presentable.GetCategory();
-                switch (cat)
-                {
-                    case ETypeObjectPresentable.Project:
-                        SetRightPanel(ERightPanelMode.Versions);
-                        break;
-                    case ETypeObjectPresentable.VersionScript:
-                        if (selectedNode.Tag is VersionScriptCounter version)
-                        {
-                            lblType.Text = version.ToString();
-                            versionScriptControl1.Version = version;
-                        }
-
-                        SetRightPanel(ERightPanelMode.VersionScript);
-                        break;
-                    case ETypeObjectPresentable.Clients:
-                        SetRightPanel(ERightPanelMode.Clients);
-                        break;
-                    case ETypeObjectPresentable.Client:
-                        if (selectedNode.Tag != null && selectedNode.Tag is Base baseClient)
-                        {
-                            baseClientControl1.ClientBase = baseClient;
-                            SetRightPanel(ERightPanelMode.BaseClient);
-                        }
-                        break;
-                    case ETypeObjectPresentable.VersionReferential:
-                        lblType.Text = $"Version {presentable}";
-                        SetRightPanel(ERightPanelMode.Referential);
-                        break;
-                    case ETypeObjectPresentable.SqlGroup:
-                        lblType.Text = $"Liste des {presentable}";
-                        SetRightPanel(ERightPanelMode.Referential);
-                        break;
-                    case ETypeObjectPresentable.SqlObject:
-                        SetRightPanel(ERightPanelMode.TextSqlReadOnly);
-                        var parent = selectedNode.Parent;
-                        if (parent != null && parent.Tag is TypeObject typ2)
-                        {
-                            lblType.Text = $"{typ2.TypeObjectName} {presentable}";
-                        }
-
-                        if (selectedNode.Tag is Object myobject)
-                        {
-                            sqlTextBox1.Text = myobject.ObjectSql;
-                        }
-
-                        break;
-                    case ETypeObjectPresentable.Script:
-                        SetRightPanel(ERightPanelMode.TextSqlReadOnly);
-                        if (selectedNode.Tag is Script script)
-                        {
-                            sqlTextBox1.Text = script.ScriptText;
-                            var analyzer = script.GetAnalyzer();
-                            lblResumes.Text = analyzer.ResumeText;
-                        }
-
-                        break;
-                }
-
-                ActionsFill(cat.GetActions(presentable));
-            }
-            else
+            if (selectedNode == null || selectedNode.Tag == null || !(selectedNode.Tag is IPresentable presentable))
             {
                 ActionsClear();
+                return;
             }
+
+            bool versionIsLocked = false;
+            bool checkCBVersion = false;
+
+            lblType.Text = presentable.ToString();
+            var cat = presentable.GetCategory();
+            switch (cat)
+            {
+                case ETypeObjectPresentable.Project:
+                    SetRightPanel(ERightPanelMode.Versions);
+                    break;
+                case ETypeObjectPresentable.VersionScript:
+                    SetRightPanel(ERightPanelMode.VersionScript);
+                    if (selectedNode.Tag is VersionScriptCounter version)
+                    {
+                        versionScriptControl1.Version = version;
+                        versionIsLocked = version.VersionIsLocked;
+                    }
+
+                    break;
+                case ETypeObjectPresentable.Script:
+                    SetRightPanel(ERightPanelMode.TextSqlReadOnly);
+                    if (selectedNode.Tag is Script script)
+                    {
+                        sqlTextBox1.Text = script.ScriptText;
+                        var analyzer = script.GetAnalyzer();
+                        lblResumes.Text = analyzer.ResumeText;
+                        lblResumes.Visible = true;
+
+                        if (selectedNode.Parent != null && selectedNode.Parent.Tag != null && selectedNode.Parent.Tag is VersionScriptCounter versionParent)
+                        {
+                            versionIsLocked = versionParent.VersionIsLocked;
+                        }
+                    }
+
+                    break;
+                case ETypeObjectPresentable.Clients:
+                    SetRightPanel(ERightPanelMode.Clients);
+                    break;
+                case ETypeObjectPresentable.Client:
+                    SetRightPanel(ERightPanelMode.BaseClient);
+                    if (selectedNode.Tag != null && selectedNode.Tag is Base baseClient)
+                    {
+                        baseClientControl1.ClientBase = baseClient;
+                    }
+                    break;
+                case ETypeObjectPresentable.VersionReferential:
+                    SetRightPanel(ERightPanelMode.Referential);
+                    checkCBVersion = true;
+                    break;
+                case ETypeObjectPresentable.SqlGroup:
+                    SetRightPanel(ERightPanelMode.Referential);
+                    checkCBVersion = true;
+                    break;
+                case ETypeObjectPresentable.SqlObject:
+                    SetRightPanel(ERightPanelMode.TextSqlReadOnly);
+                    checkCBVersion = true;
+                    if (selectedNode.Tag is Object myobject)
+                    {
+                        sqlTextBox1.Text = myobject.ObjectSql;
+                    }
+
+                    break;
+                case ETypeObjectPresentable.SQlObjectCustomClient:
+                    SetRightPanel(ERightPanelMode.TextSqlReadOnly);
+                    checkCBVersion = true;
+                    if (selectedNode.Tag is Object myobjectClient)
+                    {
+                        sqlTextBox1.Text = myobjectClient.ObjectSql;
+                    }
+
+                    break;
+
+            }
+
+
+            if (checkCBVersion && cbVersions.SelectedItem != null && cbVersions.SelectedItem is Version vers)
+            {
+                versionIsLocked = vers.VersionIsLocked;
+            }
+
+            ActionsFill(cat.GetActions(versionIsLocked, presentable));
         }
 
         private void SelectNodeScript(TreeNode node, int scriptId)
@@ -660,16 +645,18 @@ namespace VersionDB4
             }
         }
 
-        private void SelectNodeObject(TreeNode node, int objectId)
+        private TreeNode SelectNodeObject(TreeNode node, int objectId)
         {
             foreach (TreeNode nod in node.Nodes)
             {
                 if (nod.Tag != null && nod.Tag is Object theobject && theobject.ObjectId == objectId)
                 {
                     treeView1.SelectedNode = nod;
-                    return;
+                    return nod;
                 }
             }
+
+            return null;
         }
 
         #endregion
@@ -774,10 +761,10 @@ namespace VersionDB4
                 Button bt = new Button
                 {
                     Name = action.ToString(),
+                    Font = new Font("Segoe MDL2 Assets", 12f),
                     Tag = action,
                     Text = action.GetIcon(),
                     ForeColor = action.GetColor(),
-                    Font = new Font("Segoe MDL2 Assets", 12f),
                     FlatStyle = FlatStyle.Flat,
                     Height = 30,
                     Width = 30,
@@ -787,6 +774,7 @@ namespace VersionDB4
                 bt.FlatAppearance.BorderSize = 0;
                 bt.FlatAppearance.MouseOverBackColor = Color.FromArgb(205, 230, 247);
                 bt.FlatAppearance.MouseDownBackColor = Color.FromArgb(146, 192, 224);
+                toolTip1.SetToolTip(bt, action.GetToolTipText());
                 pnlActions.Controls.Add(bt);
                 bt.Click += BtActions_Click;
                 mw += bt.Width + 10;
@@ -805,7 +793,7 @@ namespace VersionDB4
             SetRightPanel(ERightPanelMode.TextSqlReadOnly);
             currentScriptEdited = null;
             currentObjectEdited = null;
-            NodeSelected(selectedNode);
+            DisplayNodeSelected(selectedNode);
         }
 
         private int NewVersion()
@@ -869,6 +857,5 @@ namespace VersionDB4
             Referential,
             Versions
         }
-
     }
 }

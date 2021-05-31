@@ -53,9 +53,9 @@ namespace VersionDB4
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(35, 62);
+            this.lblName.Location = new System.Drawing.Point(40, 73);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(37, 17);
+            this.lblName.Size = new System.Drawing.Size(42, 20);
             this.lblName.TabIndex = 1;
             this.lblName.Text = "Nom";
             // 
@@ -63,19 +63,20 @@ namespace VersionDB4
             // 
             this.txtName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtName.Location = new System.Drawing.Point(150, 59);
+            this.txtName.Location = new System.Drawing.Point(171, 69);
+            this.txtName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtName.MaxLength = 50;
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(278, 25);
+            this.txtName.Size = new System.Drawing.Size(320, 27);
             this.txtName.TabIndex = 2;
             this.txtName.TextChanged += new System.EventHandler(this.Controls_TextChanged);
             // 
             // lblClientCode
             // 
             this.lblClientCode.AutoSize = true;
-            this.lblClientCode.Location = new System.Drawing.Point(35, 107);
+            this.lblClientCode.Location = new System.Drawing.Point(40, 126);
             this.lblClientCode.Name = "lblClientCode";
-            this.lblClientCode.Size = new System.Drawing.Size(73, 17);
+            this.lblClientCode.Size = new System.Drawing.Size(84, 20);
             this.lblClientCode.TabIndex = 3;
             this.lblClientCode.Text = "Code client";
             // 
@@ -85,9 +86,10 @@ namespace VersionDB4
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbClientCode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbClientCode.FormattingEnabled = true;
-            this.cbClientCode.Location = new System.Drawing.Point(150, 104);
+            this.cbClientCode.Location = new System.Drawing.Point(171, 123);
+            this.cbClientCode.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbClientCode.Name = "cbClientCode";
-            this.cbClientCode.Size = new System.Drawing.Size(278, 25);
+            this.cbClientCode.Size = new System.Drawing.Size(320, 28);
             this.cbClientCode.TabIndex = 4;
             this.cbClientCode.SelectedIndexChanged += new System.EventHandler(this.Controls_TextChanged);
             // 
@@ -95,19 +97,20 @@ namespace VersionDB4
             // 
             this.txtServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtServer.Location = new System.Drawing.Point(150, 160);
+            this.txtServer.Location = new System.Drawing.Point(171, 188);
+            this.txtServer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtServer.MaxLength = 50;
             this.txtServer.Name = "txtServer";
-            this.txtServer.Size = new System.Drawing.Size(278, 25);
+            this.txtServer.Size = new System.Drawing.Size(320, 27);
             this.txtServer.TabIndex = 6;
             this.txtServer.TextChanged += new System.EventHandler(this.ControlBase_TextChanged);
             // 
             // lblServer
             // 
             this.lblServer.AutoSize = true;
-            this.lblServer.Location = new System.Drawing.Point(35, 163);
+            this.lblServer.Location = new System.Drawing.Point(40, 192);
             this.lblServer.Name = "lblServer";
-            this.lblServer.Size = new System.Drawing.Size(103, 17);
+            this.lblServer.Size = new System.Drawing.Size(114, 20);
             this.lblServer.TabIndex = 5;
             this.lblServer.Text = "Nom du serveur";
             // 
@@ -117,18 +120,19 @@ namespace VersionDB4
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbAuthentification.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbAuthentification.FormattingEnabled = true;
-            this.cbAuthentification.Location = new System.Drawing.Point(150, 191);
+            this.cbAuthentification.Location = new System.Drawing.Point(171, 225);
+            this.cbAuthentification.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbAuthentification.Name = "cbAuthentification";
-            this.cbAuthentification.Size = new System.Drawing.Size(278, 25);
+            this.cbAuthentification.Size = new System.Drawing.Size(320, 28);
             this.cbAuthentification.TabIndex = 8;
             this.cbAuthentification.SelectedIndexChanged += new System.EventHandler(this.ControlBase_TextChanged);
             // 
             // lblAuthentification
             // 
             this.lblAuthentification.AutoSize = true;
-            this.lblAuthentification.Location = new System.Drawing.Point(35, 194);
+            this.lblAuthentification.Location = new System.Drawing.Point(40, 228);
             this.lblAuthentification.Name = "lblAuthentification";
-            this.lblAuthentification.Size = new System.Drawing.Size(97, 17);
+            this.lblAuthentification.Size = new System.Drawing.Size(115, 20);
             this.lblAuthentification.TabIndex = 7;
             this.lblAuthentification.Text = "Authentification";
             // 
@@ -136,19 +140,20 @@ namespace VersionDB4
             // 
             this.txtLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLogin.Location = new System.Drawing.Point(184, 236);
+            this.txtLogin.Location = new System.Drawing.Point(210, 278);
+            this.txtLogin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtLogin.MaxLength = 50;
             this.txtLogin.Name = "txtLogin";
-            this.txtLogin.Size = new System.Drawing.Size(244, 25);
+            this.txtLogin.Size = new System.Drawing.Size(281, 27);
             this.txtLogin.TabIndex = 10;
             this.txtLogin.TextChanged += new System.EventHandler(this.ControlBase_TextChanged);
             // 
             // lblLogin
             // 
             this.lblLogin.AutoSize = true;
-            this.lblLogin.Location = new System.Drawing.Point(53, 239);
+            this.lblLogin.Location = new System.Drawing.Point(61, 281);
             this.lblLogin.Name = "lblLogin";
-            this.lblLogin.Size = new System.Drawing.Size(108, 17);
+            this.lblLogin.Size = new System.Drawing.Size(123, 20);
             this.lblLogin.TabIndex = 9;
             this.lblLogin.Text = "Nom d\'utilisateur";
             // 
@@ -156,20 +161,21 @@ namespace VersionDB4
             // 
             this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPassword.Location = new System.Drawing.Point(184, 267);
+            this.txtPassword.Location = new System.Drawing.Point(210, 314);
+            this.txtPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPassword.MaxLength = 50;
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(244, 25);
+            this.txtPassword.Size = new System.Drawing.Size(281, 27);
             this.txtPassword.TabIndex = 12;
             this.txtPassword.TextChanged += new System.EventHandler(this.ControlBase_TextChanged);
             // 
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(53, 270);
+            this.lblPassword.Location = new System.Drawing.Point(61, 318);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(89, 17);
+            this.lblPassword.Size = new System.Drawing.Size(98, 20);
             this.lblPassword.TabIndex = 11;
             this.lblPassword.Text = "Mot de passe";
             // 
@@ -179,9 +185,10 @@ namespace VersionDB4
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbBase.FormattingEnabled = true;
-            this.cbBase.Location = new System.Drawing.Point(150, 314);
+            this.cbBase.Location = new System.Drawing.Point(171, 369);
+            this.cbBase.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbBase.Name = "cbBase";
-            this.cbBase.Size = new System.Drawing.Size(278, 25);
+            this.cbBase.Size = new System.Drawing.Size(320, 28);
             this.cbBase.TabIndex = 14;
             this.cbBase.DropDown += new System.EventHandler(this.CbBase_DropDown);
             this.cbBase.SelectedIndexChanged += new System.EventHandler(this.Controls_TextChanged);
@@ -189,9 +196,9 @@ namespace VersionDB4
             // lblBase
             // 
             this.lblBase.AutoSize = true;
-            this.lblBase.Location = new System.Drawing.Point(35, 317);
+            this.lblBase.Location = new System.Drawing.Point(40, 373);
             this.lblBase.Name = "lblBase";
-            this.lblBase.Size = new System.Drawing.Size(108, 17);
+            this.lblBase.Size = new System.Drawing.Size(121, 20);
             this.lblBase.TabIndex = 13;
             this.lblBase.Text = "Base de données";
             // 
@@ -199,9 +206,10 @@ namespace VersionDB4
             // 
             this.btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btCancel.Location = new System.Drawing.Point(326, 357);
+            this.btCancel.Location = new System.Drawing.Point(378, 422);
+            this.btCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btCancel.Name = "btCancel";
-            this.btCancel.Size = new System.Drawing.Size(102, 32);
+            this.btCancel.Size = new System.Drawing.Size(113, 37);
             this.btCancel.TabIndex = 16;
             this.btCancel.Text = "Annuler";
             this.btCancel.UseVisualStyleBackColor = true;
@@ -209,9 +217,10 @@ namespace VersionDB4
             // btOk
             // 
             this.btOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btOk.Location = new System.Drawing.Point(218, 357);
+            this.btOk.Location = new System.Drawing.Point(249, 422);
+            this.btOk.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btOk.Name = "btOk";
-            this.btOk.Size = new System.Drawing.Size(102, 32);
+            this.btOk.Size = new System.Drawing.Size(113, 37);
             this.btOk.TabIndex = 15;
             this.btOk.Text = "Valider";
             this.btOk.UseVisualStyleBackColor = true;
@@ -223,15 +232,16 @@ namespace VersionDB4
             this.panel1.Controls.Add(this.lblTitre);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(440, 33);
+            this.panel1.Size = new System.Drawing.Size(503, 39);
             this.panel1.TabIndex = 16;
             // 
             // lblTitre
             // 
             this.lblTitre.AutoSize = true;
             this.lblTitre.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblTitre.Location = new System.Drawing.Point(12, -2);
+            this.lblTitre.Location = new System.Drawing.Point(14, -2);
             this.lblTitre.Name = "lblTitre";
             this.lblTitre.Size = new System.Drawing.Size(218, 25);
             this.lblTitre.TabIndex = 0;
@@ -240,10 +250,10 @@ namespace VersionDB4
             // FEditBase
             // 
             this.AcceptButton = this.btOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btCancel;
-            this.ClientSize = new System.Drawing.Size(440, 401);
+            this.ClientSize = new System.Drawing.Size(503, 472);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.btOk);
             this.Controls.Add(this.btCancel);
@@ -261,11 +271,12 @@ namespace VersionDB4
             this.Controls.Add(this.lblClientCode);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.lblName);
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(603, 440);
+            this.MaximumSize = new System.Drawing.Size(687, 511);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(335, 440);
+            this.MinimumSize = new System.Drawing.Size(381, 511);
             this.Name = "FEditBase";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
