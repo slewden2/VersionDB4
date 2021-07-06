@@ -230,6 +230,32 @@ namespace VersionDB4
         private void Panel1_Paint(object sender, PaintEventArgs e)
             => e.Graphics.DrawLine(SystemPens.ControlDark, 0, panel1.ClientSize.Height - 1, panel1.ClientSize.Width - 1, panel1.ClientSize.Height - 1);
 
+        private void LstResume_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0 || e.Index >= lstResume.Items.Count)
+            {
+                return;
+            }
+
+            if (lstResume.Items[e.Index] is Resume resume)
+            {
+                e.DrawBackground();
+                var st = resume.GetResumeManualValidationCode();
+                string txt = st.Libelle();
+                var sz = e.Graphics.MeasureString(txt + " ", lstResume.Font);
+                e.Graphics.DrawString(txt, lstResume.Font, new SolidBrush(st.GetColor()), new PointF(e.Bounds.Left, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
+
+                e.Graphics.DrawString(resume.Description(), lstResume.Font, new SolidBrush(lstResume.ForeColor), new PointF(e.Bounds.Left + sz.Width, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
+            }
+            else
+            { // draw default (au cas ou !)
+                e.DrawBackground();
+                string txt = lstResume.Items[e.Index].ToString();
+                var sz = e.Graphics.MeasureString(txt, lstResume.Font);
+                e.Graphics.DrawString(txt, lstResume.Font, new SolidBrush(lstResume.ForeColor), new PointF(e.Bounds.Left, e.Bounds.Top + ((e.Bounds.Height - sz.Height) / 2)));
+            }
+        }
         #endregion
+
     }
 }

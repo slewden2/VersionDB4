@@ -306,6 +306,12 @@ namespace VersionDB4Lib.Business
                 EImportType.DifferentImportASCustomClient => "Importer comme spécifique au client",
                 _ => ((int)import).ToString()
             };
+
+        /// <summary>
+        /// quels sont les types d'import qui sont des actions Vs des statuts
+        /// </summary>
+        /// <param name="import"></param>
+        /// <returns></returns>
         public static bool IsAction(this EImportType import)
             => import switch
             {
@@ -319,6 +325,11 @@ namespace VersionDB4Lib.Business
                 _ => false
             };
 
+        /// <summary>
+        /// Le type d'import nécessite t il un choix utilisateur
+        /// </summary>
+        /// <param name="import"></param>
+        /// <returns></returns>
         public static bool IsChoice(this EImportType import)
             => import == EImportType.Different || import == EImportType.Unkonw;
 

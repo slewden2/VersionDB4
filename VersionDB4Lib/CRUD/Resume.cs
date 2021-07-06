@@ -90,19 +90,23 @@ namespace VersionDB4Lib.CRUD
         public override string ToString()
         {
             string valid = GetResumeManualValidationCode().Libelle();
-
-            if (SqlActionId == SqlAction.CodeClient)
-            {
-                string clients = string.Join(", ", this.Clients.Select(x => x.ToString()));
-                return $"{valid} : S'applique pour les clients : {clients}";
-            }
-            else
-            {
-                return $"{valid} : {EnumHelper.ToString(GetAction(), GetWhat(), Identifier)}";
-            }
+            return $"{valid} : {Description()}";
         }
         public string GetFullName()
              => Identifier.ToString();
+
+        public string Description()
+        {
+            if (SqlActionId == SqlAction.CodeClient)
+            {
+                string clients = string.Join(", ", this.Clients.Select(x => x.ToString()));
+                return $"S'applique pour les clients : {clients}";
+            }
+            else
+            {
+                return EnumHelper.ToString(GetAction(), GetWhat(), Identifier);
+            }
+        }
 
 
         public override bool Equals(object obj)

@@ -6,9 +6,10 @@ using DatabaseAndLogLibrary.DataBase;
 namespace VersionDB4Lib.CRUD
 {
     /// <summary>
-    /// Les types d'actions : 18 valeurs
+    /// Les types d'actions gérées (pour l'instant) sur une base de données : 18 valeurs
+    /// Cette notion doit être synchrone avec la table dbo.SqlAction du référentiel
     /// 
-    /// 0 Inconu
+    /// 0 Inconue
     /// 1 DBComparer
     /// 2 CodeClient
     /// 3 Comment
@@ -83,6 +84,7 @@ namespace VersionDB4Lib.CRUD
         public static int AddColumnNotNull => 16;
 
         public static int RaiseError = 17;
+
         public static int Print = 18;
 
         public static bool IsForColumn(int action)

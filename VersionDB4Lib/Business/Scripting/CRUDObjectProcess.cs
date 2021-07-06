@@ -29,6 +29,11 @@ namespace VersionDB4Lib.Business.Scripting
 
             int id = cnn.ExecuteScalar(Object.SQLInsert, objectInserted);
 
+            if (objectInserted.GetTypeObject().TypeObjectNeedColumnDefinition)
+            {
+                // TODO : Add synchronisation des colonnes Here
+            }
+
             AddScriptToObjectAction(objectInserted, SqlAction.Create);
 
             return id;
@@ -42,6 +47,11 @@ namespace VersionDB4Lib.Business.Scripting
             using var cnn = new DatabaseConnection();
             cnn.Execute(Object.SQLUpdate, objectEdited);
 
+            if (objectEdited.GetTypeObject().TypeObjectNeedColumnDefinition)
+            {
+                // TODO : Add synchronisation des colonnes Here
+            }
+
             AddScriptToObjectAction(objectEdited, SqlAction.Alter);
         }
 
@@ -52,6 +62,11 @@ namespace VersionDB4Lib.Business.Scripting
             string sql = numberOfImplementation > 0 ? ObjectWithClientSpecific.SQLDelete : Object.SQLDelete;
 
             using var cnn = new DatabaseConnection();
+            if (objectDel.GetTypeObject().TypeObjectNeedColumnDefinition)
+            {
+                cnn.Execute(ColumnDefinition.SQLDelete, objectDel);
+            }
+
             cnn.Execute(sql, objectDel);
 
             AddScriptToObjectAction(objectDel, SqlAction.Delete);

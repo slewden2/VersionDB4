@@ -1,14 +1,15 @@
-using System;
+using System.Drawing;
 using DatabaseAndLogLibrary.DataBase;
 using VersionDB4Lib.Business;
 using VersionDB4Lib.Business.SqlAnalyze;
+using VersionDB4Lib.UI;
 
 namespace VersionDB4Lib.CRUD
 {
     /// <summary>
     /// Un script du référentiel
     /// </summary>
-    public class Script : IPresentable
+    public class Script : IPresentable, IWithStatusColor
     {
         private SqlAnalyzer myAnalyser = null;
 
@@ -18,7 +19,7 @@ namespace VersionDB4Lib.CRUD
         public int ScriptId { get; set; }
 
         /// <summary>
-        /// Clé de la verison
+        /// Clé de la version
         /// </summary>
         public int VersionId { get; set; }
 
@@ -40,6 +41,9 @@ namespace VersionDB4Lib.CRUD
             => Version == null ? $"Script N° {ScriptOrder}" : $"Script V{Version.VersionPrincipal}.{Version.VersionSecondary}.{ScriptOrder}";
 
         public ETypeObjectPresentable GetCategory() => ETypeObjectPresentable.Script;
+
+        public Color GetColorStatus()
+            => GetAnalyzer()?.Valide.GetColor() ?? Color.Black; 
 
         public SqlAnalyzer GetAnalyzer(bool force = false)
         {

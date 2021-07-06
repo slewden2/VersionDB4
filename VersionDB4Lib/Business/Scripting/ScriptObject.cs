@@ -36,7 +36,7 @@ namespace VersionDB4Lib.Business.Scripting
             StringBuilder sql = new StringBuilder();
             sql.AppendLine();
             sql.AppendLine("-------------------------------------------------------------------------------");
-            sql.AppendLine($"--- DBComparer {Environment.UserName} le {DateTime.Now:dd/MM/yyyy} à {DateTime.Now:HH:mm} {TypeObject.FileEntete(myobject.TypeObjectId)} {myobject}");
+            sql.AppendLine($"--- DBComparer {Environment.UserName} le {DateTime.Now:dd/MM/yyyy} à {DateTime.Now:HH:mm} {myobject.GetTypeObject().TypeObjectTilte} {myobject}");
             sql.AppendLine("-------------------------------------------------------------------------------");
 
             string sepi = string.Empty;

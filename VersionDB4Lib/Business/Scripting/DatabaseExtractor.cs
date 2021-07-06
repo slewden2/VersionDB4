@@ -5,8 +5,16 @@ using VersionDB4Lib.CRUD;
 
 namespace VersionDB4Lib.Business.Scripting
 {
-    public class AnalyzeBase
+    /// <summary>
+    /// Classe pour l'extraction des données de structure d'une base de données
+    /// </summary>
+    public static class DatabaseExtractor
     {
+        /// <summary>
+        ///  Renvoie les données pour extraire les informations d'un type d'objet depuis une base de données client
+        /// </summary>
+        /// <param name="typeObjectId"></param>
+        /// <returns></returns>
         public static string SQLImportObject(int typeObjectId)
             => typeObjectId switch
             {

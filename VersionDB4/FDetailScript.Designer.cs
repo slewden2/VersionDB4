@@ -35,9 +35,14 @@ namespace VersionDB4
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.lstResume = new VersionDB4Lib.UI.ListBox();
+            this.lstResume = new VersionDB4Lib.UI.ListBoxResume();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnPop = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuAddResume = new System.Windows.Forms.ToolStripMenuItem();
+            this.MnuMigrateAlterColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuEditResume = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDelResume = new System.Windows.Forms.ToolStripMenuItem();
             this.btnValid = new System.Windows.Forms.Button();
             this.controlWindow1 = new VersionDB4Lib.UI.ControlWindow();
             this.BtnRefuse = new System.Windows.Forms.Button();
@@ -51,11 +56,6 @@ namespace VersionDB4
             this.lstBloc = new VersionDB4Lib.UI.ListBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.mnuAddResume = new System.Windows.Forms.ToolStripMenuItem();
-            this.MnuMigrateAlterColumn = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuEditResume = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuDelResume = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -66,13 +66,13 @@ namespace VersionDB4
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -162,6 +162,7 @@ namespace VersionDB4
             this.lstResume.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(146)))), ((int)(((byte)(192)))), ((int)(((byte)(224)))));
             this.lstResume.Size = new System.Drawing.Size(379, 98);
             this.lstResume.TabIndex = 1;
+            this.lstResume.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.LstResume_DrawItem);
             this.lstResume.SelectedIndexChanged += new System.EventHandler(this.LstResume_SelectedIndexChanged);
             // 
             // panel2
@@ -195,6 +196,44 @@ namespace VersionDB4
             this.btnPop.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnPop.UseVisualStyleBackColor = true;
             this.btnPop.Click += new System.EventHandler(this.BtnPop_Click);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuAddResume,
+            this.MnuMigrateAlterColumn,
+            this.mnuEditResume,
+            this.mnuDelResume});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(130, 92);
+            // 
+            // mnuAddResume
+            // 
+            this.mnuAddResume.Name = "mnuAddResume";
+            this.mnuAddResume.Size = new System.Drawing.Size(129, 22);
+            this.mnuAddResume.Text = "Ajouter";
+            this.mnuAddResume.Click += new System.EventHandler(this.MnuAddResume_Click);
+            // 
+            // MnuMigrateAlterColumn
+            // 
+            this.MnuMigrateAlterColumn.Name = "MnuMigrateAlterColumn";
+            this.MnuMigrateAlterColumn.Size = new System.Drawing.Size(129, 22);
+            this.MnuMigrateAlterColumn.Text = "Changer";
+            this.MnuMigrateAlterColumn.Click += new System.EventHandler(this.MnuMigrateAlterColumn_Click);
+            // 
+            // mnuEditResume
+            // 
+            this.mnuEditResume.Name = "mnuEditResume";
+            this.mnuEditResume.Size = new System.Drawing.Size(129, 22);
+            this.mnuEditResume.Text = "Modifier";
+            this.mnuEditResume.Click += new System.EventHandler(this.MnuEditResume_Click);
+            // 
+            // mnuDelResume
+            // 
+            this.mnuDelResume.Name = "mnuDelResume";
+            this.mnuDelResume.Size = new System.Drawing.Size(129, 22);
+            this.mnuDelResume.Text = "Supprimer";
+            this.mnuDelResume.Click += new System.EventHandler(this.MnuDelResume_Click);
             // 
             // btnValid
             // 
@@ -364,44 +403,6 @@ namespace VersionDB4
             this.label3.TabIndex = 1;
             this.label3.Text = "Blocs trouvés";
             // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuAddResume,
-            this.MnuMigrateAlterColumn,
-            this.mnuEditResume,
-            this.mnuDelResume});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(130, 92);
-            // 
-            // mnuAddResume
-            // 
-            this.mnuAddResume.Name = "mnuAddResume";
-            this.mnuAddResume.Size = new System.Drawing.Size(129, 22);
-            this.mnuAddResume.Text = "Ajouter";
-            this.mnuAddResume.Click += new System.EventHandler(this.MnuAddResume_Click);
-            // 
-            // MnuMigrateAlterColumn
-            // 
-            this.MnuMigrateAlterColumn.Name = "MnuMigrateAlterColumn";
-            this.MnuMigrateAlterColumn.Size = new System.Drawing.Size(129, 22);
-            this.MnuMigrateAlterColumn.Text = "Changer";
-            this.MnuMigrateAlterColumn.Click += new System.EventHandler(this.MnuMigrateAlterColumn_Click);
-            // 
-            // mnuEditResume
-            // 
-            this.mnuEditResume.Name = "mnuEditResume";
-            this.mnuEditResume.Size = new System.Drawing.Size(129, 22);
-            this.mnuEditResume.Text = "Modifier";
-            this.mnuEditResume.Click += new System.EventHandler(this.MnuEditResume_Click);
-            // 
-            // mnuDelResume
-            // 
-            this.mnuDelResume.Name = "mnuDelResume";
-            this.mnuDelResume.Size = new System.Drawing.Size(129, 22);
-            this.mnuDelResume.Text = "Supprimer";
-            this.mnuDelResume.Click += new System.EventHandler(this.MnuDelResume_Click);
-            // 
             // FDetailScript
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -427,6 +428,7 @@ namespace VersionDB4
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
@@ -435,7 +437,6 @@ namespace VersionDB4
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -446,7 +447,7 @@ namespace VersionDB4
         private VersionDB4.Control.SqlTextBox txtSql;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private VersionDB4Lib.UI.ListBox lstResume;
+        private VersionDB4Lib.UI.ListBoxResume lstResume;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private VersionDB4Lib.UI.ListBox lstDatabaseObject;

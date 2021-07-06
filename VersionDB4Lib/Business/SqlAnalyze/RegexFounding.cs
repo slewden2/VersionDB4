@@ -11,6 +11,12 @@ namespace VersionDB4Lib.Business.SqlAnalyze
     public class RegexFounding
     {
         /// <summary>
+        /// Expression régulière utilisée pour trouver la liste des colonne dans la définition d'une table
+        /// </summary>
+        public const string REGEXPCOLUMNLIST = @"(\(|,)\s*(?<column>\S+)\s+(?<type>(\S+?\.)?[^,\s]+(\(\d+\))?)\s*(?<mandatory>IDENTITY|NULL|NOT\s+NULL)?\s*";
+
+
+        /// <summary>
         /// Obtient la liste publique des éléments à chercher
         /// </summary>
         private static readonly List<RegexFounding> THELIST = new List<RegexFounding>()

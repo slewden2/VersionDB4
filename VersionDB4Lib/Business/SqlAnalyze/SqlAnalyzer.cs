@@ -68,6 +68,20 @@ namespace VersionDB4Lib.Business.SqlAnalyze
 
         public EValidation Valide
         {
+            get
+            {
+                if (Resumes.All(x => x.ResumeManualValidationCode == (byte)EValidation.Valide || x.ResumeManualValidationCode == (byte)EValidation.Manuel))
+                {
+                    return EValidation.Valide;
+                }
+
+                if (Resumes.Any(x => x.ResumeManualValidationCode == (byte)EValidation.NonValide))
+                {
+                    return EValidation.NonValide;
+                }
+
+                return EValidation.None;
+            }
             set
             {
                 foreach (var r in Resumes)

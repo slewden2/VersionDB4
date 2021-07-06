@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace VersionDB4Lib.Business
 {
+    /// <summary>
+    ///  identifiant d'un objet SQL : Base/Schema/Nom/Colonne
+    /// </summary>
     public class ObjectIdentifier
     {
-        public ObjectIdentifier(string name) 
+        public ObjectIdentifier(string name)
             => this.Name = name;
 
         public string DataBase { get; set; }
@@ -24,7 +25,7 @@ namespace VersionDB4Lib.Business
         }
 
         public override int GetHashCode()
-            => HashCode.Combine(Schema, Name, Column);
+            => HashCode.Combine(DataBase, Schema, Name, Column);
 
         public override bool Equals(object obj)
         {

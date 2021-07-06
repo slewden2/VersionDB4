@@ -31,6 +31,14 @@ namespace VersionDB4Lib.UI
             {
                 int children = (e.Node.Tag != null && e.Node.Tag is ICounter counter) ? counter.Count : 0;
                 bool isLocked = e.Node.Tag != null && e.Node.Tag is ILocked locked && locked.VersionIsLocked;
+
+                var textColor = ForeColor;  
+                if (e.Node.Tag != null && e.Node.Tag is IWithStatusColor status)
+                    {
+                    textColor = status.GetColorStatus();
+                }
+
+
                 bool hasChildren = children > 0;
                 
                 int indent = Math.Max(0, (e.Node.Level - (ShowRootLines ? 0 : 1))) * Indent;
@@ -63,7 +71,7 @@ namespace VersionDB4Lib.UI
                 var txt = e.Node.Text + " ";
                 using var ft2 = new Font(Font, (e.State & TreeNodeStates.Selected) != 0 ? FontStyle.Bold : FontStyle.Regular);
                 var sz2 = e.Graphics.MeasureString(txt, ft2);
-                e.Graphics.DrawString(txt, ft2, new SolidBrush(ForeColor), new PointF(e.Bounds.Left + indent + sz.Width + dx, e.Bounds.Top + ((e.Bounds.Height - sz2.Height) / 2)));
+                e.Graphics.DrawString(txt, ft2, new SolidBrush(textColor), new PointF(e.Bounds.Left + indent + sz.Width + dx, e.Bounds.Top + ((e.Bounds.Height - sz2.Height) / 2)));
 
 
                 if (hasChildren)

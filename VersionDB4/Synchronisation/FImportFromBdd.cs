@@ -273,7 +273,7 @@ namespace VersionDB4.Synchronisation
                 progressBar1.PerformStep();
                 Application.DoEvents();
 
-                var lst = cnn.Query<ObjectToImport>(AnalyzeBase.SQLImportObject(typOb.TypeObjectId), new { version.VersionId });
+                var lst = cnn.Query<ObjectToImport>(DatabaseExtractor.SQLImportObject(typOb.TypeObjectId), new { version.VersionId });
 
                 itx = new ListViewItem(typOb.TypeObjectPlurial);
                 itx.SubItems.Add(lst.Count().Counter("Aucun objet", "Un seul objet trouvé", "{0} objets trouvés"));

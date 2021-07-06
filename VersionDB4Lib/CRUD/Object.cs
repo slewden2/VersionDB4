@@ -13,14 +13,14 @@ namespace VersionDB4Lib.CRUD
         public int TypeObjectId { get; set; }
         public string ObjectSchema { get; set; }
         public string ObjectName { get; set; }
-        public string ObjectColumn { get; set; }  // nom utilisé pour les colonnes, les index et les contraintes
+        public string ObjectColumn { get; set; }  // le nom utilisé pour les colonnes, les index et les contraintes
         public bool ObjectDeleted { get; set; }
         public bool ObjectEmpty { get; set; }
         public string ObjectSql { get; set; }
         public string ObjectLockedBy { get; set; }
         public int? ClientCodeId { get; set; }
 
-        public string TypeObjectName() => TypeObject.List().First(x => x.TypeObjectId == TypeObjectId).TypeObjectName;
+        public TypeObject GetTypeObject() => TypeObject.List().First(x => x.TypeObjectId == TypeObjectId);
 
         public ObjectIdentifier Identifier => new ObjectIdentifier(ObjectName) { Schema = ObjectSchema, Column = ObjectColumn };
 
@@ -29,17 +29,17 @@ namespace VersionDB4Lib.CRUD
         {
             if (TypeObjectId == TypeObject.Schema)
             {
-                return $"{TypeObjectName()} {ObjectName}";
+                return $"{GetTypeObject().TypeObjectName} {ObjectName}";
             }
             else if (TypeObjectId == TypeObject.Index || TypeObjectId == TypeObject.ForeignKey || TypeObjectId == TypeObject.Constraint)
             {
                 string sch = string.IsNullOrWhiteSpace(ObjectSchema) ? string.Empty : $"{ObjectSchema}.";
-                return $"{TypeObjectName()} {ObjectColumn} de la table {sch}{ObjectName}";
+                return $"{GetTypeObject().TypeObjectName} {ObjectColumn} de la table {sch}{ObjectName}";
             }
             else
             {
                 string sch = string.IsNullOrWhiteSpace(ObjectSchema) ? string.Empty : $"{ObjectSchema}.";
-                return $"{TypeObjectName()} {sch}{ObjectName}";
+                return $"{GetTypeObject().TypeObjectName} {sch}{ObjectName}";
             }
         }
 

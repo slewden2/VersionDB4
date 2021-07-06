@@ -166,7 +166,7 @@ namespace VersionDB4
             {
                 currentObjectEdited.ObjectSchema = bla.Blocs[0].BlocSchema;
                 currentObjectEdited.ObjectName = bla.Blocs[0].BlocName;
-                lblResumes.Text = $"Trouvé {currentObjectEdited.TypeObjectName()} {currentObjectEdited}";
+                lblResumes.Text = $"Trouvé {currentObjectEdited.GetTypeObject().TypeObjectName} {currentObjectEdited}";
             }
             else
             {
@@ -262,7 +262,7 @@ namespace VersionDB4
                 AnalyseEntete();
                 if (string.IsNullOrWhiteSpace(currentObjectEdited.ObjectName))
                 {
-                    MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.TypeObjectName()}", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.GetTypeObject().TypeObjectName}", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -283,7 +283,7 @@ namespace VersionDB4
                 AnalyseEntete();
                 if (string.IsNullOrWhiteSpace(currentObjectEdited.ObjectName))
                 {
-                    MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.TypeObjectName()}", "Mise à jour imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.GetTypeObject().TypeObjectName}", "Mise à jour imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -317,7 +317,7 @@ namespace VersionDB4
             AnalyseEntete();
             if (string.IsNullOrWhiteSpace(currentObjectEdited.ObjectName))
             {
-                MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.TypeObjectName()}", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, $"L'analyse du script a échoué.\nImpossible de déterminer le nom de {currentObjectEdited.GetTypeObject().TypeObjectName}", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

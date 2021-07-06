@@ -40,6 +40,11 @@ namespace VersionDB4Lib.Business
         Effacement = 254
     }
 
+    /// <summary>
+    /// Gère les statuts et les actions associés à un import 
+    /// statuts : Egaux/Différents/nouveau/..
+    /// Actions : importer/ne pas importer/...
+    /// </summary>
     public enum EImportType
     {
         /// <summary>
@@ -78,6 +83,9 @@ namespace VersionDB4Lib.Business
         DifferentImportASCustomClient = 6
     }
 
+    /// <summary>
+    /// Les catégories d'objets présenté dans les écrans
+    /// </summary>
     public enum ETypeObjectPresentable
     {
         Project = 1,
@@ -91,7 +99,9 @@ namespace VersionDB4Lib.Business
         Client = 9,
     }
 
-
+    /// <summary>
+    /// Les actions métier disponible dans l'interface
+    /// </summary>
     public enum EAction
     {
         /// <summary>
