@@ -36,9 +36,9 @@ WHERE t.TypeObjectId = 9  --- t.TypeObjectNeedColumnDefinition = 1
                     {
                         var column = new ColumnDefinition()
                         {
-                            ColmnName = match.Groups["column"]?.Value,
+                            ColumnName = match.Groups["column"]?.Value,
                             ColumnType = match.Groups["type"]?.Value,
-                            ColumnMandatory = ConvertMandatorySqlToBool(match.Groups["mandatory"]?.Value),
+                            ColomnMandatory = ConvertMandatorySqlToBool(match.Groups["mandatory"]?.Value),
                             ObjectId = obj.ObjectId
                         };
                 }

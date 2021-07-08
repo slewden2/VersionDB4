@@ -22,7 +22,7 @@ namespace VersionDB4Lib.Business.Scripting
         public void CommitTransaction() => cnn.CommitTransaction();
         public void RollBackTransaction() => cnn.RollBackTransaction();
 
-        public int Add(Object objectInserted)
+        public int Add(ObjectToImport objectInserted)
         {
             objectInserted.ObjectDeleted = false;
             objectInserted.ObjectEmpty = false;
@@ -31,7 +31,12 @@ namespace VersionDB4Lib.Business.Scripting
 
             if (objectInserted.GetTypeObject().TypeObjectNeedColumnDefinition)
             {
-                // TODO : Add synchronisation des colonnes Here
+                // synchronisation des colonnes Here
+                foreach (var column in objectInserted.Columns )
+                {
+                    column.ObjectId = id;
+                    cnn.Execute(ColumnDefinition.SQLInsert, column);
+                }
             }
 
             AddScriptToObjectAction(objectInserted, SqlAction.Create);

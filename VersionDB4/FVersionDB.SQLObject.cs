@@ -198,7 +198,7 @@ namespace VersionDB4
                 return;
             }
 
-            currentObjectEdited = new Object()
+            currentObjectEdited = new ObjectToImport()
             {
                 VersionId = versionObjectCounter.VersionId,
                 TypeObjectId = objectAdd.TypeObjectId,
@@ -214,7 +214,7 @@ namespace VersionDB4
                 return;
             }
 
-            currentObjectEdited = objectEdited;
+            currentObjectEdited = new ObjectToImport(objectEdited);
             BeginAddSqlObjectUpdateDisplay(EAction.SqlObjectEditEnd, $"Modification de {objectEdited}");
         }
         private void ProcessSqlObjectAddCustomClientBegin()
@@ -229,7 +229,7 @@ namespace VersionDB4
             frm.Refill(ClientCode.List().Except(objectAdd.ClientCodeList()).ToList());
             if (frm.ShowDialog(this) == DialogResult.OK)
             {
-                currentObjectEdited = new Object()
+                currentObjectEdited = new ObjectToImport()
                 {
                     VersionId = versionObjectCounter.VersionId,
                     TypeObjectId = objectAdd.TypeObjectId,
@@ -306,8 +306,7 @@ namespace VersionDB4
                 return;
             }
 
-            TreeNode node = null;
-            if (sqlTextBox1.Text != currentObjectEdited.ObjectSql)
+            if (sqlTextBox1.Text == currentObjectEdited.ObjectSql)
             {
                 MessageBox.Show(this, $"Aucun changement entre l'implémentation et la version de départ", "Insertion imposible", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -325,7 +324,7 @@ namespace VersionDB4
             int id = crudProcess.Add(currentObjectEdited);
 
             FillCustomClientList(treeView1.SelectedNode, ObjetAddEnd, true);
-            node = SelectNodeObject(treeView1.SelectedNode, id);
+            var node = SelectNodeObject(treeView1.SelectedNode, id);
 
             CancelEdition(node);
         }

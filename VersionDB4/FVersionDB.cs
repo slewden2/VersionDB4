@@ -26,7 +26,7 @@ namespace VersionDB4
         private Version lastVersion;
 
         private Script currentScriptEdited = null;
-        private Object currentObjectEdited = null;
+        private ObjectToImport currentObjectEdited = null;
         private Button buttonOk = null;
         private bool processing;
         #endregion

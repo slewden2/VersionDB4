@@ -233,12 +233,81 @@ INNER JOIN sys.tables t on cstr.parent_object_id = t.object_id
                 _ => string.Empty
             };
 
+
+
+        public static string SQLImportColumns(int typeObjectId)
+             => typeObjectId switch
+                {
+                    5 => @"   --- Vue
+SELECT cl.[name] AS ColumnName
+     , ty.[name] + CASE WHEN ty.[name] IN ('varchar', 'char')   THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length, '')     ELSE 'MAX' END + ')' 
+                        WHEN ty.[name] IN ('nvarchar', 'nchar') THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length / 2, '') ELSE 'MAX' END + ')'
+                        WHEN ty.[name] = 'numeric' THEN '(' + FORMAT(cl.[precision], '') + ', ' + FORMAT(cl.scale, '') + ')'
+                        ELSE '' 
+                   END  AS ColumnType
+     , 1 - cl.is_nullable AS ColumnMandatory
+FROM sys.views v
+INNER JOIN sys.columns cl ON v.object_id = cl.object_id
+INNER JOIN sys.types ty ON cl.[system_type_id] = ty.[system_type_id] AND cl.[user_type_id] = ty.[user_type_id]
+WHERE OBJECT_SCHEMA_NAME(v.object_id) = @ObjectSchema AND v.[name] = @ObjectName
+;
+",
+                    7 => @"   --- Index (TODO A compléter)
+SELECT cl.[name] AS ColumnName
+     , ty.[name] + CASE WHEN ty.[name] IN ('varchar', 'char')   THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length, '')     ELSE 'MAX' END + ')' 
+                        WHEN ty.[name] IN ('nvarchar', 'nchar') THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length / 2, '') ELSE 'MAX' END + ')'
+                        WHEN ty.[name] = 'numeric' THEN '(' + FORMAT(cl.[precision], '') + ', ' + FORMAT(cl.scale, '') + ')'
+                        ELSE '' 
+                   END AS ColumnType
+     , 1 - cl.is_nullable AS ColumnMandatory
+FROM sys.indexes i
+INNER JOIN sys.index_columns ic ON ic.object_id = i.object_id AND i.index_id = ic.index_id
+INNER JOIN sys.columns cl ON i.object_id = cl.object_id AND ic.column_id = cl.column_id
+INNER JOIN sys.types ty ON cl.[system_type_id] = ty.[system_type_id] AND cl.[user_type_id] = ty.[user_type_id]
+WHERE OBJECT_SCHEMA_NAME(i.object_id) = @ObjectSchema AND i.[name] = @ObjectName
+;
+",
+                    9 => @"   --- Table
+SELECT cl.[name] AS ColumnName
+     , ty.[name] + CASE WHEN ty.[name] IN ('varchar', 'char')   THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length, '')     ELSE 'MAX' END + ')' 
+                        WHEN ty.[name] IN ('nvarchar', 'nchar') THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length / 2, '') ELSE 'MAX' END + ')'
+                        WHEN ty.[name] = 'numeric' THEN '(' + FORMAT(cl.[precision], '') + ', ' + FORMAT(cl.scale, '') + ')'
+                        ELSE '' 
+                   END AS ColumnType
+     , 1 - cl.is_nullable AS ColumnMandatory
+FROM sys.tables ta
+INNER JOIN sys.columns cl ON ta.object_id = cl.object_id
+INNER JOIN sys.types ty ON cl.[system_type_id] = ty.[system_type_id] AND cl.[user_type_id] = ty.[user_type_id]
+WHERE OBJECT_SCHEMA_NAME(ta.object_id) = @ObjectSchema AND ta.[name] = @ObjectName
+;
+",
+                    10 => @"   --- TypeTable
+SELECT cl.[name]
+     , ty.[name] + CASE WHEN ty.[name] IN ('varchar', 'char')   THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length, '')     ELSE 'MAX' END + ')' 
+                        WHEN ty.[name] IN ('nvarchar', 'nchar') THEN '(' + CASE WHEN cl.max_length > 0 THEN FORMAT(cl.max_length / 2, '') ELSE 'MAX' END + ')'
+                        WHEN ty.[name] = 'numeric' THEN '(' + FORMAT(cl.[precision], '') + ', ' + FORMAT(cl.scale, '') + ')'
+                        ELSE '' 
+                   END AS ColumnType
+     , 1 - cl.is_nullable AS ColumnMandatory
+FROM sys.table_types t
+INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
+INNER JOIN sys.columns cl ON t.type_table_object_id = cl.object_id
+INNER JOIN sys.types ty ON cl.[system_type_id] = ty.[system_type_id] AND cl.[user_type_id] = ty.[user_type_id]
+WHERE t.is_table_type = 1
+  AND s.[name] = @ObjectSchema
+  AND t.[name] = @ObjectName
+;
+",
+
+                    _ => string.Empty
+                };
+                
         /*
             
             
             
             @"
---- tables
+         -- - tables
 SELECT t.object_id AS [ObjectId], @VersionId AS VersionId
  , 5 AS TypeObjectId   --- Table
  , OBJECT_SCHEMA_NAME(t.object_id) AS ObjectSchema, t.name AS ObjectName

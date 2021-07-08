@@ -1,3 +1,4 @@
+
 -------------------------------------------------------------------------------
 --- SLew 06/07/2021 20:04:57 : Crée tout le schéma
 -------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ create table dbo."Column" (
    ObjectId             int                  not null,
    ColumnName           Varchar(100)         not null,
    ColumnType           Varchar(50)          not null,
-   ColomnMandatory      bit                  not null,
+   ColumnMandatory      bit                  not null,
    constraint PK_COLUMN primary key (ColumnId)
 )
 ;

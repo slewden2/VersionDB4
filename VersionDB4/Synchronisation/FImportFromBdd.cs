@@ -19,7 +19,6 @@ namespace VersionDB4.Synchronisation
     {
         private Base baseClient = null;
         private EStep currentStep;
-        //private List<ObjetToImport> lstToImport;
 
         public FImportFromBdd()
         {
@@ -187,7 +186,7 @@ namespace VersionDB4.Synchronisation
         private void EnableButtons()
         {
             btnPrevious.Enabled = currentStep != EStep.Selection && currentStep != EStep.Summary;
-
+            btCancel.Enabled = true;
             bool ok = true;
             switch (currentStep)
             {
@@ -207,7 +206,6 @@ namespace VersionDB4.Synchronisation
 
             btnOk.Enabled = ok;
         }
-
 
         private bool ComputeListChoices()
         {
@@ -273,6 +271,8 @@ namespace VersionDB4.Synchronisation
                 progressBar1.PerformStep();
                 Application.DoEvents();
 
+                bool withColumn = typOb.TypeObjectNeedColumnDefinition;
+
                 var lst = cnn.Query<ObjectToImport>(DatabaseExtractor.SQLImportObject(typOb.TypeObjectId), new { version.VersionId });
 
                 itx = new ListViewItem(typOb.TypeObjectPlurial);
@@ -283,6 +283,11 @@ namespace VersionDB4.Synchronisation
                 lstChoice.Groups.Add(grp);
                 foreach (ObjectToImport x in lst)
                 {
+                    if (withColumn)
+                    {
+                        x.Columns = cnn.Query<ColumnDefinition>(DatabaseExtractor.SQLImportColumns(typOb.TypeObjectId), x).ToList();
+                    }
+
                     counter++;
                     x.ReferencedObject = lstObjects.FirstOrDefault(o => x.IsMatch(o));
                     itx = new ListViewItem(x.ToString())
@@ -320,39 +325,57 @@ namespace VersionDB4.Synchronisation
 
         private void DoImport()
         {
-            int nb = 0, ok = 0;
-            using var processor = new CRUDObjectProcess();
-            processor.BeginTransaction();
+            this.UseWaitCursor = true;
+            lblFinalSumary.Text = "Import en cours...";
+            lblFinalSumary.ForeColor = SystemColors.ControlText;
+            lblStatusSummary.ForeColor = SystemColors.ControlText;
+            lblStatusSummary.Text = "...";
+            btnPrevious.Enabled = false;
+            btnOk.Enabled = false;
+            btCancel.Enabled = false;
+
+            Application.DoEvents();
             try
             {
-                foreach (ListViewItem itx in lstChoice.Items)
+                
+                int nb = 0, ok = 0;
+                using var processor = new CRUDObjectProcess();
+                processor.BeginTransaction();
+                try
                 {
-                    if (itx.Tag != null && itx.Tag is ObjectToImport import && import.Status.IsAction())
+                    foreach (ListViewItem itx in lstChoice.Items)
                     {
-                        if (DoImport(processor, import))
+                        if (itx.Tag != null && itx.Tag is ObjectToImport import && import.Status.IsAction())
                         {
-                            ok++;
+                            if (DoImport(processor, import))
+                            {
+                                ok++;
+                            }
+
+                            nb++;
                         }
-
-                        nb++;
                     }
-                }
 
-                processor.CommitTransaction();
-                lblFinalSumary.Text = $"{ok.Counter("Aucun objet importé", "Un seul objet importé", "{0} objets importés")} sur {nb.Counter("x", "l'objet prévu", "les {0} objets prévus")}";
-                lblFinalSumary.ForeColor = ok == nb ? Color.Green : Color.Red;
-                lblStatusSummary.ForeColor = ok == nb ? Color.Green : Color.Red;
-                lblStatusSummary.Text = ok == nb ? "" : "";
+                    processor.CommitTransaction();
+                    lblFinalSumary.Text = $"{ok.Counter("Aucun objet importé", "Un seul objet importé", "{0} objets importés")} sur {nb.Counter("x", "l'objet prévu", "les {0} objets prévus")}";
+                    lblFinalSumary.ForeColor = ok == nb ? Color.Green : Color.Red;
+                    lblStatusSummary.ForeColor = ok == nb ? Color.Green : Color.Red;
+                    lblStatusSummary.Text = ok == nb ? "" : "";
+                }
+                catch (Exception ex)
+                {
+                    string message = "Erreur de traitement : Opération totalement annulée\n\n" + ex.Message;
+                    processor.RollBackTransaction();
+                    lblFinalSumary.Text = message;
+                    lblFinalSumary.ForeColor = Color.Red;
+                    lblStatusSummary.ForeColor = Color.Red;
+                    lblStatusSummary.Text = "";
+                    MessageBox.Show(message, "Erreur de traitement", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            catch (Exception ex)
+            finally
             {
-                string message = "Erreur de traitement : Opération totalement annulée\n\n" + ex.Message;
-                processor.RollBackTransaction();
-                lblFinalSumary.Text = message;
-                lblFinalSumary.ForeColor = Color.Red;
-                lblStatusSummary.ForeColor = Color.Red;
-                lblStatusSummary.Text = "";
-                MessageBox.Show(message, "Erreur de traitement", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.UseWaitCursor = false;
             }
 
             EnableButtons();

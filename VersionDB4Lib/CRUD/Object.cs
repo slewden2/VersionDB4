@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DatabaseAndLogLibrary;
 using VersionDB4Lib.Business;
 
 namespace VersionDB4Lib.CRUD
@@ -23,6 +24,10 @@ namespace VersionDB4Lib.CRUD
         public TypeObject GetTypeObject() => TypeObject.List().First(x => x.TypeObjectId == TypeObjectId);
 
         public ObjectIdentifier Identifier => new ObjectIdentifier(ObjectName) { Schema = ObjectSchema, Column = ObjectColumn };
+
+
+        public bool CanAddCustomClient(IDatabaseConnection cnn)
+            => cnn.ExecuteScalar(SQLCountCodeClientNotUsedForOneObject, new { ObjectId }) > 0;
 
 
         public override string ToString()
@@ -73,5 +78,22 @@ UPDATE dbo.Object
 SET ObjectDeleted = 1
 WHERE ObjectId = @ObjectId
 ";
+
+        public static string SQLCountCodeClientNotUsedForOneObject
+            => @"
+SELECT COUNT(*) AS [Key] 
+FROM dbo.ClientCode
+WHERE ClientCodeId NOT IN (SELECT DISTINCT o2.ClientCodeId
+                           FROM dbo.[Object] o1
+                           INNER JOIN dbo.[Object] o2 ON o1.VersionId    = o2.VersionId
+                                                     AND o1.TypeObjectId = o2.TypeObjectId 
+                                                     AND o1.ObjectSchema = o2.ObjectSchema
+                                                     AND o1.ObjectName   = o2.ObjectName
+                                                     AND (COALESCE(o1.ObjectColumn, o2.ObjectColumn) IS NULL OR o1.ObjectColumn = o2.ObjectColumn)
+                           WHERE o1.ObjectId = @ObjectId
+                             AND o2.ClientCodeId IS NOT NULL
+                             AND o2.ObjectDeleted = 0
+                          )
+;";
     }
 }

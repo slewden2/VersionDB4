@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using DatabaseAndLogLibrary.DataBase;
 using VersionDB4Lib.CRUD;
 using VersionDB4Lib.ForUI;
 
@@ -34,7 +35,12 @@ namespace VersionDB4Lib.Business
                     {
                         yield return EAction.SqlObjectEditBegin;
                         yield return EAction.SqlObjectDelete;
-                        yield return EAction.SqlObjectAddCustomClient;
+
+                        using var cnn = new DatabaseConnection();
+                        if (sqlObject.CanAddCustomClient(cnn))
+                        {
+                            yield return EAction.SqlObjectAddCustomClient;
+                        }
                     }
 
                     break;
