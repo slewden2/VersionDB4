@@ -51,6 +51,7 @@ namespace VersionDB4
             this.versionScriptControl1 = new VersionDB4.Control.VersionScriptControl();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -379,6 +380,7 @@ namespace VersionDB4
         private System.Windows.Forms.PictureBox pictureBox1;
         private Control.SqlTextBox sqlTextBox1;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }
 

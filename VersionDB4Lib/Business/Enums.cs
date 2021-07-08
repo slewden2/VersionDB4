@@ -134,6 +134,8 @@ namespace VersionDB4Lib.Business
         VersionLock = 44,
         VersionUnLock = 45,
 
+        VersionToDisk = 46,
+
 
         ScriptAddBegin = 50,
         ScriptAddEnd = 51,

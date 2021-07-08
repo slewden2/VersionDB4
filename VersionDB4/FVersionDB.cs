@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using DatabaseAndLogLibrary.DataBase;
 using VersionDB4.Synchronisation;
 using VersionDB4Lib.Business;
+using VersionDB4Lib.Business.Scripting;
 using VersionDB4Lib.Business.SqlAnalyze;
 using VersionDB4Lib.CRUD;
 using VersionDB4Lib.ForUI;
@@ -261,6 +262,14 @@ namespace VersionDB4
                         cnn.Execute(Version.SQLUpdate, versionUnlock);
                         FillScriptTreeView();
 
+                    }
+
+                    break;
+                case EAction.VersionToDisk:
+                    if (treeView1.SelectedNode.Tag != null && treeView1.SelectedNode.Tag is VersionScriptCounter versionToDisk && folderBrowserDialog1.ShowDialog(this) == DialogResult.OK)
+                    {
+                        var scToDisk = new ScriptToDisk(versionToDisk.VersionId, folderBrowserDialog1.SelectedPath);
+                        scToDisk.WriteScripts();
                     }
 
                     break;

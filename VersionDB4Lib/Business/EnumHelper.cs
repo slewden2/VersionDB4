@@ -60,6 +60,7 @@ namespace VersionDB4Lib.Business
                     if (versionIsLocked)
                     {
                         yield return EAction.VersionUnLock;
+                        
                     }
                     else
                     {
@@ -72,6 +73,8 @@ namespace VersionDB4Lib.Business
 
                         yield return EAction.VersionLock;
                     }
+
+                    yield return EAction.VersionToDisk;
 
                     break;
 
@@ -144,6 +147,7 @@ namespace VersionDB4Lib.Business
                   EAction.VersionAdd => "",                    // 0xE109;
                   EAction.VersionLock => "",                   // 0xE72E;  Lock
                   EAction.VersionUnLock => "",                 // 0xE785;  Unlock
+                  EAction.VersionToDisk => "",                 // 0xE74E;  Save to Disque
 
                   //EAction.VersionScriptRefresh => "",          // 0xE72C;
                   _ => string.Empty
@@ -190,6 +194,7 @@ namespace VersionDB4Lib.Business
                     EAction.VersionAdd => Color.Navy,
                     EAction.VersionLock => CSTLockColor,                     // Lock : jaune foncé
                     EAction.VersionUnLock => CSTLockColor,                   // UnLock : jaune foncé 
+                    EAction.VersionToDisk => Color.Navy,                   
 
 
                     _ => Color.Black
@@ -217,6 +222,7 @@ namespace VersionDB4Lib.Business
                 EAction.VersionDelete => "Supprimer cette version vide",
                 EAction.VersionLock => "Verrouiller cette version",
                 EAction.VersionUnLock => "Libérer cette version",
+                EAction.VersionToDisk => "Exporter sur disque",
                 EAction.ScriptAddBegin => "Ajouter un script manuellement",
                 EAction.ScriptAddEnd => "Valider l'ajout du script",
                 EAction.ScriptEditBegin => "Modifier ce script",

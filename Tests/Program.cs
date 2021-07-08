@@ -18,7 +18,7 @@ namespace Tests
 
             using var conn = new DatabaseConnection();
             string sql = @"
-SELECT ObjectId, VersionId, TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ObjectColumn
+SELECT ObjectId, VersionId, o.TypeObjectId, ObjectSchema, ObjectName, ObjectDeleted, ObjectEmpty, ObjectSql, ObjectLockedBy, ClientCodeId, ObjectColumn
 FROM dbo.[object] o 
 INNER JOIN TypeObject t ON o.TypeObjectId = t.TypeObjectId 
 WHERE t.TypeObjectId = 9  --- t.TypeObjectNeedColumnDefinition = 1
@@ -38,7 +38,7 @@ WHERE t.TypeObjectId = 9  --- t.TypeObjectNeedColumnDefinition = 1
                         {
                             ColumnName = match.Groups["column"]?.Value,
                             ColumnType = match.Groups["type"]?.Value,
-                            ColomnMandatory = ConvertMandatorySqlToBool(match.Groups["mandatory"]?.Value),
+                            ColumnMandatory = ConvertMandatorySqlToBool(match.Groups["mandatory"]?.Value),
                             ObjectId = obj.ObjectId
                         };
                 }
